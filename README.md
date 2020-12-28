@@ -18,11 +18,13 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Update USB holder
 ![](elite-c_trrs_holder.png)
+![](elite-c_trrs_reset_holder.png)
 - Created ("working" but unpolished) SCAD version of USB holder for modifications
 - Provide better clearance to USB cables plugging into controller
 - Adjust size to better hold Elite-C controller
 - Taper angle to reduce waste material
 - Make holder shape symetrical to case notches so it fits upside down or right side up
+- Add option for square reset button to be held as well
 
 
 ## Comparison with previous model
