@@ -31,11 +31,11 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 4)
+(def nrows 5)
 (def ncols 6)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
-(def row-curvature (deg2rad 4))                             ; 5                   ; curvature of the rows
+(def row-curvature (deg2rad (if (> nrows 4) 2 4)))                             ; 5                   ; curvature of the rows
 (def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
 (def tenting-angle (deg2rad 18))                            ; or, change this for more precise tenting control
@@ -47,7 +47,7 @@
                                (>= column 4) [0 -16 6]
                                :else [0 0 0]))
 
-(def keyboard-z-offset 9)                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+(def keyboard-z-offset (if (> nrows 4) 10.5 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.5)                                      ; original= 0.5
 
@@ -475,7 +475,7 @@ need to adjust for difference for thumb-z only"
                                        (- thumb-design-z plate-thickness) 
                                        0)) 
                             1.1))
-(def thumb-x-rotation-adjustment -8)
+(def thumb-x-rotation-adjustment (if (> nrows 4) -12 -8))
 (defn thumb-place [rot move shape]
   (->> shape
        
@@ -675,9 +675,9 @@ need to adjust for difference for thumb-z only"
     (key-wall-brace 3 lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl)
     (for [x (range 4 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br)) ; TODO fix extra wall
     (for [x (range 5 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br))
-    (->> (wall-brace thumb-r-place 0 -1 web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl) (color RED))
+    (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl) (color RED))
     ; thumb walls
-    (->> (wall-brace thumb-r-place  0 -1 web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
+    (->> (wall-brace thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
     (->> (wall-brace thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
     (->> (wall-brace thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl) (color GRE))
     (->> (wall-brace thumb-l-place  0  1 fat-web-post-tr thumb-l-place  0  1 fat-web-post-tl) (color CYA))
@@ -708,8 +708,8 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bottom-offset 0)
 (def screw-insert-bc   (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
 (def screw-insert-ml   (if (> nrows 4) [-8.5 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-29.0 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-br   (if (> nrows 4) [23.7 6.5 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
+(def screw-insert-thmb (if (> nrows 4) [-27.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
+(def screw-insert-br   (if (> nrows 4) [23.5 6.5 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
 (def screw-insert-fc   (if (> nrows 4) [19.8 7 screw-insert-bottom-offset] [21 9 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
@@ -810,11 +810,11 @@ need to adjust for difference for thumb-z only"
                     (import "../things/usb_holder.stl")
                 )
 )
-(def usb-holder-cutout-height 16.8)
+(def usb-holder-cutout-height 16.9)
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0)
 
-(def usb-holder-offset-coordinates (if (> nrows 4) [-39 57.2 usb-holder-bottom-offset] 
+(def usb-holder-offset-coordinates (if (> nrows 4) [-39 57.3 usb-holder-bottom-offset] 
                                                    [-41.5 50.4 usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
@@ -869,12 +869,12 @@ need to adjust for difference for thumb-z only"
               ) 
               ;(color BLU)
             )
-            ;caps
-            ;thumbcaps
+            caps
+            thumbcaps
             (debug key-space-below)
             (debug thumb-space-below)
             (debug usb-holder)
-            (debug okke-right)
+            ;(debug okke-right)
             )
           (translate [0 0 -20] (cube 350 350 40)))))
 
