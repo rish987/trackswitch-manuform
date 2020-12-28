@@ -8,16 +8,29 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Adjusted column spacing for better clearance
 - Continuous (vs. recessed) bottom plate with filleted holes
 - Exoskeleton top case design
-- Updated USB holder
 - Rendered both 4x6 and 5x6 versions with bottom plate
 - (orig. Tightyl) As small around the keys as possible
 - (orig. Tightyl) Smoother transition between thumb and fingers (less facets)
 - (orig. Tightyl) Thicker walls in steep regions where walls were too thin
 
 ![](compactyl.png)
+![](assembly.png)
+
+## Update USB holder
 ![](elite-c_trrs_holder.png)
+- Created ("working" but unpolished) SCAD version of USB holder for modifications
+- Provide better clearance to USB cables plugging into controller
+- Adjust size to better hold Elite-C controller
+- Taper angle to reduce waste material
+- Make holder shape symetrical to case notches so it fits upside down or right side up
+
+
+## Comparison with previous model
 ![](compare.png)
-![](preview.png)
+- Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
+- New Compactyl (blue) uses a flatter row curvature, but increases tent to result in similar keyboard angle
+- New Compactyl (blue) is approximately 4mm taller (plus additional heigh for bottom plate if used) because of space requried by hot swap holders below pinky columns.
+
 
 ## Generate OpenSCAD and STL models
 
@@ -32,8 +45,8 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 ## Tips
 
 * When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you don't use.
-* If you're not sure what things are generted by a piece of code (see examples in dactyl.clj, color them in using something like
-`(->> SOMETHING_HERE (color RED))`
+* If you're not sure what things are generted by a piece of code, color them in using something like
+`(->> SOMETHING_HERE (color RED))` (see examples in dactyl.clj).
 
 ## License
 
