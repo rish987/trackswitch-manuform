@@ -71,6 +71,7 @@
 (def keyswitch-height 14)                                   ;; Was 14.1, then 14.25
 (def keyswitch-width 14)
 (def plate-thickness 5)
+(def use_hotswap true)
 (def keyswitch-below-plate (- 8 plate-thickness))           ; approx space needed below keyswitch
 
 (def retention-tab-thickness 1.5)
@@ -88,7 +89,7 @@
 (def holder-thickness    (/ (- holder-x keyswitch-width) 2))
 (def holder-y            (+ keyswitch-height (* holder-thickness 2)))
 (def swap-z              3)
-(def web-thickness (+ plate-thickness swap-z))
+(def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
 (def north_facing true)
 (def LED-holder true)
 (def square-led-size     6)
@@ -707,11 +708,11 @@ need to adjust for difference for thumb-z only"
 
 (def screw-insert-bottom-offset 0)
 (def screw-insert-bc   (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-8.5 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-8 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
 (def screw-insert-thmb (if (> nrows 4) [-27.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
 (def screw-insert-br   (if (> nrows 4) [23.5 6.5 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [19.8 7 screw-insert-bottom-offset] [21 9 screw-insert-bottom-offset]))
+(def screw-insert-fc   (if (> nrows 4) [19.8 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -814,8 +815,8 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0)
 
-(def usb-holder-offset-coordinates (if (> nrows 4) [-39 57.3 usb-holder-bottom-offset] 
-                                                   [-41.5 50.4 usb-holder-bottom-offset]))
+(def usb-holder-offset-coordinates (if (> nrows 4) [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset] 
+                                                   [-41.5 (if use_hotswap 50.4 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
