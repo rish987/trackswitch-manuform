@@ -1,43 +1,23 @@
-lein run src/dactyl_keyboard/dactyl.clj
-cp things/right.scad things/right-4x5.scad
-cp things/left.scad things/left-4x5.scad
-cp things/right-plate.scad things/right-4x5-plate.scad
-openscad -o things/right-4x5-plate.dxf things/right-4x5-plate.scad >/dev/null 2>&1 &
-openscad -o things/right-4x5.stl things/right-4x5.scad >/dev/null 2>&1 &
-openscad -o things/left-4x5.stl  things/left-4x5.scad >/dev/null 2>&1 &
+# based on similar changes from alexoterof in okke-formsma/dactyl-manuform-tight
 
-patch -p1 < 4x6.patch 
-lein run src/dactyl_keyboard/dactyl.clj
-cp things/right.scad things/right-4x6.scad
-cp things/left.scad things/left-4x6.scad
-cp things/right-plate.scad things/right-4x6-plate.scad
-openscad -o things/right-4x6-plate.dxf things/right-4x6-plate.scad >/dev/null 2>&1 &
-openscad -o things/right-4x6.stl things/right-4x6.scad >/dev/null 2>&1  &
-openscad -o things/left-4x6.stl  things/left-4x6.scad >/dev/null 2>&1 &
-git checkout src/dactyl_keyboard/dactyl.clj
+# MAC
+OPEN_SCAD='/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD'
 
-patch -p1 < 5x6.patch 
-lein run src/dactyl_keyboard/dactyl.clj
-cp things/right.scad things/right-5x6.scad
-cp things/left.scad things/left-5x6.scad
-cp things/right-plate.scad things/right-5x6-plate.scad
-openscad -o things/right-5x6-plate.dxf things/right-5x6-plate.scad >/dev/null 2>&1 &
-openscad -o things/right-5x6.stl things/right-5x6.scad >/dev/null 2>&1  &
-openscad -o things/left-5x6.stl  things/left-5x6.scad >/dev/null 2>&1 &
-git checkout src/dactyl_keyboard/dactyl.clj
+# WINDOWS
+# OPEN_SCAD='openscad.com'
 
-patch -p1 < 6x6.patch 
-lein run src/dactyl_keyboard/dactyl.clj
-cp things/right.scad things/right-6x6.scad
-cp things/left.scad things/left-6x6.scad
-cp things/right-plate.scad things/right-6x6-plate.scad
-openscad -o things/right-6x6-plate.dxf things/right-6x6-plate.scad >/dev/null 2>&1 &
-openscad -o things/right-6x6.stl things/right-6x6.scad >/dev/null 2>&1  &
-openscad -o things/left-6x6.stl  things/left-6x6.scad >/dev/null 2>&1 &
-git checkout src/dactyl_keyboard/dactyl.clj
+echo 'Generating things/*.scad files using '$(lein -v)
+echo '(load-file "src/dactyl_keyboard/dactyl.clj")' | lein repl > /dev/null 2>&1
 
+echo 'Rendering things/*.stl files from things/*.scad using ...'
+$OPEN_SCAD -v
+$OPEN_SCAD -o things/right-plate-cut.stl things/right-plate-cut.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o things/right.stl things/right.scad >/dev/null 2>&1 &
+#$OPEN_SCAD -o things/left.stl  things/left.scad >/dev/null 2>&1 &
 
-# git add things/*-4x5.stl
-# git add things/right-4x5-plate.dxf
-# git commit -m "Add CAD files"
-wait
+echo 'Please wait for STL files to output in things/ directory!'
+
+# echo 'Removing intermediary things/*.scad files...'
+# rm -f things/right-bottom-plate.scad
+# rm -f things/right.scad
+# rm -f things/left.scad
