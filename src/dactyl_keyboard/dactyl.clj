@@ -211,22 +211,22 @@
                        (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
                                    0
                                    (/ plate-thickness 2)]))
-        plate-half (union top-wall left-wall)
-        plate      (difference
-                     (union plate-half
-                         (->> plate-half
-                              (mirror [1 0 0])
-                              (mirror [0 1 0]))
-                         (if north_facing
-                             (->> hotswap-holder
-                                  (mirror [1 0 0])
-                                  (mirror [0 1 0])
-                             )
-                             hotswap-holder
-                         )
-                     )
-                     switch-teeth-cutout
-                   )
+        plate-half (difference (union top-wall left-wall) 
+                               switch-teeth-cutout)
+        plate (union plate-half
+                  (->> plate-half
+                       (mirror [1 0 0])
+                       (mirror [0 1 0]))
+                  (if use_hotswap 
+                      (if north_facing
+                          (->> hotswap-holder
+                               (mirror [1 0 0])
+                               (mirror [0 1 0])
+                          )
+                          hotswap-holder
+                      )
+                  )
+              )
        ]
     (->> (if mirror-internals
            (->> plate (mirror [1 0 0]))
