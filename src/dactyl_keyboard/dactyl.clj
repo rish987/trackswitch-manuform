@@ -49,7 +49,7 @@
 
 (def keyboard-z-offset (if (> nrows 4) 10.5 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
-(def extra-height 1.5)                                      ; original= 0.5
+(def extra-height 1.7)                                      ; original= 0.5
 
 (def wall-z-offset -7)                                      ; -5                ; original=-15 length of the first downward-sloping part of the wall (negative)
 (def wall-xy-offset 1)
@@ -68,11 +68,10 @@
 ;; Switch Hole ;;
 ;;;;;;;;;;;;;;;;;
 
-(def keyswitch-height 14)                                   ;; Was 14.1, then 14.25
-(def keyswitch-width 14)
+(def keyswitch-height 13.8)                                   ;; Was 14.1, then 14.25
+(def keyswitch-width 13.9)
 (def plate-thickness 5)
 (def use_hotswap true)
-(def keyswitch-below-plate (- 8 plate-thickness))           ; approx space needed below keyswitch
 
 (def retention-tab-thickness 1.5)
 (def retention-tab-hole-thickness (- plate-thickness retention-tab-thickness))
@@ -90,6 +89,7 @@
 (def holder-y            (+ keyswitch-height (* holder-thickness 2)))
 (def swap-z              3)
 (def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
+(def keyswitch-below-plate (- 8 web-thickness))           ; approx space needed below keyswitch
 (def north_facing true)
 (def LED-holder true)
 (def square-led-size     6)
@@ -112,6 +112,11 @@
   )
 )
 
+(def hotswap-y1          4.3) ;first y-size of kailh hotswap holder
+(def hotswap-y2          6.2) ;second y-size of kailh hotswap holder
+(def hotswap-z           (+ swap-z 0.5));thickness of kailn hotswap holder + some margin of printing error (0.5mm)
+(def hotswap-cutout-z-offset -2.6)
+(def hotswap-cutout-1-y-offset 4.95)
 (def hotswap-holder
   (let [
         
@@ -139,9 +144,7 @@
         hotswap-x           holder-x ;cutout full width of holder instead of only 14.5mm
         hotswap-x2          (* (/ holder-x 3) 1.95)
         hotswap-x3          (/ holder-x 4)
-        hotswap-y1          4.3 ;first y-size of kailh hotswap holder
-        hotswap-y2          6.2 ;second y-size of kailh hotswap holder
-        hotswap-z           (+ swap-z 0.5) ;thickness of kailn hotswap holder + some margin of printing error (0.5mm)
+
         hotswap-cutout-1-x-offset 0.01
         hotswap-cutout-2-x-offset (* (/ holder-x 4.5) -1)
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2))
@@ -151,7 +154,7 @@
         hotswap-cutout-2-y-offset 4
         hotswap-cutout-3-y-offset (/ holder-y 2)
         hotswap-cutout-led-y-offset -6
-        hotswap-cutout-z-offset -2.6
+        
         hotswap-cutout-1    (->> (cube hotswap-x hotswap-y1 hotswap-z)
                                  (translate [hotswap-cutout-1-x-offset 
                                              hotswap-cutout-1-y-offset 
@@ -203,7 +206,7 @@
 ; (def mirror-internals true)
 
 (def single-plate
-  (let [top-wall (->> (cube (+ keyswitch-width 3) 1.5 plate-thickness)
+  (let [top-wall (->> (cube (+ keyswitch-height 3) 1.5 plate-thickness)
                       (translate [0
                                   (+ (/ 1.5 2) (/ keyswitch-height 2))
                                   (/ plate-thickness 2)]))
@@ -239,6 +242,9 @@
 ;amoeba is 16 mm high
 (def switch-bottom
   (translate [0 0 (/ keyswitch-below-plate -2)] (cube 16 keyswitch-width keyswitch-below-plate)))
+
+(def hotswap-case-cutout
+  (translate [0 (* hotswap-cutout-1-y-offset -1) hotswap-cutout-z-offset] (cube (+ keyswitch-width 3) hotswap-y1 hotswap-z)))
 
 ;;;;;;;;;;;;;;;;
 ;; SA Keycaps ;;
@@ -504,6 +510,7 @@ need to adjust for difference for thumb-z only"
 (def thumbcaps (thumb-layout (sa-cap 1)))
 (def thumb (thumb-layout single-plate))
 (def thumb-space-below (thumb-layout switch-bottom))
+(def thumb-space-hotswap (thumb-layout hotswap-case-cutout))
 ;;;;;;;;;;
 ;; Case ;;
 ;;;;;;;;;;
@@ -808,15 +815,15 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder 
                 (mirror [-1 0 0]
-                    (import "../things/usb_holder.stl")
+                    (import "../things/usb_holder_w_reset.stl")
                 )
 )
-(def usb-holder-cutout-height 16.9)
+(def usb-holder-cutout-height 30.3)
 (def usb-holder-clearance 0.05)
-(def usb-holder-bottom-offset 0)
+(def usb-holder-bottom-offset 0.05)
 
 (def usb-holder-offset-coordinates (if (> nrows 4) [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset] 
-                                                   [-41.5 (if use_hotswap 50.4 48.9) usb-holder-bottom-offset]))
+                                                   [-41.5 (if use_hotswap 50.365 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
@@ -838,11 +845,26 @@ need to adjust for difference for thumb-z only"
                   usb-holder-space
                   screw-insert-holes
                   ))
-    (translate [0 0 -20] (cube 350 350 40))))
+    (translate [0 0 -20] (cube 350 350 40))
+    thumb-space-hotswap
+    ))
 ;
 
 (spit "things/right.scad"
       (write-scad model-right))
+
+; (spit "things/single-plate.scad"
+;       (write-scad single-plate))
+
+; (def model-back-cutout
+;   (difference
+;     model-right
+;     (translate [53 0 0] (cube 150 999 999))
+;     (translate [0 -10 0] (cube 999 100 999))
+;     (translate [0 0 70] (cube 999 999 100))
+;   ))
+; (spit "things/back_cutout.scad"
+;       (write-scad model-back-cutout))
 
 " change mirror-internals to true to generate left side with correct hot-swap pin orientation
 "
@@ -856,24 +878,14 @@ need to adjust for difference for thumb-z only"
       (write-scad
         (difference
           (union
-            (->> (union
-              key-holes
-              connectors
-              thumb
-              thumb-connectors
-              (difference (union case-walls
-                                 screw-insert-outers
-                                 )
-                          usb-holder-space
-                          screw-insert-holes
-                          )
-              ) 
+            (->> model-right 
               ;(color BLU)
             )
             caps
             thumbcaps
             (debug key-space-below)
             (debug thumb-space-below)
+            (debug thumb-space-hotswap)
             (debug usb-holder)
             ;(debug okke-right)
             )
