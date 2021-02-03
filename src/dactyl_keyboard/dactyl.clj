@@ -31,16 +31,19 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 5)
+(def nrows 6)
 (def ncols 6)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
-(def row-curvature (deg2rad (if (> nrows 4) 2 4)))                             ; 5                   ; curvature of the rows
+(def row-curvature (deg2rad (if (> nrows 4) 1 4)))                             ; 5                   ; curvature of the rows
 (def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
+(def centerrow (case nrows
+    6 3.1
+    5 2.1 
+    4 1.75))
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
 (def tenting-angle (deg2rad 18))                            ; or, change this for more precise tenting control
-(def column-style
-  (if (> nrows 5) :orthographic :standard))
+(def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
                                (= column 3) [0 0 -0.5]
@@ -71,7 +74,7 @@
 (def keyswitch-height 13.8)                                   ;; Was 14.1, then 14.25
 (def keyswitch-width 13.9)
 (def plate-thickness 5)
-(def use_hotswap true)
+(def use_hotswap false)
 
 (def retention-tab-thickness 1.5)
 (def retention-tab-hole-thickness (- plate-thickness retention-tab-thickness))
@@ -93,7 +96,7 @@
 (def north_facing true)
 (def LED-holder true)
 (def square-led-size     6)
-(def mirror-internals false) ; lazy way to re-generate left side with correct hotswap holder orientation
+(def mirror-internals true) ; lazy way to re-generate left side with correct hotswap holder orientation
 
 (def switch-teeth-cutout
   (let [
@@ -126,7 +129,7 @@
         ;|_|_O__  \ _|  hotswap pin
         ;|      \O_|_|  hotswap pin
         ;|  o  O  o  |  fully supported friction holes
-        ;| _________ |   
+        ;|    ___    |  
         ;|    |_|    |  space for LED under SMD or transparent switches
         ;
         ; can be described as having two sizes in the y dimension depending on the x coordinate
@@ -822,8 +825,10 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0.05)
 
-(def usb-holder-offset-coordinates (if (> nrows 4) [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset] 
-                                                   [-41.5 (if use_hotswap 50.365 48.9) usb-holder-bottom-offset]))
+(def usb-holder-offset-coordinates (case nrows 
+    6 [-32 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
+    5 [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset]
+    4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
