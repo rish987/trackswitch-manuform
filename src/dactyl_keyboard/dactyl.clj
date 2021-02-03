@@ -42,7 +42,7 @@
     5 2.1 
     4 1.75))
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad 18))                            ; or, change this for more precise tenting control
+(def tenting-angle (deg2rad 28))                            ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
@@ -50,7 +50,10 @@
                                (>= column 4) [0 -16 6]
                                :else [0 0 0]))
 
-(def keyboard-z-offset (if (> nrows 4) 10.5 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+(def keyboard-z-offset (case nrows 
+    6 20
+    5 10.5 
+    4 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
 
@@ -717,12 +720,12 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-8 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-27.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-br   (if (> nrows 4) [23.5 6.5 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
+(def screw-insert-bc   (if (> nrows 4) [0 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-9.5 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
+(def screw-insert-thmb (if (> nrows 4) [-29.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
+(def screw-insert-br   (if (> nrows 4) [20.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [19.8 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
+(def screw-insert-fc   (if (> nrows 4) [16.7 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -826,7 +829,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-bottom-offset 0.05)
 
 (def usb-holder-offset-coordinates (case nrows 
-    6 [-32 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
+    6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
     5 [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset]
     4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
