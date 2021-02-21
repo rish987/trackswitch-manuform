@@ -31,18 +31,22 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 6)
+(def nrows 4)
 (def ncols 6)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
-(def row-curvature (deg2rad (if (> nrows 4) 1 4)))                             ; 5                   ; curvature of the rows
+(def row-curvature (deg2rad (case nrows 6 1
+                                        5 2
+                                        4 4)))   ; 5                   ; curvature of the rows
 (def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
 (def centerrow (case nrows
     6 3.1
     5 2.1 
     4 1.75))
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad 28))                            ; or, change this for more precise tenting control
+(def tenting-angle (deg2rad (case 6 30
+                                  5 18
+                                  4 18)))                            ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 2) [0 2.8 -6.5]
@@ -77,7 +81,7 @@
 (def keyswitch-height 13.8)                                   ;; Was 14.1, then 14.25
 (def keyswitch-width 13.9)
 (def plate-thickness 5)
-(def use_hotswap false)
+(def use_hotswap true)
 
 (def retention-tab-thickness 1.5)
 (def retention-tab-hole-thickness (- plate-thickness retention-tab-thickness))
