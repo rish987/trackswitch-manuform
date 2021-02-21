@@ -900,8 +900,8 @@ need to adjust for difference for thumb-z only"
           (translate [0 0 -20] (cube 350 350 40)))))
 
 (def bottom-plate-thickness 2)
-(def screw-insert-bottom-plate-bottom-radius (+ screw-insert-bottom-radius 0.6))
-(def screw-insert-bottom-plate-top-radius    (- screw-insert-top-radius    0.4))
+(def screw-insert-bottom-plate-bottom-radius (+ screw-insert-bottom-radius 0.9))
+(def screw-insert-bottom-plate-top-radius    (- screw-insert-top-radius    0.3))
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
                                        screw-insert-bottom-plate-bottom-radius 
                                        screw-insert-bottom-plate-top-radius 
