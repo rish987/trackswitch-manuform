@@ -36,6 +36,7 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Generate OpenSCAD and STL models
 
+### OLD
 * Run `lein repl`
 * In the repl run `(load-file "src/dactyl_keyboard/dactyl.clj")`
 * This will regenerate the `things/*.scad` files
@@ -43,6 +44,17 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 * Make changes to design, repeat `load-file`, OpenSCAD will watch for changes and rerender.
 * When done, use OpenSCAD to render, then export model STL files which can be printed by 3d printer slicing software.
 
+### NEW
+* Run `lein auto generate`
+* This will regenerate the `things/*.scad` files whenever the .clr file is saved
+* Use OpenSCAD to open a `.scad` file.
+* Make changes to design in `src/dactyl_keyboard/dactyl.clj`, open scad files will auto regenerate, OpenSCAD will rerender.
+* When done, use OpenSCAD to render, then export model STL files which can be printed by 3d printer slicing software.
+
+### Batch (parallel) Processing
+* Edit the path for OpenSCAD in `create-models.sh` if needed
+* Change any other settings for which files you want to render
+* Wait for STL files to appear (this may take a minute or two) 
 
 ## Tips
 
