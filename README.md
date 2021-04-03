@@ -16,7 +16,7 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 ![](compactyl-real-5x6-glamour.jpeg)
 ![](compactyl.png)
 ![](assembly.png)
-![](compactyl-real-4x6.jpg)
+[![Kailh Box White Sound Test](compactyl-real-4x6.jpg)](https://www.youtube.com/watch?v=2oHvrcsFb9k)
 ![](compactyl-real-5x6.jpeg)
 
 ## Update USB holder
