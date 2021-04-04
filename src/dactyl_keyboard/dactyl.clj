@@ -29,12 +29,12 @@
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
-(def nrows 4)
+(def nrows 5)
 (def ncols 6)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (case nrows 6 1
-                                        5 2
+                                        5 1
                                         4 4)))   ; 5                   ; curvature of the rows
 (def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
 (def centerrow (case nrows
@@ -42,19 +42,22 @@
     5 2.1 
     4 1.75))
 (def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad (case 6 30
-                                  5 18
-                                  4 18)))                            ; or, change this for more precise tenting control
+(def tenting-angle (deg2rad (case nrows 6 30
+                                        5 20
+                                        4 18)))                            ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
-                               (= column 2) [0 2.8 -6.5]
-                               (= column 3) [0 0 -0.5]
-                               (>= column 4) [0 -16 6]
+                               (= column 0) [0 -3 1]    ;;index outer
+                               (= column 1) [0 -3 1]    ;;index
+                               (= column 2) [0 3 -5.5] ;;middle
+                               (= column 3) [0 0 0]   ;;ring
+                               (= column 4) [0 -16 6]   ;;pinky outer
+                               (>= column 5) [0 -18 6]   ;;pinky outer
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 
     6 20
-    5 10.5 
+    5 12.5 
     4 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
@@ -508,7 +511,7 @@
 ;; Thumbs ;;
 ;;;;;;;;;;;;
 
-(def thumb-offsets (if (> nrows 4) [8 -5 8] [9 -5 4]))
+(def thumb-offsets (if (> nrows 4) [10.5 1 9] [9 -5 4]))
 
 (def thumborigin
   (map + (key-position 1 cornerrow [(/ mount-width 2) (- (/ mount-height 2)) 0])
@@ -759,12 +762,12 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [0 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-9.5 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-29.5 -17.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-br   (if (> nrows 4) [20.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
+(def screw-insert-bc   (if (> nrows 4) [-3 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-9 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
+(def screw-insert-thmb (if (> nrows 4) [-24.5 -11.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
+(def screw-insert-br   (if (> nrows 4) [21.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [16.7 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
+(def screw-insert-fc   (if (> nrows 4) [19.5 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -869,7 +872,7 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder-offset-coordinates (case nrows 
     6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
-    5 [-39 (if use_hotswap 57.3 55.5) usb-holder-bottom-offset]
+    5 [-39 (if use_hotswap 54.17 55.5) usb-holder-bottom-offset]
     4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
