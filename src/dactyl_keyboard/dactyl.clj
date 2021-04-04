@@ -959,21 +959,64 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
                                        screw-insert-bottom-plate-bottom-radius 
                                        screw-insert-bottom-plate-top-radius 
-                                       bottom-plate-thickness
+                                       (+ bottom-plate-thickness 0.1)
                                      ))
+
+(defn screw-insert-wrist-rest [bottom-radius top-radius height]
+    (for [x (range 0 15)
+          y (range 0 10)] 
+        (translate [(* x 5) (* y 5) 0]
+          (screw-insert-shape 
+            bottom-radius 
+            top-radius 
+            height)
+        )
+    )
+)
+
+(def wrist-rest-right
+    (import "../things/wrist-rest-right.stl"))
+(def wrist-rest-right-holes
+    (difference wrist-rest-right
+                ; cut lots of holes in wrist rest for threaded inserts
+                (translate [-35 -20 0] 
+                           (screw-insert-wrist-rest screw-insert-bottom-plate-top-radius
+                                                    screw-insert-bottom-plate-top-radius
+                                                    99))
+    )
+)
+; (def wrist-rest-bottom-holes
+;     (import "../things/wrist-rest-right-holes.stl"))
+
 (def bottom-plate
-  (let [screw-cutouts-fillets      (translate [0 0 -1] screw-insert-holes-bottom-plate)
+  (let [screw-cutouts-fillets (translate [0 0 -1] screw-insert-holes-bottom-plate)
         bottom-outline     (cut (translate [0 0 -0.1] case-walls))
         inner-thing        (translate [0 0 -0.1] (project (union (extrude-linear {:height 99
-                                                                                  :scale  0.1
+                                                                                  :scale  0
                                                                                   :center true} bottom-outline)
-                                                                 (cube 50 50 bottom-plate-thickness))))
+                                                                 (translate [8 -55 0] (cube 65 30 1))
+                                                                 (scale [0.99 0.99 1] 
+                                                                        (translate [8 -100 0] 
+                                                                                   wrist-rest-right))
+                                                          )))
         bottom-plate-blank (extrude-linear {:height bottom-plate-thickness} inner-thing)
        ]
-    (difference bottom-plate-blank
-                screw-cutouts-fillets)
-  ))
+    (difference (union 
+                       bottom-plate-blank
+                       ; (translate [8 -100 0] wrist-rest-right-holes)
+                )
+                screw-cutouts-fillets
+
+                ; fillet adjustment holes to recess screws
+                (translate [-27 -120 0] 
+                           (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
+                                                    screw-insert-bottom-plate-top-radius
+                                                    (+ bottom-plate-thickness 0.1)))
+  )))
 
 (spit "things/right-plate-cut.scad"
       (write-scad bottom-plate))
+
+; (spit "things/wrist-rest-right-holes.scad"
+;       (write-scad wrist-rest-right-holes))
 
