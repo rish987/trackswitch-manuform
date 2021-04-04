@@ -476,13 +476,18 @@
            ;; Row connections
            (for [column (range 0 (dec ncols))
                  row (range 0 lastrow)]
-             ; (if-not (and (>= column 1) (<= column 3))
+             (if use_hotswap
                (triangle-hulls
                  (key-place (inc column) row plate-post-tl)
-                 (key-place column row plate-post-tr)
+                 (key-place      column  row plate-post-tr)
                  (key-place (inc column) row plate-post-bl)
-                 (key-place column row plate-post-br))
-             ; )
+                 (key-place      column  row plate-post-br))
+               (triangle-hulls
+                 (key-place (inc column) row web-post-tl)
+                 (key-place      column  row web-post-tr)
+                 (key-place (inc column) row web-post-bl)
+                 (key-place      column  row web-post-br))
+              ) 
            )
 
            ;; Column connections
@@ -497,15 +502,19 @@
            ;; Diagonal connections
            (for [column (range 0 (dec ncols))
                  row (range 0 cornerrow)]
-             ; (if-not (and (>= column 1) (<= column 3))
+             (if use_hotswap
                (triangle-hulls
-                 (key-place column row plate-post-br)
-                 (key-place column (inc row) plate-post-tr)
-                 (key-place (inc column) row plate-post-bl)
+                 (key-place      column       row  plate-post-br)
+                 (key-place      column  (inc row) plate-post-tr)
+                 (key-place (inc column)      row  plate-post-bl)
                  (key-place (inc column) (inc row) plate-post-tl))
-               )
-             ; )
-           )))
+               (triangle-hulls
+                 (key-place      column       row  web-post-br)
+                 (key-place      column  (inc row) web-post-tr)
+                 (key-place (inc column)      row  web-post-bl)
+                 (key-place (inc column) (inc row) web-post-tl))
+             )
+           ))))
 
 ;;;;;;;;;;;;
 ;; Thumbs ;;
@@ -587,28 +596,28 @@ need to adjust for difference for thumb-z only"
       (thumb-l-place plate-post-br)
       (thumb-m-place plate-post-bl)) (color ORA))
     (->> (triangle-hulls                                         ; top two to the main keyboard, starting on the left
-      ; (key-place 2 lastrow web-post-br)
-      ; (key-place 3 lastrow web-post-bl)
-      ; (key-place 2 lastrow web-post-tr)
+      (key-place 2 lastrow web-post-br)
+      (key-place 3 lastrow web-post-bl)
+      (key-place 2 lastrow web-post-tr)
       (key-place 3 lastrow web-post-tl)
       (key-place 3 cornerrow web-post-bl)
       (key-place 3 lastrow web-post-tr)
       (key-place 3 cornerrow web-post-br)
-      ; (key-place 4 cornerrow web-post-bl)
+      (key-place 4 cornerrow web-post-bl)
       ) (color BLA))
     (->> (triangle-hulls
-      ; (key-place 1 cornerrow web-post-br)
+      (key-place 1 cornerrow web-post-br)
       (key-place 2 lastrow web-post-tl)
       (key-place 2 cornerrow web-post-bl)
       (key-place 2 lastrow web-post-tr)
       (key-place 2 cornerrow web-post-br)
-      ; (key-place 3 cornerrow web-post-bl)
+      (key-place 3 cornerrow web-post-bl)
       ) (color GRE))
-    ; (->> (triangle-hulls
-    ;   (key-place 3 lastrow web-post-tr)
-    ;   (key-place 3 lastrow web-post-br)
-    ;   (key-place 3 lastrow web-post-tr)
-    ;   (key-place 4 cornerrow web-post-bl)) (color CYA))
+    (->> (triangle-hulls
+      (key-place 3 lastrow web-post-tr)
+      (key-place 3 lastrow web-post-br)
+      (key-place 3 lastrow web-post-tr)
+      (key-place 4 cornerrow web-post-bl)) (color CYA))
     (hull                                                   ; between thumb m and top key
       (key-place 0 cornerrow (translate (wall-locate1 -1 0) web-post-bl))
       (thumb-m-place web-post-tr)
@@ -763,7 +772,7 @@ need to adjust for difference for thumb-z only"
 
 (def screw-insert-bottom-offset 0)
 (def screw-insert-bc   (if (> nrows 4) [-3 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-9 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-8 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
 (def screw-insert-thmb (if (> nrows 4) [-24.5 -11.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
 (def screw-insert-br   (if (> nrows 4) [21.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
@@ -872,7 +881,7 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder-offset-coordinates (case nrows 
     6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
-    5 [-39 (if use_hotswap 54.17 55.5) usb-holder-bottom-offset]
+    5 [-39 (if use_hotswap 54.17 52.5) usb-holder-bottom-offset]
     4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
