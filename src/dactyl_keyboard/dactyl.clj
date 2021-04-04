@@ -104,7 +104,6 @@
 (def north_facing true)
 (def LED-holder true)
 (def square-led-size     6)
-(def mirror-internals true) ; lazy way to re-generate left side with correct hotswap holder orientation
 
 (def switch-teeth-cutout
   (let [
@@ -214,9 +213,7 @@
   )
 )
 
-; (def mirror-internals true)
-
-(def single-plate
+(defn single-plate [mirror-internals]
   (let [top-wall (->> (cube (+ keyswitch-height 3) 1.5 plate-thickness)
                       (translate [0
                                   (+ (/ 1.5 2) (/ keyswitch-height 2))
@@ -404,8 +401,8 @@
                          (not= row lastrow))]
            (->> shape
                 (key-place column row)))))
-(def key-holes
-  (key-places single-plate))
+(defn key-holes [mirror-internals]
+  (key-places (single-plate mirror-internals)))
 (def key-fills
   (key-places filled-plate))
 (def key-space-below
@@ -563,7 +560,7 @@ need to adjust for difference for thumb-z only"
 
 (def thumbcaps (thumb-layout (sa-cap 1)))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
-(def thumb (thumb-layout single-plate))
+(defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
 (def thumb-space-below (thumb-layout switch-bottom))
 (def thumb-space-hotswap (thumb-layout hotswap-case-cutout))
 ;;;;;;;;;;
@@ -891,12 +888,12 @@ need to adjust for difference for thumb-z only"
                           (project usb-holder))))
   )
 
-(def model-right
+(defn model-right [mirror-internals]
   (difference
     (union
-      key-holes
+      (key-holes mirror-internals)
       connectors
-      thumb
+      (thumb mirror-internals)
       thumb-connectors
       (difference (union case-walls
                          screw-insert-outers
@@ -912,14 +909,14 @@ need to adjust for difference for thumb-z only"
 ;
 
 (spit "things/right.scad"
-      (write-scad model-right))
+      (write-scad (model-right false)))
 
 ; (spit "things/single-plate.scad"
-;       (write-scad single-plate))
+;       (write-scad (single-plate mirror-internals)))
 
 ; (def model-back-cutout
 ;   (difference
-;     model-right
+;     (model-right false)
 ;     (translate [53 0 0] (cube 150 999 999))
 ;     (translate [0 -10 0] (cube 999 100 999))
 ;     (translate [0 0 70] (cube 999 999 100))
@@ -930,7 +927,7 @@ need to adjust for difference for thumb-z only"
 " change mirror-internals to true to generate left side with correct hot-swap pin orientation
 "
 (def model-left
-  (mirror [-1 0 0] model-right)
+  (mirror [-1 0 0] (model-right true))
 )
 (spit "things/left.scad"
       (write-scad model-left))
@@ -939,7 +936,7 @@ need to adjust for difference for thumb-z only"
       (write-scad
         (difference
           (union
-            (->> model-right 
+            (->> (model-right false)
               ;(color BLU)
             )
             caps

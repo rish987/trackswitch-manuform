@@ -13,7 +13,7 @@ echo 'Rendering things/*.stl files from things/*.scad using ...'
 $OPEN_SCAD -v
 $OPEN_SCAD -o things/right-plate-cut.stl things/right-plate-cut.scad >/dev/null 2>&1 &
 $OPEN_SCAD -o things/right.stl things/right.scad >/dev/null 2>&1 &
-#$OPEN_SCAD -o things/left.stl  things/left.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o things/left.stl  things/left.scad >/dev/null 2>&1 &
 
 echo 'Please wait for STL files to output in things/ directory!'
 
