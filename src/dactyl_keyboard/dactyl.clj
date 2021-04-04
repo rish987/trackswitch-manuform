@@ -23,9 +23,7 @@
 (def MAG [255/255 0/255 127/255 1])
 (def BRO [102/255 51/255 0/255 1])
 (def BLA [0/255 0/255 0/255 1])
-(def _1U [220/255 163/255 163/255 1])
-(def _2U [127/255 159/255 127/255 1])
-(def _1_5U [240/255 223/255 175/255 1])
+(def KEYCAP [220/255 163/255 163/255 1])
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape parameters ;;
@@ -268,47 +266,61 @@
 (def sa-cap-bottom-height-pressed (+ 3 plate-thickness))
 
 (def sa-double-length 37.5)
-(def sa-cap {1   (let [bl2 (/ sa-length 2)
-                       m 8.25
-                       key-cap (hull (->> (polygon [[bl2 bl2] [bl2 (- bl2)] [(- bl2) (- bl2)] [(- bl2) bl2]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 0.05]))
-                                     (->> (polygon [[m m] [m (- m)] [(- m) (- m)] [(- m) m]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 6]))
-                                     (->> (polygon [[6 6] [6 -6] [-6 -6] [-6 6]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 sa-height])))]
-                   (union 
-                     (->> key-cap
-                          (translate [0 0 sa-cap-bottom-height])
-                          (color _1U))
-                     (debug (->> key-cap
-                          (translate [0 0 sa-cap-bottom-height-pressed])))
-                   )
-                 )
-             2   (let [bl2 sa-length
-                       bw2 (/ sa-length 2)
-                       key-cap (hull (->> (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 0.05]))
-                                     (->> (polygon [[6 16] [6 -16] [-6 -16] [-6 16]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 sa-height])))]
-                   (->> key-cap
-                        (translate [0 0 (+ 5 plate-thickness)])
-                        (color _2U)))
-             1.5 (let [bl2 (/ sa-length 2)
-                       bw2 (/ 27.94 2)
-                       key-cap (hull (->> (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 0.05]))
-                                     (->> (polygon [[11 6] [-11 6] [-11 -6] [11 -6]])
-                                          (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                          (translate [0 0 sa-height])))]
-                   (->> key-cap
-                        (translate [0 0 (+ 5 plate-thickness)])
-                        (color _1_5U)))})
+(defn sa-cap [keysize]
+    (let [ bl2 (case keysize 1   (/ sa-length 2)
+                             1.5 (/ sa-length 2)
+                             2      sa-length   )
+           bw2 (case keysize 1   (/ sa-length 2)
+                             1.5 (/ 27.94 2)
+                             2   (/ sa-length 2))
+           m 8.25
+           keycap-xy (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
+           keycap-top (case keysize 1    (polygon [[6  6] [  6  -6] [ -6  -6] [-6  6]])
+                                    1.52 (polygon [[11 6] [-11   6] [-11  -6] [11 -6]])
+                                    2    (polygon [[6 16] [  6 -16] [ -6 -16] [-6 16]]))
+           key-cap (hull (->> keycap-xy
+                                     (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                     (translate [0 0 0.05]))
+                                (->> (polygon [[m m] [m (- m)] [(- m) (- m)] [(- m) m]])
+                                     (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                     (translate [0 0 (/ sa-height 2)]))
+                                (->> keycap-top
+                                     (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                     (translate [0 0 sa-height])))
+         ]
+         (union 
+           (->> key-cap
+                (translate [0 0 sa-cap-bottom-height])
+                (color KEYCAP))
+           (debug (->> key-cap
+                (translate [0 0 sa-cap-bottom-height-pressed])))
+         )
+    )
+)
+
+(defn sa-cap-cutout [keysize]
+    (let [ cutout-x 0.3
+           cutout-y 1.3
+           bl2 (case keysize 
+                     1   (+ (/ sa-length 2) cutout-y)
+                     1.5 (+ (/ sa-length 2) cutout-y)
+                     2   (+ sa-length cutout-y))
+           bw2 (case keysize
+                     1   (+ (/ sa-length 2) cutout-x)
+                     1.5 (+ (/ 27.94 2) cutout-x)
+                     2   (+ (/ sa-length 2) cutout-x))
+           keycap-cutout-xy (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
+           key-cap-cutout (hull (->> keycap-cutout-xy
+                                     (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                     (translate [0 0 0.05]))
+                                (->> keycap-cutout-xy
+                                     (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                     (translate [0 0 (* sa-height 1)])))
+         ]
+         (->> key-cap-cutout
+              (translate [0 0 (- sa-cap-bottom-height-pressed 2.99)]))
+    )
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Placement Functions ;;
@@ -397,6 +409,8 @@
   (key-places switch-bottom))
 (def caps
   (key-places (sa-cap 1)))
+(def caps-cutout
+  (key-places (sa-cap-cutout 1)))
 
 ;;;;;;;;;;;;;;;;;;;;
 ;; Web Connectors ;;
@@ -416,6 +430,18 @@
 (def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
 (def web-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
 (def web-post-br (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+
+
+; plate posts for connecting columns together without wasting material
+; or blocking sides of hotswap sockets
+(def plate-post-thickness (- web-thickness 2))
+(def plate-post (->> (cube post-size post-size plate-post-thickness)
+                   (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5)
+                                      )])))
+(def plate-post-tr (translate [(- (/ mount-width  2) post-adj) (- (/ mount-height  2) post-adj) 0] plate-post))
+(def plate-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height  2) post-adj) 0] plate-post))
+(def plate-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] plate-post))
+(def plate-post-br (translate [(- (/ mount-width  2) post-adj) (+ (/ mount-height -2) post-adj) 0] plate-post))
 
 ; fat web post for very steep angles between thumb and finger clusters
 ; this ensures the walls stay somewhat thicker
@@ -445,13 +471,16 @@
   (apply union
          (concat
            ;; Row connections
-           ; (for [column (range 0 (dec ncols))
-           ;       row (range 0 lastrow)]
-           ;   (triangle-hulls
-           ;     (key-place (inc column) row web-post-tl)
-           ;     (key-place column row web-post-tr)
-           ;     (key-place (inc column) row web-post-bl)
-           ;     (key-place column row web-post-br)))
+           (for [column (range 0 (dec ncols))
+                 row (range 0 lastrow)]
+             ; (if-not (and (>= column 1) (<= column 3))
+               (triangle-hulls
+                 (key-place (inc column) row plate-post-tl)
+                 (key-place column row plate-post-tr)
+                 (key-place (inc column) row plate-post-bl)
+                 (key-place column row plate-post-br))
+             ; )
+           )
 
            ;; Column connections
            (for [column columns
@@ -463,13 +492,16 @@
                (key-place column (inc row) web-post-tr)))
 
            ;; Diagonal connections
-           ; (for [column (range 0 (dec ncols))
-           ;       row (range 0 cornerrow)]
-           ;   (triangle-hulls
-           ;     (key-place column row web-post-br)
-           ;     (key-place column (inc row) web-post-tr)
-           ;     (key-place (inc column) row web-post-bl)
-           ;     (key-place (inc column) (inc row) web-post-tl)))
+           (for [column (range 0 (dec ncols))
+                 row (range 0 cornerrow)]
+             ; (if-not (and (>= column 1) (<= column 3))
+               (triangle-hulls
+                 (key-place column row plate-post-br)
+                 (key-place column (inc row) plate-post-tr)
+                 (key-place (inc column) row plate-post-bl)
+                 (key-place (inc column) (inc row) plate-post-tl))
+               )
+             ; )
            )))
 
 ;;;;;;;;;;;;
@@ -518,6 +550,7 @@ need to adjust for difference for thumb-z only"
     ))
 
 (def thumbcaps (thumb-layout (sa-cap 1)))
+(def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
 (def thumb (thumb-layout single-plate))
 (def thumb-space-below (thumb-layout switch-bottom))
 (def thumb-space-hotswap (thumb-layout hotswap-case-cutout))
@@ -539,17 +572,17 @@ need to adjust for difference for thumb-z only"
 
 (def thumb-connectors
   (union
-    ; (->> (triangle-hulls                                         ; top two
-    ;   (thumb-m-place web-post-tr)
-    ;   (thumb-m-place web-post-br)
-    ;   (thumb-r-place web-post-tl)
-    ;   (thumb-r-place web-post-bl)) (color RED))
-    ; (->> (triangle-hulls                                         ; top two
-    ;   (thumb-m-place web-post-tl)
-    ;   (thumb-l-place web-post-tr)
-    ;   (thumb-m-place web-post-bl)
-    ;   (thumb-l-place web-post-br)
-    ;   (thumb-m-place web-post-bl)) (color ORA))
+    (->> (triangle-hulls                                         ; top two
+      (thumb-m-place plate-post-tr)
+      (thumb-m-place plate-post-br)
+      (thumb-r-place plate-post-tl)
+      (thumb-r-place plate-post-bl)) (color RED))
+    (->> (triangle-hulls                                         ; top two
+      (thumb-m-place plate-post-tl)
+      (thumb-l-place plate-post-tr)
+      (thumb-m-place plate-post-bl)
+      (thumb-l-place plate-post-br)
+      (thumb-m-place plate-post-bl)) (color ORA))
     (->> (triangle-hulls                                         ; top two to the main keyboard, starting on the left
       ; (key-place 2 lastrow web-post-br)
       ; (key-place 3 lastrow web-post-bl)
@@ -676,16 +709,18 @@ need to adjust for difference for thumb-z only"
     (for [x (range 0 ncols)] (key-wall-brace x 0 0 1 web-post-tl      x  0 0 1 web-post-tr))
     (for [x (range 1 ncols)]
       (case x
-        2 (key-wall-brace-back x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
-        3 (key-wall-brace-back x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
-        4 (key-wall-brace-back x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
+        2 (key-wall-brace x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
+        3 (key-wall-brace x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
+        4 (key-wall-brace x 0 0 1 fat-web-post-tl (dec x) 0 0 1 fat-web-post-tr)
           (key-wall-brace      x 0 0 1 web-post-tl (dec x) 0 0 1 web-post-tr)
       )
     )
     ; left wall
+    (->> (key-wall-brace 0 0 -1 0 web-post-tl 0 0 -1 0 web-post-bl) (color BLA))
     (for [y (range 0 lastrow)] (key-wall-brace 0 y -1 0 web-post-tl 0 y -1 0 web-post-bl))
     (for [y (range 1 lastrow)] (key-wall-brace 0 (dec y) -1 0 web-post-bl 0 y -1 0 web-post-tl))
     (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-m-place 0 1 web-post-tl) (color WHI))
+
     ; left-back-corner
     (key-wall-brace 0 0 0 1 web-post-tl 0 0 -1 0 web-post-tl)
     ; front wall
@@ -859,6 +894,8 @@ need to adjust for difference for thumb-z only"
                   ))
     (translate [0 0 -20] (cube 350 350 40))
     thumb-space-hotswap
+    caps-cutout
+    thumbcaps-cutout
     ))
 ;
 
@@ -894,14 +931,18 @@ need to adjust for difference for thumb-z only"
               ;(color BLU)
             )
             caps
+            ; (debug caps-cutout)
             thumbcaps
+            ; (debug thumbcaps-cutout)
             (debug key-space-below)
             (debug thumb-space-below)
             (debug thumb-space-hotswap)
+
             (debug usb-holder)
             ;(debug okke-right)
             )
-          (translate [0 0 -20] (cube 350 350 40)))))
+          (translate [0 0 -20] (cube 350 350 40))
+        )))
 
 (def bottom-plate-thickness 2)
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-bottom-radius 0.9))
