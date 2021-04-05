@@ -2,6 +2,18 @@
 
 This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
+## V2 Features
+- Returned back to one solid piece top case deisgn for easier printing
+- Subtraced space around keycaps to improve clearances
+	- better clearance on top row for middle and ring finger keys
+	- thick ABS caps still not recommended
+- Adjusted stagger and column height deltas
+- Extended bottom plate to connect wrist rest
+	- Wrist rest can be positioned to adjust X, Y, or Z placement (adding or removing shims)
+- Added modified version of cyrstalhands wrist rest holder
+	- slanted, removed case connector tubes, added threaded insert holes
+![Compactyl V2](compactyl-V2.png)
+
 ## Features
 - Hotswap north facing switch plates
 - Increase pinky stagger
