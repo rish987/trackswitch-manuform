@@ -251,10 +251,12 @@
 
 ;amoeba is 16 mm high
 (def switch-bottom
-  (translate [0 0 (/ keyswitch-below-plate -2)] (cube 16 keyswitch-width keyswitch-below-plate)))
+  (translate [0 0 (/ keyswitch-below-plate -2)] 
+             (cube 16 keyswitch-width keyswitch-below-plate)))
 
 (def hotswap-case-cutout
-  (translate [0 (* hotswap-cutout-1-y-offset -1) hotswap-cutout-z-offset] (cube (+ keyswitch-width 3) hotswap-y1 hotswap-z)))
+  (translate [0 (* hotswap-cutout-1-y-offset -1) hotswap-cutout-z-offset] 
+             (cube (+ keyswitch-width 3) hotswap-y1 hotswap-z)))
 
 ;;;;;;;;;;;;;;;;
 ;; SA Keycaps ;;
@@ -428,10 +430,10 @@
                                       plate-thickness)])))
 
 (def post-adj (/ post-size 2))
-(def web-post-tr (translate [(- (/ mount-width 2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
-(def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
+(def web-post-tr (translate [(- (/ mount-width  2) post-adj) (- (/ mount-height  2) post-adj) 0] web-post))
+(def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height  2) post-adj) 0] web-post))
 (def web-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
-(def web-post-br (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+(def web-post-br (translate [(- (/ mount-width  2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
 
 
 ; plate posts for connecting columns together without wasting material
@@ -453,10 +455,10 @@
                                           plate-thickness)])))
 
 (def fat-post-adj (/ fat-post-size 2))
-(def fat-web-post-tr (translate [(- (/ mount-width 2) fat-post-adj) (- (/ mount-height 2) fat-post-adj) 0] fat-web-post))
-(def fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height 2) fat-post-adj) 0] fat-web-post))
+(def fat-web-post-tr (translate [(- (/ mount-width  2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
+(def fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
 (def fat-web-post-bl (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
-(def fat-web-post-br (translate [(- (/ mount-width 2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
+(def fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 ; wide posts for 1.5u keys in the main cluster
 
 (defn triangle-hulls [& shapes]
