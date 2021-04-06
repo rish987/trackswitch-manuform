@@ -32,6 +32,8 @@
 (def nrows 5)
 (def ncols 6)
 
+(def adjustable-wrist-rest-holder-plate true)
+
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (case nrows 6 1
                                         5 1
@@ -771,33 +773,31 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bc   (if (> nrows 4) [-3 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
 (def screw-insert-ml   (if (> nrows 4) [-8 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
 (def screw-insert-thmb (if (> nrows 4) [-24.5 -11.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-br   (if (> nrows 4) [21.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
+(def screw-insert-tr   (if (> nrows 4) [21.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
 (def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
 (def screw-insert-fc   (if (> nrows 4) [19.5 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
          (->> (screw-insert 0 lastrow bottom-radius top-radius height screw-insert-thmb) (color BRO)) ;thumb
-         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-br) (color PUR)) ; top right
+         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-tr) (color PUR)) ; top right
          (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) ))  ;bottom middle
 
 ; Hole Depth Y: 4.4
 (def screw-insert-height 5.5)
 
 ; Hole Diameter C: 4.1-4.4
-(def screw-insert-bottom-radius (/ 4.0 2))
-(def screw-insert-top-radius (/ 3.9 2))
+(def screw-insert-radius (/ 4.4 2))
 (def screw-insert-holes ( screw-insert-all-shapes 
-                          screw-insert-bottom-radius 
-                          screw-insert-top-radius 
+                          screw-insert-radius 
+                          screw-insert-radius 
                           (* screw-insert-height 1.5)
                         ))
 
 (def screw-insert-wall-thickness 2.5)
-(def screw-insert-top-radius (/ 3.9 2))
 (def screw-insert-outers ( screw-insert-all-shapes 
-                           (+ screw-insert-bottom-radius screw-insert-wall-thickness) 
-                           (+ screw-insert-top-radius screw-insert-wall-thickness) 
+                           (+ screw-insert-radius screw-insert-wall-thickness) 
+                           (+ screw-insert-radius screw-insert-wall-thickness) 
                            screw-insert-height
                          ))
 
@@ -954,8 +954,8 @@ need to adjust for difference for thumb-z only"
         )))
 
 (def bottom-plate-thickness 2)
-(def screw-insert-bottom-plate-bottom-radius (+ screw-insert-bottom-radius 0.9))
-(def screw-insert-bottom-plate-top-radius    (- screw-insert-top-radius    0.3))
+(def screw-insert-bottom-plate-bottom-radius (+ screw-insert-radius 0.9))
+(def screw-insert-bottom-plate-top-radius    (- screw-insert-radius    0.3))
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
                                        screw-insert-bottom-plate-bottom-radius 
                                        screw-insert-bottom-plate-top-radius 
@@ -963,9 +963,21 @@ need to adjust for difference for thumb-z only"
                                      ))
 
 (defn screw-insert-wrist-rest [bottom-radius top-radius height]
-    (for [x (range 0 15)
-          y (range 0 10)] 
+    (for [x (range 0 9)
+          y (range 0 9)]
         (translate [(* x 5) (* y 5) 0]
+          (screw-insert-shape 
+            bottom-radius 
+            top-radius 
+            height)
+        )
+    )
+)
+
+(defn screw-insert-wrist-rest-four [bottom-radius top-radius height]
+    (for [x (range 0 2)
+          y (range 0 2)]
+        (translate [(* x 20) (* y 20) 0]
           (screw-insert-shape 
             bottom-radius 
             top-radius 
@@ -979,25 +991,27 @@ need to adjust for difference for thumb-z only"
 (def wrist-rest-right-holes
     (difference wrist-rest-right
                 ; cut lots of holes in wrist rest for threaded inserts
-                (translate [-35 -20 0] 
-                           (screw-insert-wrist-rest screw-insert-bottom-plate-top-radius
-                                                    screw-insert-bottom-plate-top-radius
+                (translate [-10 -5 0] 
+                           (screw-insert-wrist-rest-four screw-insert-radius
+                                                    screw-insert-radius
                                                     99))
     )
 )
-; (def wrist-rest-bottom-holes
-;     (import "../things/wrist-rest-right-holes.stl"))
 
 (def bottom-plate
   (let [screw-cutouts-fillets (translate [0 0 -1] screw-insert-holes-bottom-plate)
+        wrist-rest-adjust     (translate [-12 -120 0] 
+                                         (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
+                                                                  screw-insert-bottom-plate-top-radius
+                                                                  (+ bottom-plate-thickness 0.1)))
         bottom-outline     (cut (translate [0 0 -0.1] case-walls))
         inner-thing        (translate [0 0 -0.1] (project (union (extrude-linear {:height 99
                                                                                   :scale  0
                                                                                   :center true} bottom-outline)
-                                                                 (translate [8 -55 0] (cube 65 30 1))
-                                                                 (scale [0.99 0.99 1] 
-                                                                        (translate [8 -100 0] 
-                                                                                   wrist-rest-right))
+                                                                 (if adjustable-wrist-rest-holder-plate 
+                                                                     (translate [8 -55 0] (cube 65 40 1)))
+                                                                 (if adjustable-wrist-rest-holder-plate 
+                                                                     (translate [8 -100 0] (cube 55 55 1)))
                                                           )))
         bottom-plate-blank (extrude-linear {:height bottom-plate-thickness} inner-thing)
        ]
@@ -1006,17 +1020,13 @@ need to adjust for difference for thumb-z only"
                        ; (translate [8 -100 0] wrist-rest-right-holes)
                 )
                 screw-cutouts-fillets
-
-                ; fillet adjustment holes to recess screws
-                (translate [-27 -120 0] 
-                           (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
-                                                    screw-insert-bottom-plate-top-radius
-                                                    (+ bottom-plate-thickness 0.1)))
+                (if adjustable-wrist-rest-holder-plate
+                    wrist-rest-adjust)
   )))
 
 (spit "things/right-plate-cut.scad"
       (write-scad bottom-plate))
 
-; (spit "things/wrist-rest-right-holes.scad"
-;       (write-scad wrist-rest-right-holes))
+(spit "things/wrist-rest-right-holes.scad"
+      (write-scad wrist-rest-right-holes))
 
