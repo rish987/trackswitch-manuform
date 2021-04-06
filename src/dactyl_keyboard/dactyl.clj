@@ -991,13 +991,13 @@ need to adjust for difference for thumb-z only"
 (def wrist-shape-connector (polygon [[35 20] [27 -20] [-27 -20] [-35 20]]))
 (def wrist-shape 
     (union 
-        (translate [0 -45 0] (cube 55 55 1))
-        (translate [0 0 0]
+        (translate [0 -45 0] (cube 55 55 2))
+        (translate [0 0 -1.05]
                    (hull (->> wrist-shape-connector
                               (extrude-linear {:height 0.1 :twist 0 :convexity 0}))
                          (->> wrist-shape-connector
                               (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                              (translate [0 0 1])) ))
+                              (translate [0 0 2])) ))
     )
 )
 
@@ -1009,7 +1009,8 @@ need to adjust for difference for thumb-z only"
                            (screw-insert-wrist-rest-four screw-insert-radius
                                                          screw-insert-radius
                                                          99))
-                (translate [0 5 0] (cube 75 75 2.2))
+                (translate [-10 40 0.99] wrist-shape)
+                (translate [ 10 40 0.99] wrist-shape)
     )
 )
 
