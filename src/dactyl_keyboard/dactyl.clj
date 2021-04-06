@@ -988,15 +988,28 @@ need to adjust for difference for thumb-z only"
     )
 )
 
+(def wrist-shape-connector (polygon [[35 20] [27 -20] [-27 -20] [-35 20]]))
+(def wrist-shape 
+    (union 
+        (translate [0 -45 0] (cube 55 55 1))
+        (translate [0 0 0]
+                   (hull (->> wrist-shape-connector
+                              (extrude-linear {:height 0.1 :twist 0 :convexity 0}))
+                         (->> wrist-shape-connector
+                              (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                              (translate [0 0 1])) ))
+    )
+)
+
 (def wrist-rest-right
     (import "../things/wrist-rest-right.stl"))
 (def wrist-rest-right-holes
     (difference wrist-rest-right
-                ; cut lots of holes in wrist rest for threaded inserts
                 (translate [-10 -5 0] 
                            (screw-insert-wrist-rest-four screw-insert-radius
-                                                    screw-insert-radius
-                                                    99))
+                                                         screw-insert-radius
+                                                         99))
+                (translate [0 5 0] (cube 75 75 2.2))
     )
 )
 
@@ -1007,14 +1020,13 @@ need to adjust for difference for thumb-z only"
                                                                   screw-insert-bottom-plate-top-radius
                                                                   (+ bottom-plate-thickness 0.1)))
         bottom-outline     (cut (translate [0 0 -0.1] case-walls))
-        inner-thing        (translate [0 0 -0.1] (project (union (extrude-linear {:height 99
-                                                                                  :scale  0
-                                                                                  :center true} bottom-outline)
-                                                                 (if adjustable-wrist-rest-holder-plate 
-                                                                     (translate [8 -55 0] (cube 65 40 1)))
-                                                                 (if adjustable-wrist-rest-holder-plate 
-                                                                     (translate [8 -100 0] (cube 55 55 1)))
-                                                          )))
+        inner-thing        (translate [0 0 -0.1] 
+                                      (project (union (extrude-linear {:height 99
+                                                                       :scale  0
+                                                                       :center true} bottom-outline)
+                                                      (if adjustable-wrist-rest-holder-plate 
+                                                          (translate [8 -55 0] wrist-shape))
+                                                )))
         bottom-plate-blank (extrude-linear {:height bottom-plate-thickness} inner-thing)
        ]
     (difference (union 
