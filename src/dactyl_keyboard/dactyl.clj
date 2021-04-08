@@ -955,7 +955,7 @@ need to adjust for difference for thumb-z only"
           (translate [0 0 -20] (cube 350 350 40))
         )))
 
-(def bottom-plate-thickness 2)
+(def bottom-plate-thickness 3)
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-radius 0.9))
 (def screw-insert-bottom-plate-top-radius    (- screw-insert-radius    0.3))
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
@@ -991,13 +991,13 @@ need to adjust for difference for thumb-z only"
 (def wrist-shape-connector (polygon [[35 20] [27 -20] [-27 -20] [-35 20]]))
 (def wrist-shape 
     (union 
-        (translate [0 -45 0] (cube 55 55 2))
-        (translate [0 0 -1.05]
+        (translate [0 -45 0] (cube 55 55 bottom-plate-thickness))
+        (translate [0 0 (- (/ bottom-plate-thickness -2) 0.05)]
                    (hull (->> wrist-shape-connector
                               (extrude-linear {:height 0.1 :twist 0 :convexity 0}))
                          (->> wrist-shape-connector
                               (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                              (translate [0 0 2])) ))
+                              (translate [0 0 bottom-plate-thickness])) ))
     )
 )
 
@@ -1009,13 +1009,13 @@ need to adjust for difference for thumb-z only"
                            (screw-insert-wrist-rest-four screw-insert-radius
                                                          screw-insert-radius
                                                          99))
-                (translate [-10 40 0.99] wrist-shape)
-                (translate [ 10 40 0.99] wrist-shape)
+                (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+                (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
     )
 )
 
 (def bottom-plate
-  (let [screw-cutouts-fillets (translate [0 0 -1] screw-insert-holes-bottom-plate)
+  (let [screw-cutouts-fillets (translate [0 0 (- (/ bottom-plate-thickness -2) 0.01)] screw-insert-holes-bottom-plate)
         wrist-rest-adjust     (translate [-12 -120 0] 
                                          (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
                                                                   screw-insert-bottom-plate-top-radius
