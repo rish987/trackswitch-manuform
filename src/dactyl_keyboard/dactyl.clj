@@ -812,63 +812,6 @@ need to adjust for difference for thumb-z only"
                                 (translate okke-right-offset-coordinates okke-right))
 )
 
-(def usb-holder-scad
-  (let [usb-holder-x 30.6
-        usb-holder-y 38.8
-        usb-holder-z 8.2
-
-        usb-holder-center-x (/ usb-holder-x 2)
-        usb-holder-center-y (/ usb-holder-y 2)
-
-        usb-elite-c-x 18.7
-        usb-elite-c-y 33.1
-        usb-elite-c-side-cut 5
-        usb-holder-border 1.5
-
-        usb-holder-notch-xy usb-holder-border
-        usb-holder-notch-down (* 1.5 usb-holder-notch-xy)
-        usb-holder-notch-half (/ usb-holder-notch-xy 2)
-        usb-holder-notch (cube usb-holder-notch-xy usb-holder-notch-xy 99)
-       ]
-    (difference
-      (cube usb-holder-x usb-holder-y usb-holder-z)
-
-        ; misc cutouts, beware of magic numbers here
-        (union
-          (translate [(* (- usb-holder-center-x usb-holder-border) -1) 
-                      (* (- usb-holder-center-y (- usb-holder-center-y 4.5)) -1) 
-                      0]
-            (cube 3 (- usb-holder-y 4.5) 99))
-
-          (translate [(* (- usb-holder-center-x (/ 9.2 2)) -1) 
-                      (* (- usb-holder-center-y (- usb-holder-center-y (/ 16.6 2))) -1) 
-                      0]
-            (cube 9.2 (- usb-holder-y 16.6) 99))
-
-          (->> (cube usb-holder-x usb-holder-y usb-holder-z)
-               (translate [0 0 (/ usb-holder-z 1.5)])
-               (rotate (deg2rad 10) [1 0 0])
-          )
-
-        )
-
-        ; TRRS jack cutouts (moar magic numbers)
-        (translate [(* (- usb-holder-center-x (/ 6.2 2) 3) -1) 
-                    (* (- usb-holder-center-y (- usb-holder-y (/ 12.5 2) usb-holder-border)) -1) 
-                    1]
-          (cube 6.2 12.5 usb-holder-z))
-
-        ; TRRS hole cut
-        (->> (cylinder 2.5 99)
-             (rotate (deg2rad 90) [1 0 0])
-             (translate [(* (- usb-holder-center-x 6.2) -1) 
-                         0
-                         0])
-        )
-    )
-  )
-)
-
 (def usb-holder 
                 (mirror [-1 0 0]
                     (import "../things/usb_holder_w_reset.stl")
