@@ -33,6 +33,7 @@
 (def ncols 6)
 
 (def adjustable-wrist-rest-holder-plate true)
+(def recess-bottom-plate false)
 
 (def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
 (def row-curvature (deg2rad (case nrows 6 1
@@ -957,30 +958,55 @@ need to adjust for difference for thumb-z only"
     )
 )
 
+(def case-walls-bottom (cut 
+                           (translate [0 0 10] 
+                                      case-walls
+                           )
+                       ))
+(def case-walls-bottom-projectoin (project 
+                                     (extrude-linear {:height 0.01
+                                                      :center true} 
+                                         case-walls-bottom
+                                     )
+                                  ))
 (def bottom-plate
-  (let [screw-cutouts-fillets (translate [0 0 (- (/ bottom-plate-thickness -2) 0.01)] screw-insert-holes-bottom-plate)
+  (let [screw-cutouts-fillets (translate [0 0 (- (/ bottom-plate-thickness -2) 0.01)] 
+                                         screw-insert-holes-bottom-plate)
         wrist-rest-adjust     (translate [-12 -120 0] 
                                          (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
                                                                   screw-insert-bottom-plate-top-radius
                                                                   (+ bottom-plate-thickness 0.1)))
-        bottom-outline     (cut (translate [0 0 -0.1] case-walls))
-        inner-thing        (translate [0 0 -0.1] 
-                                      (project (union (extrude-linear {:height 99
-                                                                       :scale  0
-                                                                       :center true} bottom-outline)
-                                                      (if adjustable-wrist-rest-holder-plate 
-                                                          (translate [8 -55 0] wrist-shape))
-                                                )))
-        bottom-plate-blank (extrude-linear {:height bottom-plate-thickness} inner-thing)
+        bottom-plate-blank (extrude-linear {:height bottom-plate-thickness}
+                               (union
+                                   (difference
+                                       (project 
+                                          (extrude-linear {:height 0.01
+                                                           :scale  0
+                                                           :center true} 
+                                              case-walls-bottom
+                                          )
+                                       )
+                                       (if recess-bottom-plate
+                                           case-walls-bottom-projectoin
+                                       )
+                                   )
+                               (project
+                                   (if adjustable-wrist-rest-holder-plate 
+                                                  (translate [8 -55 0] wrist-shape))
+                                   )
+                               )
+                           )
        ]
     (difference (union 
                        bottom-plate-blank
-                       ; (translate [8 -100 0] wrist-rest-right-holes)
+                       (translate [8 -100 0] wrist-rest-right-holes)
                 )
                 screw-cutouts-fillets
                 (if adjustable-wrist-rest-holder-plate
                     wrist-rest-adjust)
-  )))
+    )
+  )
+)
 
 (spit "things/right-plate-cut.scad"
       (write-scad bottom-plate))
