@@ -878,27 +878,6 @@ need to adjust for difference for thumb-z only"
 (spit "things/left.scad"
       (write-scad model-left))
 
-(spit "things/test.scad"
-      (write-scad
-        (difference
-          (union
-            (->> (model-right false)
-              ;(color BLU)
-            )
-            caps
-            ; (debug caps-cutout)
-            thumbcaps
-            ; (debug thumbcaps-cutout)
-            (debug key-space-below)
-            (debug thumb-space-below)
-            (debug thumb-space-hotswap)
-
-            (debug usb-holder)
-            ;(debug okke-right)
-            )
-          (translate [0 0 -20] (cube 350 350 40))
-        )))
-
 (def bottom-plate-thickness 3)
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-radius 0.9))
 (def screw-insert-bottom-plate-top-radius    (- screw-insert-radius    0.3))
@@ -1008,9 +987,30 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(spit "things/right-plate-cut.scad"
+(spit "things/right-plate.scad"
       (write-scad bottom-plate))
 
 (spit "things/wrist-rest-right-holes.scad"
       (write-scad wrist-rest-right-holes))
 
+(spit "things/test.scad"
+      (write-scad
+        (difference
+          (union
+            (->> (model-right false)
+              ;(color BLU)
+            )
+            caps
+            ; (debug caps-cutout)
+            thumbcaps
+            ; (debug thumbcaps-cutout)
+            (debug key-space-below)
+            (debug thumb-space-below)
+            (debug thumb-space-hotswap)
+
+            (debug usb-holder)
+            ;(debug okke-right)
+            (debug bottom-plate)
+            (debug (translate [8 -100 0] wrist-rest-right-holes))
+            )
+        )))
