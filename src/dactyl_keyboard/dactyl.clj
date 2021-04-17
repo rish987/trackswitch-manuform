@@ -33,21 +33,21 @@
 (def ncols 6)
 
 (def adjustable-wrist-rest-holder-plate true)
-(def recess-bottom-plate false)
+(def recess-bottom-plate true)
 
-(def column-curvature (deg2rad 17))                         ; 15                        ; curvature of the columns
+(def column-curvature (deg2rad 17))             ; curvature of the columns
 (def row-curvature (deg2rad (case nrows 6 1
                                         5 1
-                                        4 4)))   ; 5                   ; curvature of the rows
-(def centerrow (if (> nrows 4) 2.1 1.75))                              ; controls front-back tilt
+                                        4 4)))  ; curvature of the rows
+(def centerrow (if (> nrows 4) 2.1 1.75))       ; controls front-back tilt
 (def centerrow (case nrows
     6 3.1
     5 2.1 
     4 1.75))
-(def centercol 3)                                           ; controls left-right tilt / tenting (higher number is more tenting)
+(def centercol 3)                               ; controls left-right tilt / tenting (higher number is more tenting)
 (def tenting-angle (deg2rad (case nrows 6 30
                                         5 20
-                                        4 18)))                            ; or, change this for more precise tenting control
+                                        4 18))) ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
                                (= column 0) [0 -3 1]    ;;index outer
@@ -773,12 +773,11 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [-3 5.5 screw-insert-bottom-offset] [-3.7 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-8 -8 screw-insert-bottom-offset] [-8 -8 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-24.5 -11.5 screw-insert-bottom-offset] [-7.5 -3.9 screw-insert-bottom-offset]))
-(def screw-insert-tr   (if (> nrows 4) [21.1 5.1 screw-insert-bottom-offset] [23.7 7 screw-insert-bottom-offset]))
-(def screw-insert-back (if (> nrows 4) [-2.5 6.5 screw-insert-bottom-offset] [-2.5 6.5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [19.5 7 screw-insert-bottom-offset] [21 9.5 screw-insert-bottom-offset]))
+(def screw-insert-bc   (if (> nrows 4) [-2.5 5.5 screw-insert-bottom-offset] [-3.2 7 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-7 -11 screw-insert-bottom-offset] [-7 -11 screw-insert-bottom-offset]))
+(def screw-insert-thmb (if (> nrows 4) [-23 -11.9 screw-insert-bottom-offset] [-6 -4.4 screw-insert-bottom-offset]))
+(def screw-insert-tr   (if (> nrows 4) [20.6 3.1 screw-insert-bottom-offset] [23.1 5 screw-insert-bottom-offset]))
+(def screw-insert-fc   (if (> nrows 4) [17.5 8.5 screw-insert-bottom-offset] [19 11 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -797,7 +796,7 @@ need to adjust for difference for thumb-z only"
                           (* screw-insert-height 1.5)
                         ))
 
-(def screw-insert-wall-thickness 2.5)
+(def screw-insert-wall-thickness 3.5)
 (def screw-insert-outers ( screw-insert-all-shapes 
                            (+ screw-insert-radius screw-insert-wall-thickness) 
                            (+ screw-insert-radius screw-insert-wall-thickness) 
@@ -834,58 +833,23 @@ need to adjust for difference for thumb-z only"
                           (project usb-holder))))
   )
 
-(defn model-right [mirror-internals]
-  (difference
-    (union
-      (key-holes mirror-internals)
-      connectors
-      (thumb mirror-internals)
-      thumb-connectors
-      (difference (union case-walls
-                         screw-insert-outers
-                         )
-                  usb-holder-space
-                  screw-insert-holes
-                  ))
-    (translate [0 0 -20] (cube 350 350 40))
-    thumb-space-hotswap
-    caps-cutout
-    thumbcaps-cutout
-    ))
-;
-
-(spit "things/right.scad"
-      (write-scad (model-right false)))
-
-; (spit "things/single-plate.scad"
-;       (write-scad (single-plate mirror-internals)))
-
-; (def model-back-cutout
-;   (difference
-;     (model-right false)
-;     (translate [53 0 0] (cube 150 999 999))
-;     (translate [0 -10 0] (cube 999 100 999))
-;     (translate [0 0 70] (cube 999 999 100))
-;   ))
-; (spit "things/back_cutout.scad"
-;       (write-scad model-back-cutout))
-
-" change mirror-internals to true to generate left side with correct hot-swap pin orientation
-"
-(def model-left
-  (mirror [-1 0 0] (model-right true))
-)
-(spit "things/left.scad"
-      (write-scad model-left))
-
 (def bottom-plate-thickness 3)
+(def screw-insert-fillets-z 2)
+
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-radius 0.9))
 (def screw-insert-bottom-plate-top-radius    (- screw-insert-radius    0.3))
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
-                                       screw-insert-bottom-plate-bottom-radius 
+                                       screw-insert-bottom-plate-top-radius 
                                        screw-insert-bottom-plate-top-radius 
                                        (+ bottom-plate-thickness 0.1)
                                      ))
+
+(def screw-insert-fillets-bottom-plate ( screw-insert-all-shapes 
+                                         screw-insert-bottom-plate-bottom-radius 
+                                         screw-insert-bottom-plate-top-radius 
+                                         screw-insert-fillets-z
+                                       ))
+
 
 (defn screw-insert-wrist-rest [bottom-radius top-radius height]
     (for [x (range 0 9)
@@ -911,10 +875,10 @@ need to adjust for difference for thumb-z only"
     )
 )
 
-(def wrist-shape-connector (polygon [[35 20] [27 -20] [-27 -20] [-35 20]]))
+(def wrist-shape-connector (polygon [[35 20] [30 -20] [-30 -20] [-35 20]]))
 (def wrist-shape 
     (union 
-        (translate [0 -45 0] (cube 55 55 bottom-plate-thickness))
+        (translate [0 -45 0] (cube 60 55 bottom-plate-thickness))
         (translate [0 0 (- (/ bottom-plate-thickness -2) 0.05)]
                    (hull (->> wrist-shape-connector
                               (extrude-linear {:height 0.1 :twist 0 :convexity 0}))
@@ -927,13 +891,16 @@ need to adjust for difference for thumb-z only"
 (def wrist-rest-right
     (import "../things/wrist-rest-right.stl"))
 (def wrist-rest-right-holes
-    (difference wrist-rest-right
-                (translate [-10 -5 0] 
-                           (screw-insert-wrist-rest-four screw-insert-radius
-                                                         screw-insert-radius
-                                                         99))
-                (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
-                (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+    (if adjustable-wrist-rest-holder-plate
+        (difference wrist-rest-right
+                    (translate [-10 -5 0] 
+                               (screw-insert-wrist-rest-four screw-insert-radius
+                                                             screw-insert-radius
+                                                             99))
+                    (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+                    (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+        )
+        wrist-rest-right
     )
 )
 
@@ -942,17 +909,31 @@ need to adjust for difference for thumb-z only"
                                       case-walls
                            )
                        ))
-(def case-walls-bottom-projectoin (project 
+(def case-walls-bottom-projection (project
+                                    (union
                                      (extrude-linear {:height 0.01
+                                                      :scale 0.997
                                                       :center true} 
                                          case-walls-bottom
                                      )
+                                     (extrude-linear {:height 0.01
+                                                      :scale 1.11
+                                                      :center true} 
+                                         case-walls-bottom
+                                     )
+                                    ) 
                                   ))
 (def bottom-plate
-  (let [screw-cutouts-fillets (translate [0 0 (- (/ bottom-plate-thickness -2) 0.01)] 
+  (let [screw-cutouts         (translate [0 0 (/ bottom-plate-thickness -1.99)] 
                                          screw-insert-holes-bottom-plate)
-        wrist-rest-adjust     (translate [-12 -120 0] 
+        screw-cutouts-fillets (translate [0 0 (/ bottom-plate-thickness -1.99)] 
+                                         screw-insert-fillets-bottom-plate)
+        wrist-rest-adjust-fillets (translate [-12 -120 0] 
                                          (screw-insert-wrist-rest screw-insert-bottom-plate-bottom-radius
+                                                                  screw-insert-bottom-plate-top-radius
+                                                                  screw-insert-fillets-z))
+        wrist-rest-adjust-holes (translate [-12 -120 0] 
+                                         (screw-insert-wrist-rest screw-insert-bottom-plate-top-radius
                                                                   screw-insert-bottom-plate-top-radius
                                                                   (+ bottom-plate-thickness 0.1)))
         bottom-plate-blank (extrude-linear {:height bottom-plate-thickness}
@@ -966,7 +947,7 @@ need to adjust for difference for thumb-z only"
                                           )
                                        )
                                        (if recess-bottom-plate
-                                           case-walls-bottom-projectoin
+                                           case-walls-bottom-projection
                                        )
                                    )
                                (project
@@ -978,14 +959,54 @@ need to adjust for difference for thumb-z only"
        ]
     (difference (union 
                        bottom-plate-blank
-                       (translate [8 -100 0] wrist-rest-right-holes)
+                       ; (translate [8 -100 0] wrist-rest-right-holes)
                 )
+                screw-cutouts
                 screw-cutouts-fillets
                 (if adjustable-wrist-rest-holder-plate
-                    wrist-rest-adjust)
+                    (union (translate [0 0 (* -1.01 (/ screw-insert-fillets-z 4))] 
+                                      wrist-rest-adjust-fillets)
+                           wrist-rest-adjust-holes))
     )
   )
 )
+(spit "things/single-plate.scad"
+      (write-scad (single-plate false)))
+
+(defn model-right [mirror-internals]
+  (difference
+    (union
+      (key-holes mirror-internals)
+      connectors
+      (thumb mirror-internals)
+      thumb-connectors
+      (difference (union case-walls
+                         screw-insert-outers
+                         )
+                  usb-holder-space
+                  screw-insert-holes
+                  ))
+    
+    (if recess-bottom-plate
+        (union
+            (translate [0 0 (* -1 (+ 20 bottom-plate-thickness))] (cube 350 350 40))
+            (translate [0 0 (* -1 (/ bottom-plate-thickness 2))] bottom-plate)
+        )
+        (translate [0 0 -20] (cube 350 350 40))
+    )
+    
+    thumb-space-hotswap
+    caps-cutout
+    thumbcaps-cutout
+    ))
+(spit "things/right.scad"
+      (write-scad (model-right false)))
+
+(def model-left
+  (mirror [-1 0 0] (model-right true))
+)
+(spit "things/left.scad"
+      (write-scad model-left))
 
 (spit "things/right-plate.scad"
       (write-scad bottom-plate))
@@ -1010,7 +1031,9 @@ need to adjust for difference for thumb-z only"
 
             (debug usb-holder)
             ;(debug okke-right)
-            (debug bottom-plate)
-            (debug (translate [8 -100 0] wrist-rest-right-holes))
+            (translate [0 0 (* -1 (/ bottom-plate-thickness 2))]
+                (debug bottom-plate)
+                (debug (translate [8 -100 0] wrist-rest-right-holes))
+
             )
-        )))
+        ))))
