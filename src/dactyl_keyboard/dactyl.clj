@@ -950,9 +950,14 @@ need to adjust for difference for thumb-z only"
                                            case-walls-bottom-projection
                                        )
                                    )
-                               (project
-                                   (if adjustable-wrist-rest-holder-plate 
+                                   (project
+                                       (if adjustable-wrist-rest-holder-plate 
                                                   (translate [8 -55 0] wrist-shape))
+                                   )
+                                   (project
+                                       (if recess-bottom-plate
+                                               usb-holder
+                                       )
                                    )
                                )
                            )
@@ -1033,7 +1038,7 @@ need to adjust for difference for thumb-z only"
             ;(debug okke-right)
             (translate [0 0 (* -1 (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
-                (debug (translate [8 -100 0] wrist-rest-right-holes))
+                (translate [8 -100 0] wrist-rest-right-holes)
 
             )
         ))))
