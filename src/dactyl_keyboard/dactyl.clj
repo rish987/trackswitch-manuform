@@ -46,7 +46,7 @@
     4 1.75))
 (def centercol 3)                               ; controls left-right tilt / tenting (higher number is more tenting)
 (def tenting-angle (deg2rad (case nrows 6 30
-                                        5 20
+                                        5 35
                                         4 18))) ; or, change this for more precise tenting control
 (def column-style :standard)
 (defn column-offset [column] (cond
@@ -60,7 +60,7 @@
 
 (def keyboard-z-offset (case nrows 
     6 20
-    5 12.5 
+    5 22.5 
     4 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
 (def extra-width 2)                                       ; extra space between the base of keys; original= 2
 (def extra-height 1.7)                                      ; original= 0.5
@@ -85,7 +85,7 @@
 (def keyswitch-height 13.8)                                   ;; Was 14.1, then 14.25
 (def keyswitch-width 13.9)
 (def plate-thickness 5)
-(def use_hotswap true)
+(def use_hotswap false)
 
 (def retention-tab-thickness 1.5)
 (def retention-tab-hole-thickness (- plate-thickness retention-tab-thickness))
@@ -541,7 +541,6 @@ need to adjust for difference for thumb-z only"
 (def thumb-x-rotation-adjustment (if (> nrows 4) -12 -8))
 (defn thumb-place [rot move shape]
   (->> shape
-       
        (translate [0 0 thumb-z-adjustment])                   ;adapt thumb positions for increased plate
        (rotate (deg2rad thumb-x-rotation-adjustment) [1 0 0]) ;adjust angle of all thumbs to be less angled down towards user since key is taller
 
@@ -551,17 +550,25 @@ need to adjust for difference for thumb-z only"
        (translate thumborigin)
        (translate move)))
 
+(defn thumb-layout-place [rot move shape]
+  (->> shape
+       (rotate (deg2rad (nth rot 0)) [1 0 0])
+       (rotate (deg2rad (nth rot 1)) [0 1 0])
+       (rotate (deg2rad (nth rot 2)) [0 0 1])
+       (translate move)))	
+
 ; convexer
-(defn thumb-r-place [shape] (thumb-place [14 -40 10] [-15 -10 5] shape)) ; right
+(defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14 -10 5] shape)) ; right
 (defn thumb-m-place [shape] (thumb-place [10 -23 20] [-33 -15 -6] shape)) ; middle
-(defn thumb-l-place [shape] (thumb-place [6 -5 35] [-52.5 -25.5 -11.5] shape)) ; left
+(defn thumb-l-place [shape] (thumb-place [6 -5 25] [-53 -23.5 -11.5] shape)) ; left
 
 (defn thumb-layout [shape]
+(thumb-layout-place [0 10 0] [-5 0 0]
   (union
     (thumb-r-place shape)
     (thumb-m-place shape)
     (thumb-l-place shape)
-    ))
+    )))
 
 (def thumbcaps (thumb-layout (sa-cap 1)))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
@@ -1021,10 +1028,11 @@ need to adjust for difference for thumb-z only"
 
 (spit "things/test.scad"
       (write-scad
+      (mirror [-1 0 0] 
         (difference
           (union
             (->> (model-right false)
-              ;(color BLU)
+              (color BLU)
             )
             caps
             ; (debug caps-cutout)
@@ -1034,11 +1042,12 @@ need to adjust for difference for thumb-z only"
             (debug thumb-space-below)
             (debug thumb-space-hotswap)
 
-            (debug usb-holder)
+            ; (debug usb-holder)
             ;(debug okke-right)
             (translate [0 0 (* -1 (/ bottom-plate-thickness 2))]
-                (debug bottom-plate)
-                (translate [8 -100 0] wrist-rest-right-holes)
+                ; (debug bottom-plate)
+                ; (translate [8 -100 0] wrist-rest-right-holes)
 
+            )
             )
         ))))
