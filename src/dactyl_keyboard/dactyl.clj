@@ -35,40 +35,57 @@
 (def adjustable-wrist-rest-holder-plate true)
 (def recess-bottom-plate true)
 
-(def column-curvature (deg2rad 17))             ; curvature of the columns
+(defn column-curvature [column] 
+              (cond  (= column 0)  (deg2rad 20) ;;index outer
+                     (= column 1)  (deg2rad 20) ;;index
+                     (= column 2)  (deg2rad 17) ;;middle
+                     (= column 3)  (deg2rad 17) ;;ring
+                     (= column 4)  (deg2rad 22) ;;pinky outer
+                     (>= column 5) (deg2rad 22) ;;pinky outer
+                     :else 0 ))
 (def row-curvature (deg2rad (case nrows 6 1
                                         5 1
                                         4 4)))  ; curvature of the rows
-(def centerrow (if (> nrows 4) 2.1 1.75))       ; controls front-back tilt
-(def centerrow (case nrows
+(defn centerrow [column] (case nrows
     6 3.1
-    5 2.1 
+    5 (cond  (= column 0)  2.0 ;;index outer
+             (= column 1)  2.0 ;;index
+             (= column 2)  2.1 ;;middle
+             (= column 3)  2.1 ;;ring
+             (= column 4)  1.8 ;;pinky outer
+             (>= column 5) 1.8 ;;pinky outer
+             :else 0 )
     4 1.75))
 (def centercol 3)                               ; controls left-right tilt / tenting (higher number is more tenting)
 (def tenting-angle (deg2rad (case nrows 6 30
                                         5 35
                                         4 18))) ; or, change this for more precise tenting control
-(def column-style :standard)
 (defn column-offset [column] (cond
-                               (= column 0) [0 -3 1]    ;;index outer
-                               (= column 1) [0 -3 1]    ;;index
+                               (= column 0) [0 -5 1]   ;;index outer
+                               (= column 1) [0 -5 1]   ;;index
                                (= column 2) [0 3 -5.5] ;;middle
-                               (= column 3) [0 0 0]   ;;ring
-                               (= column 4) [0 -16 6]   ;;pinky outer
-                               (>= column 5) [0 -18 6]   ;;pinky outer
+                               (= column 3) [0 0 0]    ;;ring
+                               (= column 4) [0 -12 6]  ;;pinky outer
+                               (>= column 5) [0 -14 6] ;;pinky outer
                                :else [0 0 0]))
 
 (def keyboard-z-offset (case nrows 
     6 20
     5 22.5 
-    4 9))                                   ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
-(def extra-width 2)                                       ; extra space between the base of keys; original= 2
-(def extra-height 1.7)                                      ; original= 0.5
+    4 9))                     ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+(def extra-width 2)           ; extra horizontal space between the base of keys;
+(defn extra-height [column]   ; extra vertical space between the base of keys
+              (cond  (= column 0)  1.9 ;;index outer
+                     (= column 1)  1.9 ;;index
+                     (= column 2)  1.7 ;;middle
+                     (= column 3)  1.7 ;;ring
+                     (= column 4)  2.0 ;;pinky outer
+                     (>= column 5) 2.0 ;;pinky outer
+                     :else 0 ))
 
-(def wall-z-offset -7)                                      ; -5                ; original=-15 length of the first downward-sloping part of the wall (negative)
+(def wall-z-offset -7)  ; length of the first downward-sloping part of the wall (negative)
 (def wall-xy-offset 1)
-
-(def wall-thickness 1)                                      ; wall thickness parameter; originally 5
+(def wall-thickness 1)  ; wall thickness parameter
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; General variables ;;
@@ -350,8 +367,8 @@
 (def columns (range 0 ncols))
 (def rows (range 0 nrows))
 
-(def row-radius (+ (/ (/ (+ mount-height extra-height) 2)
-                      (Math/sin (/ column-curvature 2)))
+(defn row-radius [column] (+ (/ (/ (+ mount-height (extra-height column)) 2)
+                      (Math/sin (/ (column-curvature column) 2)))
                    sa-cap-bottom-height))
 (def column-radius (+ (/ (/ (+ mount-width extra-width) 2)
                          (Math/sin (/ row-curvature 2)))
@@ -361,25 +378,16 @@
 (defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn column row shape]
   (let [column-angle (* row-curvature (- centercol column))
         placed-shape (->> shape
-                          (translate-fn [0 0 (- row-radius)])
-                          (rotate-x-fn (* column-curvature (- centerrow row)))
-                          (translate-fn [0 0 row-radius])
+                          (translate-fn [0 0 (- (row-radius column))])
+                          (rotate-x-fn (* (column-curvature column) (- (centerrow column) row)))
+                          (translate-fn [0 0 (row-radius column)])
                           (translate-fn [0 0 (- column-radius)])
                           (rotate-y-fn column-angle)
                           (translate-fn [0 0 column-radius])
                           (translate-fn (column-offset column)))
-        column-z-delta (* column-radius (- 1 (Math/cos column-angle)))
-        placed-shape-ortho (->> shape
-                                (translate-fn [0 0 (- row-radius)])
-                                (rotate-x-fn (* column-curvature (- centerrow row)))
-                                (translate-fn [0 0 row-radius])
-                                (rotate-y-fn column-angle)
-                                (translate-fn [(- (* (- column centercol) column-x-delta)) 0 column-z-delta])
-                                (translate-fn (column-offset column)))]
+        column-z-delta (* column-radius (- 1 (Math/cos column-angle)))]
 
-    (->> (case column-style
-           :orthographic placed-shape-ortho
-           placed-shape)
+    (->> placed-shape
          (rotate-y-fn tenting-angle)
          (translate-fn [0 0 keyboard-z-offset]))))
 
