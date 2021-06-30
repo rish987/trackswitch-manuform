@@ -54,32 +54,35 @@
               :else 0 ))
 
 (def tenting-angle (deg2rad 35)) ; controls left-right tilt / tenting (higher number is more tenting) 
-(def centercol 3)                ; or, change this for more precise tenting control
+(def centercol 3)                ; or, change this for more destructive tenting control
 
 (defn column-offset [column] (cond
-                               (= column 0) [0 -5 1]   ;;index outer
-                               (= column 1) [0 -5 1]   ;;index
-                               (= column 2) [0 3 -5.5] ;;middle
-                               (= column 3) [0 0 0]    ;;ring
-                               (= column 4) [0 -12 6]  ;;pinky outer
-                               (>= column 5) [0 -14 6] ;;pinky outer
-                               :else [0 0 0]))
+                  (= column 0)  [0  -5  1  ] ;;index outer
+                  (= column 1)  [0  -5  1  ] ;;index
+                  (= column 2)  [0   3 -5.5] ;;middle
+                  (= column 3)  [0   0  0  ] ;;ring
+                  (= column 4)  [0 -12  6  ] ;;pinky outer
+                  (>= column 5) [0 -14  6  ] ;;pinky outer
+                  :else [0 0 0]))
 
-(def keyboard-z-offset 22.5)  ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+(def keyboard-z-offset 22.5)  ; controls overall height
 
-(def  extra-width 2)          ; extra horizontal space between the base of keys
-(defn extra-height [column]   ; extra vertical space between the base of keys
-              (cond  (= column 0)  1.9 ;;index outer
-                     (= column 1)  1.9 ;;index
-                     (= column 2)  1.7 ;;middle
-                     (= column 3)  1.7 ;;ring
-                     (= column 4)  2.0 ;;pinky outer
-                     (>= column 5) 2.0 ;;pinky outer
-                     :else 0 ))
+(def  extra-width 2)         ; extra horizontal space between the base of keys
+(defn extra-height [column]  ; extra vertical space between the base of keys
+          (cond  (= column 0)  1.9 ;;index outer
+                 (= column 1)  1.9 ;;index
+                 (= column 2)  1.7 ;;middle
+                 (= column 3)  1.7 ;;ring
+                 (= column 4)  2.0 ;;pinky outer
+                 (>= column 5) 2.0 ;;pinky outer
+                 :else 0 ))
 
 (def wall-z-offset -7)  ; length of the first downward-sloping part of the wall (negative)
 (def wall-xy-offset 1)
 (def wall-thickness 1)  ; wall thickness parameter
+
+(def thumb-pos [5.5 1 9] )
+(def thumb-rot [0 10 0] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; General variables ;;
@@ -546,9 +549,6 @@
 ;;;;;;;;;;;;
 ;; Thumbs ;;
 ;;;;;;;;;;;;
-
-(def thumb-pos [5.5 1 9] )
-(def thumb-rot [0 10 0] )
 
 (def thumborigin
   (map + (key-position 1 cornerrow [(/ mount-width 2) (- (/ mount-height 2)) 0])
