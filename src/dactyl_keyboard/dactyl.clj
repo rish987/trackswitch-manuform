@@ -801,11 +801,11 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [-2.5 5.5 screw-insert-bottom-offset] [-3.2 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-7 -11 screw-insert-bottom-offset] [-7 -11 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-23 -11.9 screw-insert-bottom-offset] [-6 -4.4 screw-insert-bottom-offset]))
-(def screw-insert-tr   (if (> nrows 4) [20.6 3.1 screw-insert-bottom-offset] [23.1 5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [17.5 8.5 screw-insert-bottom-offset] [19 11 screw-insert-bottom-offset]))
+(def screw-insert-bc   (if (> nrows 4) [3 3.5 screw-insert-bottom-offset] [-3.2 7 screw-insert-bottom-offset]))
+(def screw-insert-ml   (if (> nrows 4) [-6 -13 screw-insert-bottom-offset] [-7 -11 screw-insert-bottom-offset]))
+(def screw-insert-thmb (if (> nrows 4) [-24 -15 screw-insert-bottom-offset] [-6 -4.4 screw-insert-bottom-offset]))
+(def screw-insert-tr   (if (> nrows 4) [15 1.5 screw-insert-bottom-offset] [23.1 5 screw-insert-bottom-offset]))
+(def screw-insert-fc   (if (> nrows 4) [17.5 9.5 screw-insert-bottom-offset] [19 11 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
          (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
@@ -851,7 +851,7 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder-offset-coordinates (case nrows 
     6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
-    5 [-39 (if use_hotswap 54.17 52.5) usb-holder-bottom-offset]
+    5 [-28 (if use_hotswap 54.17 49.5) usb-holder-bottom-offset]
     4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
@@ -1050,26 +1050,25 @@ need to adjust for difference for thumb-z only"
 
 (spit "things/test.scad"
       (write-scad
-      (mirror [-1 0 0] 
         (difference
           (union
             (->> (model-right false)
               ; (color BLU)
             )
-            caps
+            ; caps
             ; (debug caps-cutout)
-            thumbcaps
+            ; thumbcaps
             ; (debug thumbcaps-cutout)
             (debug key-space-below)
             (debug thumb-space-below)
             (debug thumb-space-hotswap)
 
-            ; (debug usb-holder)
+            (debug usb-holder)
             ;(debug okke-right)
             (translate [0 0 (* -1 (/ bottom-plate-thickness 2))]
-                ; (debug bottom-plate)
-                ; (translate [8 -100 0] wrist-rest-right-holes)
+                (debug bottom-plate)
+                (translate [8 -100 0] wrist-rest-right-holes)
 
             )
             )
-        ))))
+        )))
