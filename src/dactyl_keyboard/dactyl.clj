@@ -43,23 +43,19 @@
                      (= column 4)  (deg2rad 22) ;;pinky outer
                      (>= column 5) (deg2rad 22) ;;pinky outer
                      :else 0 ))
-(def row-curvature (deg2rad (case nrows 6 1
-                                        5 1
-                                        4 4)))  ; curvature of the rows
-(defn centerrow [column] (case nrows
-    6 3.1
-    5 (cond  (= column 0)  2.0 ;;index outer
-             (= column 1)  2.0 ;;index
-             (= column 2)  2.1 ;;middle
-             (= column 3)  2.1 ;;ring
-             (= column 4)  1.8 ;;pinky outer
-             (>= column 5) 1.8 ;;pinky outer
-             :else 0 )
-    4 1.75))
-(def centercol 3)                               ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (deg2rad (case nrows 6 30
-                                        5 35
-                                        4 18))) ; or, change this for more precise tenting control
+(def row-curvature (deg2rad 1))  ; curvature of the rows
+(defn centerrow [column] 
+       (cond  (= column 0)  2.0 ;;index outer
+              (= column 1)  2.0 ;;index
+              (= column 2)  2.1 ;;middle
+              (= column 3)  2.1 ;;ring
+              (= column 4)  1.8 ;;pinky outer
+              (>= column 5) 1.8 ;;pinky outer
+              :else 0 ))
+
+(def tenting-angle (deg2rad 35)) ; controls left-right tilt / tenting (higher number is more tenting) 
+(def centercol 3)                ; or, change this for more precise tenting control
+
 (defn column-offset [column] (cond
                                (= column 0) [0 -5 1]   ;;index outer
                                (= column 1) [0 -5 1]   ;;index
@@ -69,11 +65,9 @@
                                (>= column 5) [0 -14 6] ;;pinky outer
                                :else [0 0 0]))
 
-(def keyboard-z-offset (case nrows 
-    6 20
-    5 22.5 
-    4 9))                     ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
-(def extra-width 2)           ; extra horizontal space between the base of keys;
+(def keyboard-z-offset 22.5)  ; controls overall height; original=9 with centercol=3; use 16 for centercol=2
+
+(def  extra-width 2)          ; extra horizontal space between the base of keys
 (defn extra-height [column]   ; extra vertical space between the base of keys
               (cond  (= column 0)  1.9 ;;index outer
                      (= column 1)  1.9 ;;index
@@ -99,7 +93,7 @@
 ;; Switch Hole ;;
 ;;;;;;;;;;;;;;;;;
 
-(def keyswitch-height 13.8)                                   ;; Was 14.1, then 14.25
+(def keyswitch-height 13.8)
 (def keyswitch-width 13.9)
 (def plate-thickness 5)
 (def use_hotswap false)
@@ -120,7 +114,7 @@
 (def holder-y            (+ keyswitch-height (* holder-thickness 2)))
 (def swap-z              3)
 (def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
-(def keyswitch-below-plate (- 8 web-thickness))           ; approx space needed below keyswitch
+(def keyswitch-below-plate (- 8 web-thickness)) ; approx space needed below keyswitch, ameoba is 6mm
 (def north_facing true)
 (def LED-holder true)
 (def square-led-size     6)
@@ -166,7 +160,7 @@
         
         swap-offset-x       0
         swap-offset-y       (/ (- holder-y swap-y) 2)
-        swap-offset-z       (* (/ swap-z 2) -1) ; the bottom of the hole. 
+        swap-offset-z       (- (/ swap-z 2)) ; the bottom of the hole. 
         swap-holder         (->> (cube swap-x swap-y swap-z)
                                  (translate [swap-offset-x 
                                              swap-offset-y
@@ -176,7 +170,7 @@
         hotswap-x3          (/ holder-x 4)
 
         hotswap-cutout-1-x-offset 0.01
-        hotswap-cutout-2-x-offset (* (/ holder-x 4.5) -1)
+        hotswap-cutout-2-x-offset (- (/ holder-x 4.5))
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2))
         hotswap-cutout-4-x-offset (- (/ hotswap-x3 2) (/ holder-x 2))
         hotswap-cutout-led-x-offset 0
@@ -242,8 +236,8 @@
        ]
     (union
       (translate [cutout-x cutout-y 0] cutout)
-      (translate [(* -1 cutout-x) cutout-y 0] cutout)
-      (translate [cutout-x (* -1 cutout-y) 0] cutout)
+      (translate [(- cutout-x) cutout-y 0] cutout)
+      (translate [cutout-x (- cutout-y) 0] cutout)
     )
   )
 )
@@ -283,14 +277,21 @@
   )
 )
 
-;amoeba is 16 mm high
+(def amoeba-x 1) ; mm width
+(def amoeba-y 16) ; mm high
+
 (def switch-bottom
   (translate [0 0 (/ keyswitch-below-plate -2)] 
-             (cube 16 keyswitch-width keyswitch-below-plate)))
+             (cube amoeba-y 
+                   keyswitch-width 
+                   keyswitch-below-plate)))
 
+(def hotswap-case-cutout-x-extra 3)
 (def hotswap-case-cutout
-  (translate [0 (* hotswap-cutout-1-y-offset -1) hotswap-cutout-z-offset] 
-             (cube (+ keyswitch-width 3) hotswap-y1 hotswap-z)))
+  (translate [0 (- hotswap-cutout-1-y-offset) hotswap-cutout-z-offset] 
+             (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
+                   hotswap-y1 
+                   hotswap-z)))
 
 ;;;;;;;;;;;;;;;;
 ;; SA Keycaps ;;
@@ -353,7 +354,7 @@
                                      (translate [0 0 0.05]))
                                 (->> keycap-cutout-xy
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                     (translate [0 0 (* sa-height 1)])))
+                                     (translate [0 0 sa-height])))
          ]
          (->> key-cap-cutout
               (translate [0 0 (- sa-cap-bottom-height-pressed 2.99)]))
@@ -546,7 +547,7 @@
 ;; Thumbs ;;
 ;;;;;;;;;;;;
 
-(def thumb-pos (if (> nrows 4) [5.5 1 9] [9 -5 4]))
+(def thumb-pos [5.5 1 9] )
 (def thumb-rot [0 10 0] )
 
 (def thumborigin
@@ -554,7 +555,7 @@
        thumb-pos))
 
 "need to account for plate thickness which is baked into thumb-_-place rotation & move values
-plate-thickness was 2
+when plate-thickness was 2
 need to adjust for difference for thumb-z only"
 (def thumb-design-z 2)
 (def thumb-z-adjustment (- (if (> plate-thickness thumb-design-z)
@@ -563,7 +564,7 @@ need to adjust for difference for thumb-z only"
                                        (- thumb-design-z plate-thickness) 
                                        0)) 
                             1.1))
-(def thumb-x-rotation-adjustment (if (> nrows 4) -12 -8))
+(def thumb-x-rotation-adjustment -12) ; globally adjust front/back tilt of thumb keys
 (defn thumb-place [rot move shape]
   (->> 
     (->> shape
@@ -801,17 +802,12 @@ need to adjust for difference for thumb-z only"
 
 
 (def screw-insert-bottom-offset 0)
-(def screw-insert-bc   (if (> nrows 4) [3 3.5 screw-insert-bottom-offset] [-3.2 7 screw-insert-bottom-offset]))
-(def screw-insert-ml   (if (> nrows 4) [-6 -13 screw-insert-bottom-offset] [-7 -11 screw-insert-bottom-offset]))
-(def screw-insert-thmb (if (> nrows 4) [-24 -15 screw-insert-bottom-offset] [-6 -4.4 screw-insert-bottom-offset]))
-(def screw-insert-tr   (if (> nrows 4) [15 1.5 screw-insert-bottom-offset] [23.1 5 screw-insert-bottom-offset]))
-(def screw-insert-fc   (if (> nrows 4) [17.5 9.5 screw-insert-bottom-offset] [19 11 screw-insert-bottom-offset]))
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
-  (union (->> (screw-insert 2 0 bottom-radius top-radius height screw-insert-bc) (color RED)) ; top middle
-         (->> (screw-insert 0 1 bottom-radius top-radius height screw-insert-ml) (color PIN)) ; left
-         (->> (screw-insert 0 lastrow bottom-radius top-radius height screw-insert-thmb) (color BRO)) ;thumb
-         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height screw-insert-tr) (color PUR)) ; top right
-         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height screw-insert-fc) (color BLA)) ))  ;bottom middle
+  (union (->> (screw-insert 2             0 bottom-radius top-radius height [  3    3.5 screw-insert-bottom-offset]) (color RED))    ; top middle
+         (->> (screw-insert 0             1 bottom-radius top-radius height [ -6  -13   screw-insert-bottom-offset]) (color PIN))    ; left
+         (->> (screw-insert 0       lastrow bottom-radius top-radius height [-24  -15   screw-insert-bottom-offset]) (color BRO))    ;thumb
+         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height [ 15    1.5 screw-insert-bottom-offset]) (color PUR))    ; top right
+         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height [ 17.5  9.5 screw-insert-bottom-offset]) (color BLA)) )) ;bottom middle
 
 ; Hole Depth Y: 4.4
 (def screw-insert-height 5.5)
@@ -831,15 +827,6 @@ need to adjust for difference for thumb-z only"
                            screw-insert-height
                          ))
 
-(def okke-right (import "../things/okke_right.stl"))
-(def okke-right-offset-coordinates (if (> nrows 4) [4 -17.5 2.8] 
-                                                   [4.7 0.3 4.2]))
-(def okke-right (if (> nrows 4) (->>  okke-right (translate okke-right-offset-coordinates)
-                                                 (rotate (deg2rad -12) [1 0 0])
-                                                 (rotate (deg2rad 2.75) [0 0 1]) )
-                                (translate okke-right-offset-coordinates okke-right))
-)
-
 (def usb-holder 
                 (mirror [-1 0 0]
                     (import "../things/usb_holder_w_reset.stl")
@@ -849,10 +836,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-clearance 0.05)
 (def usb-holder-bottom-offset 0.05)
 
-(def usb-holder-offset-coordinates (case nrows 
-    6 [-24.9 (if use_hotswap 67.3 70.9) usb-holder-bottom-offset]
-    5 [-28 (if use_hotswap 54.17 49.5) usb-holder-bottom-offset]
-    4 [-41.5 (if use_hotswap 50.28 48.9) usb-holder-bottom-offset]))
+(def usb-holder-offset-coordinates [-28 (if use_hotswap 54.17 49.5) usb-holder-bottom-offset])
 (def usb-holder (translate usb-holder-offset-coordinates usb-holder))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
@@ -1022,8 +1006,8 @@ need to adjust for difference for thumb-z only"
     
     (if recess-bottom-plate
         (union
-            (translate [0 0 (* -1 (+ 20 bottom-plate-thickness))] (cube 350 350 40))
-            (translate [0 0 (* -1 (/ bottom-plate-thickness 2))] bottom-plate)
+            (translate [0 0 (- (+ 20 bottom-plate-thickness))] (cube 350 350 40))
+            (translate [0 0 (- (/ bottom-plate-thickness 2))] bottom-plate)
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
@@ -1064,11 +1048,9 @@ need to adjust for difference for thumb-z only"
             (debug thumb-space-hotswap)
 
             (debug usb-holder)
-            ;(debug okke-right)
-            (translate [0 0 (* -1 (/ bottom-plate-thickness 2))]
+            (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
                 (translate [8 -100 0] wrist-rest-right-holes)
-
             )
             )
         )))
