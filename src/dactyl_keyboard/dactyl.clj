@@ -216,6 +216,21 @@
   )
 )
 
+(def switch-dogbone-cutout
+  (let [ cutout-radius 1
+         cutout (->> (cylinder cutout-radius 10)
+                            (with-fn 8))
+         cutout-x (- (/ keyswitch-width 2) (/ cutout-radius 2))
+         cutout-y (- (/ keyswitch-height 2) (/ cutout-radius 2))
+       ]
+    (union
+      (translate [cutout-x cutout-y 0] cutout)
+      (translate [(* -1 cutout-x) cutout-y 0] cutout)
+      (translate [cutout-x (* -1 cutout-y) 0] cutout)
+    )
+  )
+)
+
 (defn single-plate [mirror-internals]
   (let [top-wall (->> (cube (+ keyswitch-height 3) 1.5 plate-thickness)
                       (translate [0
@@ -226,7 +241,8 @@
                                    0
                                    (/ plate-thickness 2)]))
         plate-half (difference (union top-wall left-wall) 
-                               switch-teeth-cutout)
+                               switch-teeth-cutout
+                               switch-dogbone-cutout)
         plate (union plate-half
                   (->> plate-half
                        (mirror [1 0 0])
@@ -522,11 +538,12 @@
 ;; Thumbs ;;
 ;;;;;;;;;;;;
 
-(def thumb-offsets (if (> nrows 4) [10.5 1 9] [9 -5 4]))
+(def thumb-pos (if (> nrows 4) [5.5 1 9] [9 -5 4]))
+(def thumb-rot [0 10 0] )
 
 (def thumborigin
   (map + (key-position 1 cornerrow [(/ mount-width 2) (- (/ mount-height 2)) 0])
-       thumb-offsets))
+       thumb-pos))
 
 "need to account for plate thickness which is baked into thumb-_-place rotation & move values
 plate-thickness was 2
@@ -540,22 +557,20 @@ need to adjust for difference for thumb-z only"
                             1.1))
 (def thumb-x-rotation-adjustment (if (> nrows 4) -12 -8))
 (defn thumb-place [rot move shape]
-  (->> shape
+  (->> 
+    (->> shape
        (translate [0 0 thumb-z-adjustment])                   ;adapt thumb positions for increased plate
        (rotate (deg2rad thumb-x-rotation-adjustment) [1 0 0]) ;adjust angle of all thumbs to be less angled down towards user since key is taller
-
+       
        (rotate (deg2rad (nth rot 0)) [1 0 0])
        (rotate (deg2rad (nth rot 1)) [0 1 0])
        (rotate (deg2rad (nth rot 2)) [0 0 1])
        (translate thumborigin)
-       (translate move)))
+       (translate move))
 
-(defn thumb-layout-place [rot move shape]
-  (->> shape
-       (rotate (deg2rad (nth rot 0)) [1 0 0])
-       (rotate (deg2rad (nth rot 1)) [0 1 0])
-       (rotate (deg2rad (nth rot 2)) [0 0 1])
-       (translate move)))	
+     (rotate (deg2rad (nth thumb-rot 0)) [1 0 0])
+     (rotate (deg2rad (nth thumb-rot 1)) [0 1 0])
+     (rotate (deg2rad (nth thumb-rot 2)) [0 0 1])))
 
 ; convexer
 (defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14 -10 5] shape)) ; right
@@ -563,12 +578,10 @@ need to adjust for difference for thumb-z only"
 (defn thumb-l-place [shape] (thumb-place [6 -5 25] [-53 -23.5 -11.5] shape)) ; left
 
 (defn thumb-layout [shape]
-(thumb-layout-place [0 10 0] [-5 0 0]
   (union
     (thumb-r-place shape)
     (thumb-m-place shape)
-    (thumb-l-place shape)
-    )))
+    (thumb-l-place shape)))
 
 (def thumbcaps (thumb-layout (sa-cap 1)))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
@@ -1010,6 +1023,7 @@ need to adjust for difference for thumb-z only"
     thumb-space-hotswap
     caps-cutout
     thumbcaps-cutout
+    key-space-below
     ))
 (spit "things/right.scad"
       (write-scad (model-right false)))
@@ -1032,7 +1046,7 @@ need to adjust for difference for thumb-z only"
         (difference
           (union
             (->> (model-right false)
-              (color BLU)
+              ; (color BLU)
             )
             caps
             ; (debug caps-cutout)
