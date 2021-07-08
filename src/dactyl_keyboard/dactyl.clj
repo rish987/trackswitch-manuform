@@ -528,8 +528,7 @@
               (partition 2 1 shapes))))
 
 (def connectors
-  (apply union
-         (concat
+  (union
            ;; Row connections
            (for [column (range 0 (dec ncols))
                  row (range 0 lastrow)]
@@ -571,7 +570,43 @@
                  (key-place (inc column)      row  web-post-bl)
                  (key-place (inc column) (inc row) web-post-tl))
              )
-           ))))
+           )
+           
+           ; top two to the main keyboard, starting on the left
+           (->> (triangle-hulls
+                  (key-place 2 lastrow web-post-br)
+                  (key-place 3 lastrow web-post-bl)
+                  (key-place 2 lastrow web-post-tr)
+                  (key-place 3 lastrow web-post-tl)
+                  (key-place 3 cornerrow web-post-bl)
+                  (key-place 3 lastrow web-post-tr)
+                  (key-place 3 cornerrow web-post-br)
+                  (key-place 4 cornerrow web-post-bl))
+                (color BLA))
+
+           (->> (triangle-hulls
+                  (key-place 1 cornerrow web-post-br)
+                  (key-place 2 lastrow web-post-tl)
+                  (key-place 2 cornerrow web-post-bl)
+                  (key-place 2 lastrow web-post-tr)
+                  (key-place 2 cornerrow web-post-br)
+                  (key-place 3 cornerrow web-post-bl)) 
+                (color GRE))
+
+           (->> (triangle-hulls
+                  (key-place 3 lastrow web-post-tr)
+                  (key-place 3 lastrow web-post-br)
+                  (key-place 3 lastrow web-post-tr)
+                  (key-place 4 cornerrow web-post-bl))
+                (color CYA))
+
+           (->> (triangle-hulls
+                  (key-place 1 cornerrow web-post-br)
+                  (key-place 2 lastrow web-post-tl)
+                  (key-place 2 lastrow web-post-bl))
+                (color MAG))
+  )
+)
 
 ;;;;;;;;;;;;
 ;; Thumbs ;;
@@ -671,30 +706,6 @@ need to adjust for difference for thumb-z only"
                (thumb-m-place web-post-bl))
            ) (color ORA))
 
-    ; top two to the main keyboard, starting on the left
-    (->> (triangle-hulls
-      (key-place 2 lastrow web-post-br)
-      (key-place 3 lastrow web-post-bl)
-      (key-place 2 lastrow web-post-tr)
-      (key-place 3 lastrow web-post-tl)
-      (key-place 3 cornerrow web-post-bl)
-      (key-place 3 lastrow web-post-tr)
-      (key-place 3 cornerrow web-post-br)
-      (key-place 4 cornerrow web-post-bl)
-      ) (color BLA))
-    (->> (triangle-hulls
-      (key-place 1 cornerrow web-post-br)
-      (key-place 2 lastrow web-post-tl)
-      (key-place 2 cornerrow web-post-bl)
-      (key-place 2 lastrow web-post-tr)
-      (key-place 2 cornerrow web-post-br)
-      (key-place 3 cornerrow web-post-bl)
-      ) (color GRE))
-    (->> (triangle-hulls
-      (key-place 3 lastrow web-post-tr)
-      (key-place 3 lastrow web-post-br)
-      (key-place 3 lastrow web-post-tr)
-      (key-place 4 cornerrow web-post-bl)) (color CYA))
     (hull                                                   ; between thumb m and top key
       (key-place 0 cornerrow (translate (wall-locate1 -1 0) web-post-bl))
       (thumb-m-place web-post-tr)
@@ -1194,7 +1205,8 @@ need to adjust for difference for thumb-z only"
                          )
                   usb-holder-space
                   screw-insert-holes
-                  ))
+                  )
+    )
     
     (if recess-bottom-plate
         (union
@@ -1225,6 +1237,20 @@ need to adjust for difference for thumb-z only"
 
 (spit "things/wrist-rest-right-holes.scad"
       (write-scad wrist-rest-right-holes))
+
+(defn model-alphas [mirror-internals]
+  (difference
+    (union
+      (key-holes mirror-internals)
+      (if use_flex_pcb_holder flex-pcb-holders)
+      connectors
+    )
+    
+    caps-cutout
+    key-space-below
+  ))
+(spit "things/alphas.scad"
+      (write-scad (model-alphas false)))
 
 (spit "things/test.scad"
       (write-scad
