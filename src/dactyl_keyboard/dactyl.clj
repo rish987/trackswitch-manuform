@@ -1089,7 +1089,7 @@ need to adjust for difference for thumb-z only"
     )
 )
 
-(def wrist-shape-connector (polygon [[35 20] [30 -20] [-30 -20] [-35 20]]))
+(def wrist-shape-connector (polygon [[35 10] [30 -20] [-30 -20] [-35 10]]))
 (def wrist-shape 
     (union 
         (translate [0 -45 0] (cube 60 55 bottom-plate-thickness))
