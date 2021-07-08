@@ -924,14 +924,12 @@ need to adjust for difference for thumb-z only"
     (for [c (range 0 ncols)] 
                   (case c  0 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
                            1 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
-                             (key-wall-brace c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
+                             (key-wall-brace        c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
                   ))
     (for [c (range 1 ncols)]
                   (case c  1 (key-wall-brace-deeper c 0 0 1     web-post-tl (dec c) 0 0 1     web-post-tr)
                            2 (key-wall-brace-back   c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr)
-                           3 (key-wall-brace c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr)
-                           4 (key-wall-brace c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr)
-                             (key-wall-brace c 0 0 1 web-post-tl     (dec c) 0 0 1 web-post-tr)
+                        (->> (key-wall-brace        c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr) (color PUR))
                   ))
   )
 )
