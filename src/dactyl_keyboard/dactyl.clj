@@ -253,12 +253,27 @@
   (let [pcb-holder-x amoeba-y; keyswitch-width
         pcb-holder-y 5
         pcb-holder-z 3 ;keyswitch-below-plate
+        pcb-holder-z-offset (- (* 2 keyswitch-below-clearance) (/ pcb-holder-z 2))
+        clip (cube pcb-holder-x pcb-holder-y pcb-holder-z)
        ]
-  (->> (cube pcb-holder-x pcb-holder-y pcb-holder-z)
+  (union
        (translate [0 
                    (/ keyswitch-height 2)
-                   (- (* 2 keyswitch-below-clearance) (/ pcb-holder-z 2) )]))
-  ))
+                   pcb-holder-z-offset]
+              (difference clip
+                          (->> clip ;cut triangle out of pcb clip
+                              (translate [0 0 (/ pcb-holder-z -1.25)])
+                              (rotate (deg2rad -45) [1 0 0])
+                          )
+              )
+
+        )
+        (translate [0 
+                    (/ keyswitch-height 2)
+                    keyswitch-below-clearance]
+            (color YEL (cube pcb-holder-x pcb-holder-y keyswitch-below-plate))
+        )
+   )))
 
 (defn single-plate [mirror-internals]
   (let [top-wall (->> (cube (+ keyswitch-height 3) 1.5 plate-thickness)
