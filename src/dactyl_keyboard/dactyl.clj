@@ -246,22 +246,22 @@
 (def switch-bottom
   (translate [0 0 keyswitch-below-clearance] 
              (cube amoeba-y 
-                   keyswitch-width 
+                   amoeba-y 
                    keyswitch-below-plate)))
 
 (def flex-pcb-holder
-  (let [pcb-holder-x amoeba-y; keyswitch-width
+  (let [pcb-holder-x (* 0.99 amoeba-y); keyswitch-width
         pcb-holder-y 5
         pcb-holder-z 3 ;keyswitch-below-plate
         pcb-holder-z-offset (- (* 2 keyswitch-below-clearance) (/ pcb-holder-z 2))
-        clip (cube pcb-holder-x pcb-holder-y pcb-holder-z)
        ]
   (union
        (translate [0 
                    (/ keyswitch-height 2)
                    pcb-holder-z-offset]
-              (difference clip
-                          (->> clip ;cut triangle out of pcb clip
+              (difference (cube pcb-holder-x pcb-holder-y pcb-holder-z)
+                          ;cut triangle out of pcb clip
+                          (->> (cube (* 1.01 pcb-holder-x) pcb-holder-y pcb-holder-z)
                               (translate [0 0 (/ pcb-holder-z -1.25)])
                               (rotate (deg2rad -45) [1 0 0])
                           )
@@ -269,9 +269,11 @@
 
         )
         (translate [0 
-                    (/ keyswitch-height 2)
+                    (+ (/ keyswitch-height 2) (/ pcb-holder-y 3) )
                     keyswitch-below-clearance]
-            (color YEL (cube pcb-holder-x pcb-holder-y keyswitch-below-plate))
+            (color YEL (cube pcb-holder-x 
+                             (/ pcb-holder-y 3) 
+                             (* 3 keyswitch-below-plate)))
         )
    )))
 
