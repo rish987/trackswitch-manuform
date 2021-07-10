@@ -31,8 +31,8 @@
 
 (def nrows 5)
 (def ncols 6)
-(def use_hotswap false)
-(def use_flex_pcb_holder true)
+(def use_hotswap true)
+(def use_flex_pcb_holder false)
 (def adjustable-wrist-rest-holder-plate true)
 (def recess-bottom-plate true)
 
@@ -198,15 +198,15 @@
                                               hotswap-cutout-z-offset]))
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
-                                 (with-fn 12))
+                                 (with-fn 15))
         plus-hole           (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 8)
+                                 (with-fn 15)
                                  (translate [-3.81 2.54 0]))
         minus-hole          (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 8)
+                                 (with-fn 15)
                                  (translate [2.54 5.08 0]))
         friction-hole       (->> (cylinder (/ 1.95 2) 10)
-                                 (with-fn 8))
+                                 (with-fn 15))
         friction-hole-right (translate [5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
        ]
@@ -666,8 +666,8 @@ need to adjust for difference for thumb-z only"
      (rotate (deg2rad (nth thumb-rot 2)) [0 0 1])))
 
 ; convexer
-(defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14 -10 5] shape)) ; right
-(defn thumb-m-place [shape] (thumb-place [10 -23 20] [-33 -15 -6] shape)) ; middle
+(defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14.5 -10 5] shape)) ; right
+(defn thumb-m-place [shape] (thumb-place [10 -23 20] [-33 -15.2 -6] shape)) ; middle
 (defn thumb-l-place [shape] (thumb-place [6 -5 25] [-53 -23.5 -11.5] shape)) ; left
 
 (defn thumb-layout [shape]
@@ -1280,9 +1280,9 @@ need to adjust for difference for thumb-z only"
               (model-right false)
               ; (color BLU)
             ; )
-            ; caps
+            caps
             ; (debug caps-cutout)
-            ; thumbcaps
+            thumbcaps
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
             ; (debug thumb-space-below)
