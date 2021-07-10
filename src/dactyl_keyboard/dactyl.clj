@@ -226,8 +226,8 @@
 
 (def switch-dogbone-cutout
   (let [ cutout-radius 1
-         cutout (->> (cylinder cutout-radius 10)
-                            (with-fn 8))
+         cutout (->> (cylinder cutout-radius 99)
+                            (with-fn 15))
          cutout-x (- (/ keyswitch-width 2) (/ cutout-radius 2))
          cutout-y (- (/ keyswitch-height 2) (/ cutout-radius 2))
        ]
@@ -254,9 +254,13 @@
         pcb-holder-y 5
         pcb-holder-z 3 ;keyswitch-below-plate
         pcb-holder-z-offset (- (* 2 keyswitch-below-clearance) (/ pcb-holder-z 2))
+        minus-hole          (->> (cylinder (/ 4 2) 99)
+                                 (with-fn 15)
+                                 (translate [2.54 5.08 0]))
        ]
   (union
-       (translate [0 
+        (difference
+           (translate [0 
                    (/ keyswitch-height 2)
                    pcb-holder-z-offset]
               (difference (cube pcb-holder-x pcb-holder-y pcb-holder-z)
@@ -266,7 +270,8 @@
                               (rotate (deg2rad -45) [1 0 0])
                           )
               )
-
+           )
+           minus-hole 
         )
         (translate [0 
                     (+ (/ keyswitch-height 2) (/ pcb-holder-y 3) )
