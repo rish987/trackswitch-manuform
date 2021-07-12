@@ -31,10 +31,14 @@
 
 (def nrows 5)
 (def ncols 6)
-(def use_hotswap true)
-(def use_flex_pcb_holder false)
-(def adjustable-wrist-rest-holder-plate true)
+
+;select only one of the following
+(def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
+(def use_hotswap false)         ; kailh hotswap holder
+(def use_solderless true)       ; solderless switch plate
+
 (def recess-bottom-plate true)
+(def adjustable-wrist-rest-holder-plate false)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -224,6 +228,85 @@
   )
 )
 
+(def solderless-plate
+  (let [
+        solderless-x        holder-x
+        solderless-y        (if (or (> 11.5 holder-y) LED-holder) 
+                                holder-y 
+                                11.5) ; should be less than or equal to holder-y
+        solderless-z        4; swap-z 3 ;pcb_thickness 4
+        solderless-cutout-z (* 1.01 solderless-z)
+        solderless-offset-x 0
+        solderless-offset-y (/ (- holder-y solderless-y) 2)
+        solderless-offset-z (- (/ solderless-z 2)) ; the bottom of the hole. 
+        switch_socket_base  (cube solderless-x 
+                                  solderless-y 
+                                  solderless-z)
+        diode_pin_angle      5 ;Upward angle of switch pin in contact 
+                               ;with diode anode (gives more reliable
+                               ;connections but slightly deforms pin)
+        wire-diameter        2.15
+        wire-channel-offset  (-(/ solderless-z 2) (/ wire-diameter 3))
+        led-cutout-x-offset  0
+        led-cutout-y-offset -6
+        led-cutout          (translate [0 -6 0] 
+                                 (cube square-led-size 
+                                       square-led-size 
+                                       solderless-cutout-z))
+        main-axis-hole      (->> (cylinder (/ 4.2 2) solderless-cutout-z)
+                                 (with-fn 30))
+        plus-hole           (->> (cylinder (/ 1.4 2) solderless-cutout-z)
+                                 (with-fn 30)
+                                 (translate [-3.81 2.54 0]))
+        minus-hole          (->> (cylinder (/ 2 2) solderless-cutout-z)
+                                 (with-fn 30)
+                                 (translate [2.54 5.08 0]))
+        friction-hole       (->> (cylinder (/ 2.1 2) solderless-cutout-z)
+                                 (with-fn 30))
+        friction-hole-right (translate [ 5 0 0] friction-hole)
+        friction-hole-left  (translate [-5 0 0] friction-hole)
+
+        diode-cathode-cutout (->> (cylinder (/ 1.4 2) solderless-cutout-z)
+                                  (with-fn 30)
+                                  (translate [3.75 -4 0]))
+        row-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
+                              (with-fn 30)
+                              (rotate (deg2rad 90) [0 1 0])
+                              (translate [0 5.08 (- wire-channel-offset)])
+                         )
+        col-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
+                              (with-fn 30)
+                              (rotate (deg2rad 90) [1 0 0])
+                              (translate [3.75 -4 wire-channel-offset])
+                         )
+        diode-pin  (translate [-3.81 -1.25 (/ solderless-z 2)]
+                       (cube 1 6.5 2))
+        diode-body (translate [2 -4 (/ solderless-z 2)]
+                       (cube 4 1 2))
+        diode-wire (translate [-1.5 -4 (/ solderless-z 2)]
+                       (cube 4 2 3))
+
+       ]
+      (translate [solderless-offset-x 
+                  solderless-offset-y
+                  solderless-offset-z]
+          (difference switch_socket_base
+                      main-axis-hole
+                      plus-hole
+                      minus-hole
+                      friction-hole-left
+                      friction-hole-right
+                      diode-cathode-cutout
+                      row-wire-channel
+                      col-wire-channel
+                      diode-pin
+                      diode-body
+                      diode-wire
+                      ; led-cutout
+       ))
+  )
+)
+
 (def switch-dogbone-cutout
   (let [ cutout-radius 1
          cutout (->> (cylinder cutout-radius 99)
@@ -305,6 +388,15 @@
                                (mirror [0 1 0])
                           )
                           hotswap-holder
+                      )
+                  )
+                  (if use_solderless 
+                      (if north_facing
+                          (->> solderless-plate
+                               (mirror [1 0 0])
+                               (mirror [0 1 0])
+                          )
+                          solderless-plate
                       )
                   )
               )
@@ -1239,8 +1331,9 @@ need to adjust for difference for thumb-z only"
     caps-cutout
     thumbcaps-cutout
     thumb-key-cutout
-    key-space-below
-    thumb-space-below
+    (if (not (or use_hotswap use_solderless)) 
+        (union key-space-below
+              thumb-space-below))
     (if use_hotswap thumb-space-hotswap)
   ))
 (spit "things/right.scad"
@@ -1267,7 +1360,7 @@ need to adjust for difference for thumb-z only"
     )
     
     caps-cutout
-    key-space-below
+    (if (not (or use_hotswap use_solderless)) key-space-below)
   ))
 (spit "things/alphas.scad"
       (write-scad (model-alphas false)))
