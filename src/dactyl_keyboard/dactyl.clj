@@ -116,8 +116,7 @@
 (def swap-z              3)
 (def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
 (def keyswitch-below-plate (- 8 web-thickness)) ; approx space needed below keyswitch, ameoba is 6mm
-(def north_facing true)
-(def LED-holder true)
+(def north_facing false)
 (def square-led-size     6)
 
 (def switch-teeth-cutout
@@ -157,7 +156,7 @@
         ; can be described as having two sizes in the y dimension depending on the x coordinate
         
         swap-x              holder-x
-        swap-y              (if (or (> 11.5 holder-y) LED-holder) holder-y 11.5) ; should be less than or equal to holder-y
+        swap-y              holder-y
         
         swap-offset-x       0
         swap-offset-y       (/ (- holder-y swap-y) 2)
@@ -231,9 +230,7 @@
 (def solderless-plate
   (let [
         solderless-x        holder-x
-        solderless-y        (if (or (> 11.5 holder-y) LED-holder) 
-                                holder-y 
-                                11.5) ; should be less than or equal to holder-y
+        solderless-y        holder-y ; should be less than or equal to holder-y
         solderless-z        4; swap-z 3 ;pcb_thickness 4
         solderless-cutout-z (* 1.01 solderless-z)
         solderless-offset-x 0
@@ -266,9 +263,9 @@
         friction-hole-right (translate [ 5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
 
-        diode-cathode-cutout (->> (cylinder (/ 1.4 2) solderless-cutout-z)
-                                  (with-fn 30)
-                                  (translate [3.75 -4 0]))
+        diode-row-hole   (->> (cylinder (/ 1.4 2) solderless-cutout-z)
+                              (with-fn 30)
+                              (translate [3.75 3.05 0]))
         row-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
                               (with-fn 30)
                               (rotate (deg2rad 90) [0 1 0])
@@ -277,32 +274,35 @@
         col-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
                               (with-fn 30)
                               (rotate (deg2rad 90) [1 0 0])
-                              (translate [3.75 -4 wire-channel-offset])
+                              (translate [3.75 4 wire-channel-offset])
                          )
-        diode-pin  (translate [-3.81 -1.25 (/ solderless-z 2)]
-                       (cube 1 6.5 2))
-        diode-body (translate [2 -4 (/ solderless-z 2)]
-                       (cube 4 1 2))
-        diode-wire (translate [-1.5 -4 (/ solderless-z 2)]
+        diode-pin  (translate [-3.15 3.05 (/ solderless-z 2)]
+                       (cube 2 1 2))
+        diode-wire (translate [2.75 3.05 (/ solderless-z 2)]
+                       (cube 2 1 2))
+        diode-body (translate [-0.2 3.05 (/ solderless-z 2)]
                        (cube 4 2 3))
 
        ]
       (translate [solderless-offset-x 
                   solderless-offset-y
                   solderless-offset-z]
-          (difference switch_socket_base
+          (difference (union switch_socket_base
+                             ; (debug diode-wire)
+                             ; (debug diode-pin)
+                      )
                       main-axis-hole
                       plus-hole
                       minus-hole
                       friction-hole-left
                       friction-hole-right
-                      diode-cathode-cutout
+                      diode-row-hole
                       row-wire-channel
                       col-wire-channel
                       diode-pin
                       diode-body
                       diode-wire
-                      ; led-cutout
+                      led-cutout
        ))
   )
 )
