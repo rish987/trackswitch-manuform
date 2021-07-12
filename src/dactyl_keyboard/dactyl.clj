@@ -39,6 +39,7 @@
 
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate false)
+(def north_facing false)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -116,7 +117,6 @@
 (def swap-z              3)
 (def web-thickness (if use_hotswap (+ plate-thickness swap-z) plate-thickness))
 (def keyswitch-below-plate (- 8 web-thickness)) ; approx space needed below keyswitch, ameoba is 6mm
-(def north_facing false)
 (def square-led-size     6)
 
 (def switch-teeth-cutout
@@ -136,25 +136,41 @@
   )
 )
 
+(def hotswap-x2          (* (/ holder-x 3) 1.95))
 (def hotswap-y1          4.3) ;first y-size of kailh hotswap holder
 (def hotswap-y2          6.2) ;second y-size of kailh hotswap holder
 (def hotswap-z           (+ swap-z 0.5));thickness of kailn hotswap holder + some margin of printing error (0.5mm)
 (def hotswap-cutout-z-offset -2.6)
+(def hotswap-cutout-2-x-offset (- (/ holder-x 4.5)))
 (def hotswap-cutout-1-y-offset 4.95)
+(def hotswap-cutout-2-y-offset 4)
+(def hotswap-case-cutout-x-extra 3.01)
+(def hotswap-case-cutout
+  (union
+    (translate [0 
+                hotswap-cutout-1-y-offset 
+                hotswap-cutout-z-offset] 
+               (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
+                     hotswap-y1 
+                     hotswap-z))
+    (translate [hotswap-cutout-2-x-offset 
+                hotswap-cutout-2-y-offset 
+                hotswap-cutout-z-offset]
+               (cube hotswap-x2 hotswap-y2 hotswap-z))
+  )
+)
 (def hotswap-holder
+  ;irregularly shaped hot swap holder
+  ;    ____________
+  ;  |  _|_______|    |  hotswap offset from out edge of holder with room to solder
+  ; y1 |_|_O__  \ _  y2  hotswap pin
+  ;    |      \O_|_|  |  hotswap pin
+  ;    |  o  O  o  |     fully supported friction holes
+  ;    |    ___    |  
+  ;    |    |_|    |  space for LED under SMD or transparent switches
+  ;
+  ; can be described as having two sizes in the y dimension depending on the x coordinate
   (let [
-        
-        ;irregularly shaped hot swap holder
-        ;    ____________
-        ;  |  _|_______|    |  hotswap offset from out edge of holder with room to solder
-        ; y1 |_|_O__  \ _  y2  hotswap pin
-        ;    |      \O_|_|  |  hotswap pin
-        ;    |  o  O  o  |     fully supported friction holes
-        ;    |    ___    |  
-        ;    |    |_|    |  space for LED under SMD or transparent switches
-        ;
-        ; can be described as having two sizes in the y dimension depending on the x coordinate
-        
         swap-x              holder-x
         swap-y              holder-y
         
@@ -166,17 +182,17 @@
                                              swap-offset-y
                                              swap-offset-z]))
         hotswap-x           holder-x ;cutout full width of holder instead of only 14.5mm
-        hotswap-x2          (* (/ holder-x 3) 1.95)
         hotswap-x3          (/ holder-x 4)
+        hotswap-y3          (/ hotswap-y1 2)
 
         hotswap-cutout-1-x-offset 0.01
         hotswap-cutout-2-x-offset (- (/ holder-x 4.5))
-        hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2))
-        hotswap-cutout-4-x-offset (- (/ hotswap-x3 2) (/ holder-x 2))
+        hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
+        hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
+
+        hotswap-cutout-3-y-offset 7.4 
+
         hotswap-cutout-led-x-offset 0
-        hotswap-cutout-1-y-offset 4.95
-        hotswap-cutout-2-y-offset 4
-        hotswap-cutout-3-y-offset (/ holder-y 2)
         hotswap-cutout-led-y-offset -6
         
         hotswap-cutout-1    (->> (cube hotswap-x hotswap-y1 hotswap-z)
@@ -187,11 +203,11 @@
                                  (translate [hotswap-cutout-2-x-offset 
                                              hotswap-cutout-2-y-offset 
                                              hotswap-cutout-z-offset]))
-        hotswap-cutout-3    (->> (cube hotswap-x3 hotswap-y1 hotswap-z)
+        hotswap-cutout-3    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-3-x-offset
                                               hotswap-cutout-3-y-offset
                                               hotswap-cutout-z-offset]))
-        hotswap-cutout-4    (->> (cube hotswap-x3 hotswap-y1 hotswap-z)
+        hotswap-cutout-4    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-4-x-offset
                                               hotswap-cutout-3-y-offset
                                               hotswap-cutout-z-offset]))
@@ -199,31 +215,42 @@
                                  (translate [ hotswap-cutout-led-x-offset
                                               hotswap-cutout-led-y-offset
                                               hotswap-cutout-z-offset]))
+        hotswap-cutout      (union hotswap-cutout-1
+                                   hotswap-cutout-2
+                                   hotswap-cutout-3
+                                   hotswap-cutout-4)
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
-                                 (with-fn 15))
+                                 (with-fn 30))
         plus-hole           (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 15)
+                                 (with-fn 30)
                                  (translate [-3.81 2.54 0]))
         minus-hole          (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 15)
+                                 (with-fn 30)
                                  (translate [2.54 5.08 0]))
         friction-hole       (->> (cylinder (/ 1.95 2) 10)
-                                 (with-fn 15))
+                                 (with-fn 30))
         friction-hole-right (translate [5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
+        hotswap-shape
+            (difference (union swap-holder
+                               ; (debug hotswap-cutout-3)
+                        )
+                        main-axis-hole
+                        plus-hole
+                        minus-hole
+                        friction-hole-left
+                        friction-hole-right
+                        hotswap-cutout
+                        hotswap-led-cutout)
        ]
-      (difference swap-holder
-                  main-axis-hole
-                  plus-hole
-                  minus-hole
-                  friction-hole-left
-                  friction-hole-right
-                  hotswap-cutout-1
-                  hotswap-cutout-2
-                  hotswap-cutout-3
-                  hotswap-cutout-4
-                  hotswap-led-cutout)
+       (if north_facing
+           (->> hotswap-shape
+                (mirror [1 0 0])
+                (mirror [0 1 0])
+           )
+           hotswap-shape
+       )
   )
 )
 
@@ -282,28 +309,36 @@
                        (cube 2 1 2))
         diode-body (translate [-0.2 3.05 (/ solderless-z 2)]
                        (cube 4 2 3))
-
+        
+        solderless-shape 
+            (translate [solderless-offset-x 
+                        solderless-offset-y
+                        solderless-offset-z]
+                (difference (union switch_socket_base
+                                   ; (debug diode-wire)
+                                   ; (debug diode-pin)
+                            )
+                            main-axis-hole
+                            plus-hole
+                            minus-hole
+                            friction-hole-left
+                            friction-hole-right
+                            diode-row-hole
+                            row-wire-channel
+                            col-wire-channel
+                            diode-pin
+                            diode-body
+                            diode-wire
+                            led-cutout
+            ))
        ]
-      (translate [solderless-offset-x 
-                  solderless-offset-y
-                  solderless-offset-z]
-          (difference (union switch_socket_base
-                             ; (debug diode-wire)
-                             ; (debug diode-pin)
-                      )
-                      main-axis-hole
-                      plus-hole
-                      minus-hole
-                      friction-hole-left
-                      friction-hole-right
-                      diode-row-hole
-                      row-wire-channel
-                      col-wire-channel
-                      diode-pin
-                      diode-body
-                      diode-wire
-                      led-cutout
-       ))
+       (if north_facing
+           (->> solderless-shape
+                (mirror [1 0 0])
+                (mirror [0 1 0])
+           )
+           solderless-shape
+       )
   )
 )
 
@@ -381,24 +416,8 @@
                   (->> plate-half
                        (mirror [1 0 0])
                        (mirror [0 1 0]))
-                  (if use_hotswap 
-                      (if north_facing
-                          (->> hotswap-holder
-                               (mirror [1 0 0])
-                               (mirror [0 1 0])
-                          )
-                          hotswap-holder
-                      )
-                  )
-                  (if use_solderless 
-                      (if north_facing
-                          (->> solderless-plate
-                               (mirror [1 0 0])
-                               (mirror [0 1 0])
-                          )
-                          solderless-plate
-                      )
-                  )
+                  (if use_hotswap hotswap-holder)
+                  (if use_solderless solderless-plate)
               )
        ]
     (->> (if mirror-internals
@@ -416,13 +435,6 @@
     (single-plate mirror-internals)
   )
 )
-
-(def hotswap-case-cutout-x-extra 3)
-(def hotswap-case-cutout
-  (translate [0 (- hotswap-cutout-1-y-offset) hotswap-cutout-z-offset] 
-             (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
-                   hotswap-y1 
-                   hotswap-z)))
 
 ;;;;;;;;;;;;;;;;
 ;; SA Keycaps ;;
@@ -687,37 +699,75 @@
            )
            
            ; top two to the main keyboard, starting on the left
-           (->> (triangle-hulls
-                  (key-place 2 lastrow web-post-br)
-                  (key-place 3 lastrow web-post-bl)
-                  (key-place 2 lastrow web-post-tr)
-                  (key-place 3 lastrow web-post-tl)
-                  (key-place 3 cornerrow web-post-bl)
-                  (key-place 3 lastrow web-post-tr)
-                  (key-place 3 cornerrow web-post-br)
-                  (key-place 4 cornerrow web-post-bl))
+           (->> (if use_hotswap
+                  (triangle-hulls
+                    (key-place 2 lastrow plate-post-br)
+                    (key-place 3 lastrow plate-post-bl)
+                    (key-place 2 lastrow plate-post-tr)
+                    (key-place 3 lastrow plate-post-tl)
+                    (key-place 3 cornerrow plate-post-bl)
+                    (key-place 3 lastrow web-post-tl)
+                    (key-place 3 cornerrow web-post-bl)
+                    (key-place 3 lastrow web-post-tr)
+                    (key-place 3 cornerrow web-post-br)
+                    (key-place 3 lastrow plate-post-tr)
+                    (key-place 3 cornerrow plate-post-br)
+                    (key-place 4 cornerrow plate-post-bl))
+                  (triangle-hulls
+                    (key-place 2 lastrow web-post-br)
+                    (key-place 3 lastrow web-post-bl)
+                    (key-place 2 lastrow web-post-tr)
+                    (key-place 3 lastrow web-post-tl)
+                    (key-place 3 cornerrow web-post-bl)
+                    (key-place 3 lastrow web-post-tr)
+                    (key-place 3 cornerrow web-post-br)
+                    (key-place 4 cornerrow web-post-bl)))
                 (color BLA))
 
-           (->> (triangle-hulls
-                  (key-place 1 cornerrow web-post-br)
-                  (key-place 2 lastrow web-post-tl)
-                  (key-place 2 cornerrow web-post-bl)
-                  (key-place 2 lastrow web-post-tr)
-                  (key-place 2 cornerrow web-post-br)
-                  (key-place 3 cornerrow web-post-bl)) 
+           (->> (if use_hotswap
+                  (triangle-hulls
+                    (key-place 1 cornerrow plate-post-br)
+                    (key-place 2 lastrow plate-post-tl)
+                    (key-place 2 cornerrow plate-post-bl)
+                    (key-place 2 lastrow web-post-tl)
+                    (key-place 2 cornerrow web-post-bl)
+                    (key-place 2 lastrow web-post-tr)
+                    (key-place 2 cornerrow web-post-br)
+                    (key-place 2 lastrow plate-post-tr)
+                    (key-place 2 cornerrow plate-post-br)
+                    (key-place 3 cornerrow plate-post-bl))
+                  (triangle-hulls
+                    (key-place 1 cornerrow web-post-br)
+                    (key-place 2 lastrow web-post-tl)
+                    (key-place 2 cornerrow web-post-bl)
+                    (key-place 2 lastrow web-post-tr)
+                    (key-place 2 cornerrow web-post-br)
+                    (key-place 3 cornerrow web-post-bl)))
                 (color GRE))
 
-           (->> (triangle-hulls
-                  (key-place 3 lastrow web-post-tr)
-                  (key-place 3 lastrow web-post-br)
-                  (key-place 3 lastrow web-post-tr)
-                  (key-place 4 cornerrow web-post-bl))
+           (->> (if use_hotswap
+                  (triangle-hulls
+                    (key-place 3 lastrow plate-post-tr)
+                    (key-place 3 lastrow plate-post-br)
+                    (key-place 3 lastrow plate-post-tr)
+                    (key-place 4 cornerrow plate-post-bl))
+                  (triangle-hulls
+                    (key-place 3 lastrow web-post-tr)
+                    (key-place 3 lastrow web-post-br)
+                    (key-place 3 lastrow web-post-tr)
+                    (key-place 4 cornerrow web-post-bl)))
                 (color CYA))
 
-           (->> (triangle-hulls
-                  (key-place 1 cornerrow web-post-br)
-                  (key-place 2 lastrow web-post-tl)
-                  (key-place 2 lastrow web-post-bl))
+           (->> (if use_hotswap
+                  (triangle-hulls
+                    (key-place 1 cornerrow plate-post-br)
+                    (key-place 2 lastrow plate-post-tl)
+                    (key-place 2 lastrow plate-post-bl))
+                     
+                   (triangle-hulls
+                    (key-place 1 cornerrow web-post-br)
+                    (key-place 2 lastrow web-post-tl)
+                    (key-place 2 lastrow web-post-bl)))
                 (color MAG))
   )
 )
@@ -772,7 +822,24 @@ need to adjust for difference for thumb-z only"
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
 (defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
 (def thumb-space-below (thumb-layout switch-bottom))
-(def thumb-space-hotswap (thumb-layout hotswap-case-cutout))
+(defn thumb-space-hotswap [mirror-internals]
+  (let [
+    rotated
+         (if north_facing
+             (->> hotswap-case-cutout
+                  (mirror [1 0 0])
+                  (mirror [0 1 0])
+             )
+             hotswap-case-cutout
+         )
+     mirrored 
+       (->> (if mirror-internals
+                (->> rotated (mirror [1 0 0]))
+                rotated))
+  ]
+    (thumb-layout mirrored)
+  )
+)
 (def thumb-key-cutout (thumb-layout (filled-plate false)))
 ;;;;;;;;;;
 ;; Case ;;
@@ -860,7 +927,8 @@ need to adjust for difference for thumb-z only"
 ; dx1, dy1, dx2, dy2 = direction of the wall. '1' for front, '-1' for back, '0' for 'not in this direction'.
 ; place1, place2 = function that places an object at a location, typically refers to the center of a key position.
 ; post1, post2 = the shape that should be rendered
-(defn wall-brace [place1 dx1 dy1 post1 place2 dx2 dy2 post2]
+(defn wall-brace [place1 dx1 dy1 post1 
+                  place2 dx2 dy2 post2]
   "If you want to change the wall, use this.
    place1 means the location at the keyboard, marked by key-place or thumb-xx-place
    dx1 means the movement from place1 in x coordinate, multiplied by wall-xy-locate.
@@ -1334,7 +1402,7 @@ need to adjust for difference for thumb-z only"
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
-    (if use_hotswap thumb-space-hotswap)
+    (if use_hotswap (thumb-space-hotswap mirror-internals))
   ))
 (spit "things/right.scad"
       (write-scad (model-right false)))
@@ -1379,7 +1447,7 @@ need to adjust for difference for thumb-z only"
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
             ; (debug thumb-space-below)
-            ; (if use_hotswap(debug thumb-space-hotswap))
+            ; (if use_hotswap(debug (thumb-space-hotswap false)))
 
             (debug usb-holder)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
