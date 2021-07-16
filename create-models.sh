@@ -11,7 +11,9 @@ echo '(load-file "src/dactyl_keyboard/dactyl.clj")' | lein repl > /dev/null 2>&1
 
 echo 'Rendering things/*.stl files from things/*.scad using ...'
 $OPEN_SCAD -v
-$OPEN_SCAD -o things/right-plate-cut.stl things/right-plate-cut.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o things/usb-holder_w_reset.stl things/usb_holder.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o things/single-plate.stl things/single-plate.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o things/right-plate.stl things/right-plate.scad >/dev/null 2>&1 &
 $OPEN_SCAD -o things/right.stl things/right.scad >/dev/null 2>&1 &
 $OPEN_SCAD -o things/left.stl  things/left.scad >/dev/null 2>&1 &
 

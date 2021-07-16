@@ -85,8 +85,10 @@ module notch() {
 
 module trrsCutouts() {
     trrs_floor = 1;
-    translate ([-9.2, 11.65, trrs_floor]) {
-        cube ([trrs_x, trrs_y, usb_holder_z], center=true);
+    trrs_squareCutoutHeight = 12;
+    trrs_squareCutoutHeightOffset = trrs_floor - usb_holder_center_z + trrs_squareCutoutHeight/2;
+    translate ([-9.2, 11.65, trrs_squareCutoutHeightOffset]) {
+        cube ([trrs_x, trrs_y, trrs_squareCutoutHeight], center=true);
     }
     
     trrsAngle_z_adjust = reset_holder? 0.5 : 4;
@@ -155,20 +157,21 @@ module usbPortCutout() {
     usbPortCenter = ((usb_holder_center_x - (usb_elite_c_x/2)) - usb_holder_border);
     usbPortCenterCut = (usb_c_x - usb_c_z);
     usbPortSideOffset = usbPortCenterCut / 2;
+    usbPortCenterCutLength = 35;
     
     translate ([(usbPortCenter - usbPortSideOffset), 0, 0]) {
         rotate (a=90.0, v=[1, 0, 0]) {
-            cylinder (h=99, r=usb_c_z/2, center=true);
+            cylinder (h=usbPortCenterCutLength, r=usb_c_z/2, center=true);
         }
     }
     
     translate ([usbPortCenter, 0, 0]) {
-        cube ([usbPortCenterCut, 99, usb_c_z], center=true);
+        cube ([usbPortCenterCut, usbPortCenterCutLength, usb_c_z], center=true);
     }
     
     translate ([(usbPortCenter + usbPortSideOffset), 0, 0]) {
         rotate (a=90.0, v=[1, 0, 0]) {
-            cylinder (h=99, r=usb_c_z/2, center=true);
+            cylinder (h=usbPortCenterCutLength, r=usb_c_z/2, center=true);
         }
     }
 }
