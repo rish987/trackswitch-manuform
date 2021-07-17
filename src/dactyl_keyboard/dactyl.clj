@@ -34,12 +34,12 @@
 
 ;select only one of the following
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
-(def use_hotswap false)         ; kailh hotswap holder
-(def use_solderless true)       ; solderless switch plate
+(def use_hotswap true)         ; kailh hotswap holder
+(def use_solderless false)       ; solderless switch plate
 
 (def recess-bottom-plate true)
-(def adjustable-wrist-rest-holder-plate false)
-(def north_facing false)
+(def adjustable-wrist-rest-holder-plate true)
+(def north_facing true)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -1162,7 +1162,7 @@ need to adjust for difference for thumb-z only"
     (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br) (color PIN))
     (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
     (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
-    (->> (wall-brace-back thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr) (color BRO))
+    (->> (wall-brace-back   thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr) (color BRO))
     (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place -1  0 fat-web-post-tl) (color BLA))
   )
 )
