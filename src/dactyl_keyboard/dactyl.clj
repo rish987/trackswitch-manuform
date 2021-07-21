@@ -1274,7 +1274,12 @@ need to adjust for difference for thumb-z only"
     )
 )
 
-(def wrist-shape-connector (polygon [[35 10] [30 -20] [-30 -20] [-35 10]]))
+(def wrist-shape-connector-width 67)
+(def wrist-shape-connector-half-width (/ wrist-shape-connector-width 2))
+(def wrist-shape-connector (polygon [[wrist-shape-connector-half-width 10] 
+                                     [ 30 -20] 
+                                     [-30 -20] 
+                                     [(- wrist-shape-connector-half-width) 10]]))
 (def wrist-shape 
     (union 
         (translate [0 -45 0] (cube 60 55 bottom-plate-thickness))
@@ -1287,8 +1292,88 @@ need to adjust for difference for thumb-z only"
     )
 )
 
-(def wrist-rest-right
+; begin crystalhand wrist rest code copied from old ibnuba repo version
+(def wrist-rest-right-stl
     (import "../things/wrist-rest-right.stl"))
+
+(def wrist-rest-back-height 29)
+(def wrist-rest-angle 0)
+(def wrist-rest-rotation-angle 0)
+(def wrist-rest-ledge 3.5)
+(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 45))
+(def cut-bottom
+  (->> (cube 300 300 300) (translate [0 0 -150])))
+
+(def h-offset
+  (* (Math/tan (/ (* pi wrist-rest-angle) 180)) 88))
+
+(def scale-cos
+  (Math/cos (/ (* pi wrist-rest-angle) 180)))
+(def scale-amount
+  (/ (* 83.7 scale-cos) 19.33))
+
+(def wrist-rest-right-base
+    (let [shape (difference
+                    (scale [4.25 scale-amount 1]
+                        (difference
+                            (union
+                                (difference
+                                    (scale [1.3, 1, 1]
+                                           (->> (cylinder 10 200)
+                                                (with-fn 250)
+                                                (translate [0 0 0])))
+                                    (scale [1.1, 1, 1]
+                                           (->> (cylinder 7 200)
+                                                (with-fn 250)
+                                                (translate [0 -13.4 0]))
+                                           (->> (cube 18 10 200)
+                                                (translate [0 -12.4 0]))))
+                                (->> (cylinder 6.8 200)
+                                     (with-fn 250)
+                                     (translate [-6.15 -0.98 0]))
+                                (->> (cylinder 6.8 200)
+                                     (with-fn 250)
+                                     (translate [6.15 -0.98 0]))
+                                (->> (cylinder 5.9 200)
+                                     (with-fn 250)
+                                     (translate [-6.35 -2 0]))
+                                (scale [1.01, 1, 1]
+                                       (->> (cylinder 5.9 200)
+                                            (with-fn 250)
+                                            (translate [6.35 -2. 0]))))))
+                    cut-bottom) 
+        ]
+        (->> shape
+             (rotate (deg2rad 180) [0 0 1]))
+    )
+)
+
+(def wrist-rest-right
+    (scale [1 1 1] ;;;;scale the wrist rest to the final size after it has been cut
+        (difference
+            (scale [1.08 1.08 1] wrist-rest-right-base)
+            (->> (cube 200 200 200)
+                 (translate [0 0 (+ (+ (/ h-offset 2)
+                                       (- wrist-rest-back-height h-offset))
+                                    100)])
+                 (rotate  (/ (* pi wrist-rest-angle) 180)  [1 0 0])
+                 (rotate  (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0]))
+            (->> (difference
+                  wrist-rest-right-base
+                  (->> (cube 200 200 200)
+                       (translate [0 0 (- (+ (/ h-offset 2)
+                                             (- wrist-rest-back-height h-offset))
+                                          (+ 100  wrist-rest-ledge))])
+                       (rotate (/ (* pi wrist-rest-angle) 180) [1 0 0])
+                       (rotate (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0])))))))
+; end crystalhand wrist rest code copied from old ibnuba repo version
+
+
+(spit "things/wrist-rest-right.scad"
+      (write-scad wrist-rest-right))
+(spit "things/wrist-rest-right-base.scad"
+      (write-scad wrist-rest-right-base))
+
 (def wrist-rest-right-holes
     (if adjustable-wrist-rest-holder-plate
         (difference wrist-rest-right
@@ -1363,7 +1448,10 @@ need to adjust for difference for thumb-z only"
        ]
     (difference (union 
                        bottom-plate-blank
-                       ; (translate [8 -100 0] wrist-rest-right-holes)
+                       (translate [8 -100 0] 
+                           ; (debug wrist-rest-right-holes)
+                           ; (debug wrist-rest-right-stl)
+                       )
                 )
                 screw-cutouts
                 screw-cutouts-fillets
@@ -1457,7 +1545,10 @@ need to adjust for difference for thumb-z only"
             (debug usb-holder)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
-                (translate [8 -100 (- (/ bottom-plate-thickness 2))] wrist-rest-right-holes)
+                (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
+                    (union wrist-rest-right-holes
+                           ; (debug wrist-rest-right-stl)
+                    ))
             )
           )
         ; )
