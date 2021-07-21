@@ -1311,7 +1311,7 @@ need to adjust for difference for thumb-z only"
 (def case-walls-bottom-projection (project
                                     (union
                                      (extrude-linear {:height 0.01
-                                                      :scale 0.997
+                                                      :scale 0.98
                                                       :center true} 
                                          case-walls-bottom
                                      )
