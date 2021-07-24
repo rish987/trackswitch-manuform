@@ -1296,13 +1296,12 @@ need to adjust for difference for thumb-z only"
 (def wrist-rest-right-stl
     (import "../things/wrist-rest-right.stl"))
 
-(def wrist-rest-back-height 29)
-(def wrist-rest-angle 0)
-(def wrist-rest-rotation-angle 0)
-(def wrist-rest-ledge 3.5)
-(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 45))
-(def cut-bottom
-  (->> (cube 300 300 300) (translate [0 0 -150])))
+(def wrist-rest-back-height 22)
+(def wrist-rest-angle -10)
+(def wrist-rest-ledge 3)
+(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 60))
+(def cut-bottom (translate [0 0 -150]
+                           (cube 300 300 300)))
 
 (def h-offset
   (* (Math/tan (/ (* pi wrist-rest-angle) 180)) 88))
@@ -1370,7 +1369,11 @@ need to adjust for difference for thumb-z only"
 
 
 (spit "things/wrist-rest-right.scad"
-      (write-scad wrist-rest-right))
+      (write-scad 
+          (union wrist-rest-right
+                 ; (debug wrist-rest-right-stl)
+          )
+      ))
 (spit "things/wrist-rest-right-base.scad"
       (write-scad wrist-rest-right-base))
 
