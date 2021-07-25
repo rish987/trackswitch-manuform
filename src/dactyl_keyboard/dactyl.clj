@@ -34,12 +34,12 @@
 
 ;select only one of the following
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
-(def use_hotswap true)         ; kailh hotswap holder
-(def use_solderless false)       ; solderless switch plate
+(def use_hotswap false)         ; kailh hotswap holder
+(def use_solderless true)       ; solderless switch plate, RESIN PRINTER RECOMMENDED!
 
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
-(def north_facing true)
+(def north_facing false)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -293,30 +293,51 @@
         diode-row-hole   (->> (cylinder (/ 1.4 2) solderless-cutout-z)
                               (with-fn 30)
                               (translate [3.75 3.05 0]))
-        row-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
-                              (with-fn 30)
-                              (rotate (deg2rad 90) [0 1 0])
-                              (translate [0 5.08 (- wire-channel-offset)])
+
+        row-wire-channel-end-radius 5
+        row-wire-channel-end (->> (circle (/ wire-diameter 2))
+                                  (with-fn 30)
+                                  (translate [row-wire-channel-end-radius 0 0])
+                                  (extrude-rotate {:angle 90})
+                                  (rotate (deg2rad 90) [1 0 0])
+                                  (translate [(+ 7.5 (- row-wire-channel-end-radius)) 
+                                              5.08 
+                                              (+ wire-channel-offset (- row-wire-channel-end-radius))])
+                             )
+        wire-channel     (->> (cylinder (/ wire-diameter 2) 99)
+                              (with-fn 30))
+        row-wire-channel (union
+                             (->> wire-channel
+                                  (rotate (deg2rad 90) [0 1 0])
+                                  (translate [0 5.08 wire-channel-offset])
+                             )
+                             row-wire-channel-end
+                             (->> row-wire-channel-end
+                                  (mirror [1 0 0])
+                             )
                          )
-        col-wire-channel (->> (cylinder (/ wire-diameter 2) 99)
-                              (with-fn 30)
-                              (rotate (deg2rad 90) [1 0 0])
-                              (translate [3.75 4 wire-channel-offset])
+        col-wire-channel-radius 15
+        col-wire-channel (->> (circle (/ wire-diameter 2))
+                              (with-fn 50)
+                              (translate [col-wire-channel-radius 0 0])
+                              (extrude-rotate {:angle 90})
+                              (rotate (deg2rad 135) [0 0 1])
+                              (translate [(+ 3.25 col-wire-channel-radius) 0 (- wire-channel-offset)])
                          )
         diode-pin  (translate [-3.15 3.05 (/ solderless-z 2)]
-                       (cube 2 1 2))
+                       (cube 2 0.75 2))
         diode-wire (translate [2.75 3.05 (/ solderless-z 2)]
-                       (cube 2 1 2))
+                       (cube 2 0.75 2))
         diode-body (translate [-0.2 3.05 (/ solderless-z 2)]
-                       (cube 4 2 3))
-        
+                       (cube 4 1.9 3))
+
         solderless-shape 
             (translate [solderless-offset-x 
                         solderless-offset-y
                         solderless-offset-z]
                 (difference (union switch_socket_base
-                                   ; (debug diode-wire)
-                                   ; (debug diode-pin)
+                                   ;(debug row-wire-channel) ; may have to disable below to appear
+                                   ;(debug col-wire-channel) ; may have to disable below to appear
                             )
                             main-axis-hole
                             plus-hole
