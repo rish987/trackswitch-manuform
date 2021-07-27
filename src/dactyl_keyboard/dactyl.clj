@@ -294,8 +294,9 @@
                               (with-fn 30)
                               (translate [3.75 3.05 0]))
 
+        wire-radius          (/ wire-diameter 2)
         row-wire-channel-end-radius 4
-        row-wire-channel-end (->> (circle (/ wire-diameter 2))
+        row-wire-channel-end (->> (circle wire-radius)
                                   (with-fn 50)
                                   (translate [row-wire-channel-end-radius 0 0])
                                   (extrude-rotate {:angle 90})
@@ -304,10 +305,10 @@
                                               5.08 
                                               (+ wire-channel-offset (- row-wire-channel-end-radius))])
                              )
-        radii (list 8.5 10)
+        radii                 (list 8.5 10)
         row-wire-channel-ends (apply union
                                      (for [radius radii]
-                                         (->> (circle (/ wire-diameter 2))
+                                         (->> (circle wire-radius)
                                               (with-fn 50)
                                               (translate [radius 0 0])
                                               (extrude-rotate {:angle 90})
@@ -319,17 +320,17 @@
                                          )
                                      )
                               )
-        row-wire-channel-radius 45
+        row-wire-channel-curve-radius 45
         row-wire-channel (union
-                             (->> (circle (/ wire-diameter 2))
+                             (->> (circle wire-radius)
                                   (with-fn 50)
-                                  (translate [row-wire-channel-radius 0 0])
+                                  (translate [row-wire-channel-curve-radius 0 0])
                                   (extrude-rotate {:angle 90})
                                   (rotate (deg2rad 90) [1 0 0])
                                   (rotate (deg2rad -45) [0 1 0])
                                   (translate [0 
                                               5.08 
-                                              (+ 0.35 wire-channel-offset (- row-wire-channel-radius))])
+                                              (+ 0.35 wire-channel-offset (- row-wire-channel-curve-radius))])
                              )
                              row-wire-channel-ends
                              row-wire-channel-end
@@ -339,13 +340,13 @@
                                   (mirror [1 0 0])
                              )
                          )
-        col-wire-channel-radius 15
-        col-wire-channel (->> (circle (/ wire-diameter 2))
+        col-wire-channel-curve-radius 15
+        col-wire-channel (->> (circle wire-radius)
                               (with-fn 50)
-                              (translate [col-wire-channel-radius 0 0])
+                              (translate [col-wire-channel-curve-radius 0 0])
                               (extrude-rotate {:angle 90})
                               (rotate (deg2rad 135) [0 0 1])
-                              (translate [(+ 3.25 col-wire-channel-radius) 0 (- wire-channel-offset)])
+                              (translate [(+ 3.25 col-wire-channel-curve-radius) 0 (- wire-channel-offset)])
                          )
         diode-pin  (translate [-3.15 3.05 (/ solderless-z 2)]
                        (cube 2 0.75 2))
@@ -387,16 +388,16 @@
 )
 
 (def switch-dogbone-cutout
-  (let [ cutout-radius 1
+  (let [ cutout-radius 0.75
          cutout (->> (cylinder cutout-radius 99)
-                            (with-fn 15))
-         cutout-x (- (/ keyswitch-width 2) (/ cutout-radius 2))
+                     (with-fn 15))
+         cutout-x (- (/ keyswitch-width  2) (/ cutout-radius 2))
          cutout-y (- (/ keyswitch-height 2) (/ cutout-radius 2))
        ]
     (union
-      (translate [cutout-x cutout-y 0] cutout)
-      (translate [(- cutout-x) cutout-y 0] cutout)
-      (translate [cutout-x (- cutout-y) 0] cutout)
+      (translate [   cutout-x    cutout-y  0] cutout)
+      (translate [(- cutout-x)   cutout-y  0] cutout)
+      (translate [   cutout-x (- cutout-y) 0] cutout)
     )
   )
 )
