@@ -294,25 +294,48 @@
                               (with-fn 30)
                               (translate [3.75 3.05 0]))
 
-        row-wire-channel-end-radius 5
+        row-wire-channel-end-radius 4
         row-wire-channel-end (->> (circle (/ wire-diameter 2))
-                                  (with-fn 30)
+                                  (with-fn 50)
                                   (translate [row-wire-channel-end-radius 0 0])
                                   (extrude-rotate {:angle 90})
                                   (rotate (deg2rad 90) [1 0 0])
-                                  (translate [(+ 7.5 (- row-wire-channel-end-radius)) 
+                                  (translate [(+ 7 (- row-wire-channel-end-radius)) 
                                               5.08 
                                               (+ wire-channel-offset (- row-wire-channel-end-radius))])
                              )
-        wire-channel     (->> (cylinder (/ wire-diameter 2) 99)
-                              (with-fn 30))
+        radii (list 8.5 10)
+        row-wire-channel-ends (apply union
+                                     (for [radius radii]
+                                         (->> (circle (/ wire-diameter 2))
+                                              (with-fn 50)
+                                              (translate [radius 0 0])
+                                              (extrude-rotate {:angle 90})
+                                              (rotate (deg2rad 90) [1 0 0])
+                                              (rotate (deg2rad -90) [0 1 0])
+                                              (translate [(+ 7 (- radius)) 
+                                                          5.08 
+                                                          (+ wire-channel-offset (- radius))])
+                                         )
+                                     )
+                              )
+        row-wire-channel-radius 45
         row-wire-channel (union
-                             (->> wire-channel
-                                  (rotate (deg2rad 90) [0 1 0])
-                                  (translate [0 5.08 wire-channel-offset])
+                             (->> (circle (/ wire-diameter 2))
+                                  (with-fn 50)
+                                  (translate [row-wire-channel-radius 0 0])
+                                  (extrude-rotate {:angle 90})
+                                  (rotate (deg2rad 90) [1 0 0])
+                                  (rotate (deg2rad -45) [0 1 0])
+                                  (translate [0 
+                                              5.08 
+                                              (+ 0.35 wire-channel-offset (- row-wire-channel-radius))])
                              )
+                             row-wire-channel-ends
                              row-wire-channel-end
-                             (->> row-wire-channel-end
+                             (->> (union row-wire-channel-end
+                                         row-wire-channel-ends
+                                  )
                                   (mirror [1 0 0])
                              )
                          )
@@ -336,8 +359,8 @@
                         solderless-offset-y
                         solderless-offset-z]
                 (difference (union switch_socket_base
-                                   ;(debug row-wire-channel) ; may have to disable below to appear
-                                   ;(debug col-wire-channel) ; may have to disable below to appear
+                                   ; (debug row-wire-channel) ; may have to disable below to appear
+                                   ; (debug col-wire-channel) ; may have to disable below to appear
                             )
                             main-axis-hole
                             plus-hole
