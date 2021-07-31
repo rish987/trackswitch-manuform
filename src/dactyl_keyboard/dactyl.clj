@@ -266,10 +266,7 @@
         switch_socket_base  (cube solderless-x 
                                   solderless-y 
                                   solderless-z)
-        diode_pin_angle      5 ;Upward angle of switch pin in contact 
-                               ;with diode anode (gives more reliable
-                               ;connections but slightly deforms pin)
-        wire-diameter        2.15
+        wire-diameter        1.75
         wire-channel-offset  (-(/ solderless-z 2) (/ wire-diameter 3))
         led-cutout-x-offset  0
         led-cutout-y-offset -6
@@ -277,22 +274,31 @@
                                  (cube square-led-size 
                                        square-led-size 
                                        solderless-cutout-z))
-        main-axis-hole      (->> (cylinder (/ 4.2 2) solderless-cutout-z)
+        main-axis-hole      (->> (cylinder (/ 4.1 2) solderless-cutout-z)
                                  (with-fn 30))
-        plus-hole           (->> (cylinder (/ 1.4 2) solderless-cutout-z)
+        plus-hole           (->> (cylinder (/ 1.55 2) solderless-cutout-z)
                                  (with-fn 30)
+                                 (scale [1 0.85 1])
                                  (translate [-3.81 2.54 0]))
-        minus-hole          (->> (cylinder (/ 2 2) solderless-cutout-z)
+        minus-hole          (->> (cylinder (/ 1.55 2) solderless-cutout-z)
                                  (with-fn 30)
+                                 (scale [1 0.85 1])
                                  (translate [2.54 5.08 0]))
-        friction-hole       (->> (cylinder (/ 2.1 2) solderless-cutout-z)
+        friction-hole       (->> (cylinder (/ 1.95 2) solderless-cutout-z)
                                  (with-fn 30))
         friction-hole-right (translate [ 5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
 
-        diode-row-hole   (->> (cylinder (/ 1.4 2) solderless-cutout-z)
+        diode-wire-dia 0.75
+        diode-row-hole   (->> (cylinder (/ diode-wire-dia 2) solderless-cutout-z)
                               (with-fn 30)
-                              (translate [3.75 3.05 0]))
+                              (translate [3.65 3.0 0]))
+        diode-pin  (translate [-3.15 3.0 (/ solderless-z 2)]
+                       (cube 2 diode-wire-dia 2))
+        diode-wire (translate [2.75 3.0 (/ solderless-z 2)]
+                       (cube 2 diode-wire-dia 2))
+        diode-body (translate [-0.2 3.0 (/ solderless-z 2)]
+                       (cube 4 1.95 3))
 
         wire-radius          (/ wire-diameter 2)
         row-wire-channel-end-radius 4
@@ -305,7 +311,7 @@
                                               5.08 
                                               (+ wire-channel-offset (- row-wire-channel-end-radius))])
                              )
-        radii                 (list 8.5 10)
+        radii                 (list 8 8.5 9.25 10 11)
         row-wire-channel-ends (apply union
                                      (for [radius radii]
                                          (->> (circle wire-radius)
@@ -332,8 +338,8 @@
                                               5.08 
                                               (+ 0.35 wire-channel-offset (- row-wire-channel-curve-radius))])
                              )
-                             row-wire-channel-ends
                              row-wire-channel-end
+                             row-wire-channel-ends
                              (->> (union row-wire-channel-end
                                          row-wire-channel-ends
                                   )
@@ -346,14 +352,10 @@
                               (translate [col-wire-channel-curve-radius 0 0])
                               (extrude-rotate {:angle 90})
                               (rotate (deg2rad 135) [0 0 1])
-                              (translate [(+ 3.25 col-wire-channel-curve-radius) 0 (- wire-channel-offset)])
+                              (translate [(+ 3.25 col-wire-channel-curve-radius) 
+                                          0 
+                                          (- 0.2 wire-channel-offset)])
                          )
-        diode-pin  (translate [-3.15 3.05 (/ solderless-z 2)]
-                       (cube 2 0.75 2))
-        diode-wire (translate [2.75 3.05 (/ solderless-z 2)]
-                       (cube 2 0.75 2))
-        diode-body (translate [-0.2 3.05 (/ solderless-z 2)]
-                       (cube 4 1.9 3))
 
         solderless-shape 
             (translate [solderless-offset-x 
@@ -361,6 +363,7 @@
                         solderless-offset-z]
                 (difference (union switch_socket_base
                                    ; (debug row-wire-channel) ; may have to disable below to appear
+                                   ; (debug row-wire-channel-ends) ; may have to disable below to appear
                                    ; (debug col-wire-channel) ; may have to disable below to appear
                             )
                             main-axis-hole
