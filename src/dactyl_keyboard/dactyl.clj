@@ -311,21 +311,11 @@
                                               5.08 
                                               (+ wire-channel-offset (- row-wire-channel-end-radius))])
                              )
-        radii                 (list 8 8.5 9.25 10 11)
-        row-wire-channel-ends (apply union
-                                     (for [radius radii]
-                                         (->> (circle wire-radius)
-                                              (with-fn 50)
-                                              (translate [radius 0 0])
-                                              (extrude-rotate {:angle 90})
-                                              (rotate (deg2rad 90) [1 0 0])
-                                              (rotate (deg2rad -90) [0 1 0])
-                                              (translate [(+ 7 (- radius)) 
-                                                          5.08 
-                                                          (+ wire-channel-offset (- radius))])
-                                         )
-                                     )
-                              )
+        row-wire-channel-ends (translate [8 5.08 -1.15] 
+                                  (union (cube 3 wire-diameter solderless-z)
+                                         (translate [(/ 3 -2) 0 0] 
+                                             (->> (cylinder (/ wire-diameter 2) solderless-z)
+                                                  (with-fn 50)))))
         row-wire-channel-curve-radius 45
         row-wire-channel (union
                              (->> (circle wire-radius)
