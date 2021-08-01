@@ -1335,9 +1335,16 @@ need to adjust for difference for thumb-z only"
     (import "../things/wrist-rest-right.stl"))
 
 (def wrist-rest-x-angle 16)
-(def wrist-rest-y-angle-adj 0) ; adj to tenting angle for wrist rest
+(def wrist-rest-y-angle-adj 0)  ; additional tenting angle for wrist rest
+(def wrist-rest-z-height-adj 8) ; additional z height for wrist rest
+
 (def wrist-rest-recess-depth 2.5)
-(def wrirst-rest-base-zheight (+ 9 wrist-rest-recess-depth))
+(def wrirst-rest-base-zheight (+ wrist-rest-z-height-adj 
+                                 wrist-rest-recess-depth))
+
+;magic numbers to tweak how well the gel wrist rest is held
+(def wrist-rest-recess-x-scale 4.25)
+(def wrist-rest-recess-y-scale 4.33)
 
 (def wrist-rest-right-base
     (let [
@@ -1350,7 +1357,9 @@ need to adjust for difference for thumb-z only"
                                    (translate [0 -13.4 0]))
                               (->> (cube 18 10 zheight-cut)
                                    (translate [0 -12.4 0])))
-          shape (scale [4.25 4.33 1] ;magic numbers to tweak how well gel wrist rest is held
+          shape (scale [wrist-rest-recess-x-scale 
+                        wrist-rest-recess-y-scale 
+                        1]
                     (union
                         (difference
                             (scale [1.3, 1, 1]
@@ -1388,13 +1397,16 @@ need to adjust for difference for thumb-z only"
     )
 )
 
-(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 45))
 (defn wrist-rest-angler [shape]
-    (->> shape
-         (rotate  (/ (* pi wrist-rest-x-angle) 180)  [1 0 0])
-         (rotate  (/ (* pi wrist-rest-y-angle-adj) 180) [0 1 0])
-         (rotate  (/ (* pi (wrist-rest-y-angle tenting-angle)) 180) [0 1 0])
-         (translate [0 0 (* 3 wrirst-rest-base-zheight)])
+    (let [wrist-rest-y-angle (* tenting-angle 45)
+          angled-shape (->> shape
+                            (rotate  (/ (* pi wrist-rest-x-angle)     180) [1 0 0])
+                            (rotate  (/ (* pi wrist-rest-y-angle)     180) [0 1 0])
+                            (rotate  (/ (* pi wrist-rest-y-angle-adj) 180) [0 1 0])
+                            (translate [0 0 (* 3 wrirst-rest-base-zheight)])
+                       )
+         ]
+         angled-shape
     )
 )
 
@@ -1412,17 +1424,23 @@ need to adjust for difference for thumb-z only"
                    recess-cut
                )
            top-angled (wrist-rest-angler top)
-           base (difference 
-                    (hull (wrist-rest-angler 
-                            (translate [0 0 (- wrist-rest-recess-depth)]
-                                top))
-                        wrist-rest-right-base
+           base  (translate [0 0 150]
+                     (extrude-linear { :height 300 } 
+                         (project 
+                             (scale [0.999 0.999 1] 
+                                 top-angled)
+                         )
+                     )
+                 )
+           base-cut (hull top-angled
+                          (translate [0 0 300] base)
                     )
-                    (wrist-rest-angler outline)
-                )
+           base-trimmed (difference base
+                                    base-cut
+                        )
          ]
          (union top-angled
-                base
+                base-trimmed
                 ; (debug thingy)
          )
     )
