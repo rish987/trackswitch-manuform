@@ -1337,72 +1337,75 @@ need to adjust for difference for thumb-z only"
 (def wrist-rest-back-height 22)
 (def wrist-rest-angle -10)
 (def wrist-rest-ledge 3)
-(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 60))
-(def cut-bottom (translate [0 0 -150]
+(def wrist-rest-cut-bottom (translate [0 0 -150]
                            (cube 300 300 300)))
-
-(def h-offset
-  (* (Math/tan (/ (* pi wrist-rest-angle) 180)) 88))
-
-(def scale-cos
-  (Math/cos (/ (* pi wrist-rest-angle) 180)))
-(def scale-amount
-  (/ (* 83.7 scale-cos) 19.33))
+(defn wrist-rest-y-angle [tenting-angle] (* tenting-angle 60))
 
 (def wrist-rest-right-base
-    (let [shape (difference
-                    (scale [4.25 scale-amount 1]
-                        (difference
-                            (union
-                                (difference
-                                    (scale [1.3, 1, 1]
-                                           (->> (cylinder 10 200)
-                                                (with-fn 250)
-                                                (translate [0 0 0])))
-                                    (scale [1.1, 1, 1]
-                                           (->> (cylinder 7 200)
-                                                (with-fn 250)
-                                                (translate [0 -13.4 0]))
-                                           (->> (cube 18 10 200)
-                                                (translate [0 -12.4 0]))))
-                                (->> (cylinder 6.8 200)
-                                     (with-fn 250)
-                                     (translate [-6.15 -0.98 0]))
-                                (->> (cylinder 6.8 200)
-                                     (with-fn 250)
-                                     (translate [6.15 -0.98 0]))
-                                (->> (cylinder 5.9 200)
-                                     (with-fn 250)
-                                     (translate [-6.35 -2 0]))
-                                (scale [1.01, 1, 1]
-                                       (->> (cylinder 5.9 200)
+    (let [scale-cos (Math/cos (/ (* pi wrist-rest-angle) 180))
+          scale-amount (/ (* 83.7 scale-cos) 19.33)
+          shape (scale [4.25 scale-amount 1]
+                    (difference
+                        (union
+                            (difference
+                                (scale [1.3, 1, 1]
+                                       (->> (cylinder 10 200)
                                             (with-fn 250)
-                                            (translate [6.35 -2. 0]))))))
-                    cut-bottom) 
+                                            (translate [0 0 0])))
+                                (scale [1.1, 1, 1]
+                                       (->> (cylinder 7 200)
+                                            (with-fn 250)
+                                            (translate [0 -13.4 0]))
+                                       (->> (cube 18 10 200)
+                                            (translate [0 -12.4 0]))))
+                            (->> (cylinder 6.8 200)
+                                 (with-fn 250)
+                                 (translate [-6.15 -0.98 0]))
+                            (->> (cylinder 6.8 200)
+                                 (with-fn 250)
+                                 (translate [6.15 -0.98 0]))
+                            (->> (cylinder 5.9 200)
+                                 (with-fn 250)
+                                 (translate [-6.35 -2 0]))
+                            (scale [1.01, 1, 1]
+                                   (->> (cylinder 5.9 200)
+                                        (with-fn 250)
+                                        (translate [6.35 -2. 0]))))))
         ]
-        (->> shape
-             (rotate (deg2rad 180) [0 0 1]))
+        (difference (->> shape
+                         (rotate (deg2rad 180) [0 0 1]))
+                    wrist-rest-cut-bottom
+        )
     )
 )
 
 (def wrist-rest-right
-    (scale [1 1 1] ;;;;scale the wrist rest to the final size after it has been cut
-        (difference
-            (scale [1.08 1.08 1] wrist-rest-right-base)
-            (->> (cube 200 200 200)
-                 (translate [0 0 (+ (+ (/ h-offset 2)
-                                       (- wrist-rest-back-height h-offset))
-                                    100)])
-                 (rotate  (/ (* pi wrist-rest-angle) 180)  [1 0 0])
-                 (rotate  (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0]))
-            (->> (difference
-                  wrist-rest-right-base
-                  (->> (cube 200 200 200)
-                       (translate [0 0 (- (+ (/ h-offset 2)
-                                             (- wrist-rest-back-height h-offset))
-                                          (+ 100  wrist-rest-ledge))])
-                       (rotate (/ (* pi wrist-rest-angle) 180) [1 0 0])
-                       (rotate (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0])))))))
+    (let [ h-offset (* (Math/tan (/ (* pi wrist-rest-angle) 180)) 88)
+           shape (difference
+                     (scale [1.08 1.08 1] wrist-rest-right-base)
+                     (->> (cube 200 200 200)
+                          (translate [0 0 (+ (+ (/ h-offset 2)
+                                                (- wrist-rest-back-height h-offset))
+                                             100)])
+                              (rotate  (/ (* pi wrist-rest-angle) 180)  [1 0 0])
+                              (rotate  (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0])
+                     )
+                     (->> (difference
+                              wrist-rest-right-base
+                              (->> (cube 200 200 200)
+                                   (translate [0 0 (- (+ (/ h-offset 2)
+                                                         (- wrist-rest-back-height h-offset))
+                                                      (+ 100  wrist-rest-ledge))])
+                                   (rotate (/ (* pi wrist-rest-angle) 180) [1 0 0])
+                                   (rotate (/ (* pi (wrist-rest-y-angle tenting-angle)) 180)  [1 1 0])
+                              )
+                          )
+                     )
+                 )
+         ]
+         shape
+    )
+)
 ; end crystalhand wrist rest code copied from old ibnuba repo version
 
 
