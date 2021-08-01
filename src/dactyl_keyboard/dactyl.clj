@@ -39,7 +39,7 @@
 
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
-(def north_facing false)
+(def north_facing true)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -1524,8 +1524,10 @@ need to adjust for difference for thumb-z only"
     
     (if recess-bottom-plate
         (union
-            (translate [0 0 (- (+ 20 bottom-plate-thickness))] (cube 350 350 40))
-            (translate [0 0 (- (/ bottom-plate-thickness 2))] bottom-plate)
+            (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
+                       (cube 350 350 40))
+            (translate [0 0 (- (/ bottom-plate-thickness 2))] 
+                       (scale [1 1 1.1] bottom-plate))
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
