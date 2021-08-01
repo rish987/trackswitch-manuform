@@ -1331,21 +1331,16 @@ need to adjust for difference for thumb-z only"
 )
 
 ; begin heavily modified crystalhand wrist rest code
-(def wrist-rest-right-stl
-    (import "../things/wrist-rest-right.stl"))
-
 (def wrist-rest-x-angle 16)
-(def wrist-rest-y-angle-adj 0)  ; additional tenting angle for wrist rest
-(def wrist-rest-z-height-adj 8) ; additional z height for wrist rest
-
-(def wrist-rest-recess-depth 2.5)
-(def wrirst-rest-base-zheight (+ wrist-rest-z-height-adj 
-                                 wrist-rest-recess-depth))
+(def wrist-rest-y-angle-adj 0)   ; additional tenting angle for wrist rest
+(def wrist-rest-z-height-adj 27) ; additional z height for wrist rest
 
 ;magic numbers to tweak how well the gel wrist rest is held
+(def wrist-rest-recess-depth 2.5)
 (def wrist-rest-recess-x-scale 4.25)
 (def wrist-rest-recess-y-scale 4.33)
 
+(def wrirst-rest-base-zheight (* 2.01 wrist-rest-recess-depth))
 (def wrist-rest-right-base
     (let [
           wrist-rest-cut-bottom (translate [0 0 -150]
@@ -1403,7 +1398,8 @@ need to adjust for difference for thumb-z only"
                             (rotate  (/ (* pi wrist-rest-x-angle)     180) [1 0 0])
                             (rotate  (/ (* pi wrist-rest-y-angle)     180) [0 1 0])
                             (rotate  (/ (* pi wrist-rest-y-angle-adj) 180) [0 1 0])
-                            (translate [0 0 (* 3 wrirst-rest-base-zheight)])
+                            (translate [0 0 (+ wrist-rest-z-height-adj 
+                                               wrirst-rest-base-zheight)])
                        )
          ]
          angled-shape
@@ -1451,7 +1447,7 @@ need to adjust for difference for thumb-z only"
 (spit "things/wrist-rest-right.scad"
       (write-scad 
           (union wrist-rest-right
-                 ; (debug wrist-rest-right-stl)
+                 ; (debug other thingy)
           )
       ))
 (spit "things/wrist-rest-right-base.scad"
