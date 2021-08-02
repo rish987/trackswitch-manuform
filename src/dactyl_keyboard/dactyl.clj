@@ -1255,8 +1255,8 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder (import "../things/usb_holder_w_reset.stl"))
 (def usb-holder-cutout-height 30.3)
-(def usb-holder-clearance 0.05)
-(def usb-holder-bottom-offset 0.05)
+(def usb-holder-clearance 0.15)
+(def usb-holder-bottom-offset 0.15)
 
 (def usb-holder-offset-coordinates 
   (if use_hotswap
@@ -1333,10 +1333,10 @@ need to adjust for difference for thumb-z only"
 ; begin heavily modified crystalhand wrist rest code
 (def wrist-rest-x-angle 16)
 (def wrist-rest-y-angle-adj 0)   ; additional tenting angle for wrist rest
-(def wrist-rest-z-height-adj 27) ; additional z height for wrist rest
+(def wrist-rest-z-height-adj 23) ; additional z height for wrist rest
 
 ;magic numbers to tweak how well the gel wrist rest is held
-(def wrist-rest-recess-depth 2.5)
+(def wrist-rest-recess-depth 4)
 (def wrist-rest-recess-x-scale 4.25)
 (def wrist-rest-recess-y-scale 4.33)
 
@@ -1459,7 +1459,7 @@ need to adjust for difference for thumb-z only"
                     (translate [-10 -5 0] 
                                (screw-insert-wrist-rest-four screw-insert-radius
                                                              screw-insert-radius
-                                                             99))
+                                                             999))
                     (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
                     (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
         )
