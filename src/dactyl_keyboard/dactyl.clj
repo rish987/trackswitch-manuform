@@ -37,9 +37,10 @@
 (def use_hotswap false)         ; kailh hotswap holder
 (def use_solderless true)       ; solderless switch plate, RESIN PRINTER RECOMMENDED!
 
+(def north_facing true)
+(def extra-curve-bottom-row true)
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
-(def north_facing true)
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -559,15 +560,32 @@
 
 (defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn column row shape]
   (let [column-angle (* row-curvature (- centercol column))
+        extra-rotation (if (and extra-curve-bottom-row
+                               (.contains [2 3] column)
+                               (= row lastrow))
+                           -0.3
+                           0)
+        extra-rotation-offset (if (and extra-curve-bottom-row
+                                       (.contains [2 3] column)
+                                       (= row lastrow))
+                           0.05
+                           0)
+        extra-rotation-zheight (if (and extra-curve-bottom-row 
+                                        (.contains [2 3] column)
+                                        (= row lastrow))
+                   4
+                   0)
         placed-shape (->> shape
+                          (rotate-x-fn extra-rotation )
+                          (translate-fn [0 0 extra-rotation-zheight])
                           (translate-fn [0 0 (- (row-radius column))])
-                          (rotate-x-fn (* (column-curvature column) (- (centerrow column) row)))
+                          (rotate-x-fn (* (+ extra-rotation-offset (column-curvature column)) 
+                                          (- (centerrow column) row)))
                           (translate-fn [0 0 (row-radius column)])
                           (translate-fn [0 0 (- column-radius)])
                           (rotate-y-fn column-angle)
                           (translate-fn [0 0 column-radius])
-                          (translate-fn (column-offset column)))
-        column-z-delta (* column-radius (- 1 (Math/cos column-angle)))]
+                          (translate-fn (column-offset column)))]
 
     (->> placed-shape
          (rotate-y-fn tenting-angle)
@@ -610,7 +628,7 @@
                row rows
                :when (or (.contains [2 3] column)
                          (not= row lastrow))]
-           (->> shape
+             (->> shape
                 (key-place column row)))))
 (defn key-holes [mirror-internals]
   (key-places (single-plate mirror-internals)))
