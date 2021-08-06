@@ -36,11 +36,14 @@
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
 (def use_hotswap false)         ; kailh hotswap holder
 (def use_solderless true)       ; solderless switch plate, RESIN PRINTER RECOMMENDED!
+(def wire-diameter 1.75)        ; outer diameter of silicone covered 22awg ~1.75mm 26awg ~1.47mm)
 
 (def north_facing true)
 (def extra-curve-bottom-row true)
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
+
+(def rendered-caps true) ; slows down model viewing but much nicer looking for more accurate clearances
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -267,8 +270,8 @@
         switch_socket_base  (cube solderless-x 
                                   solderless-y 
                                   solderless-z)
-        wire-diameter        1.75
-        wire-channel-offset  (-(/ solderless-z 2) (/ wire-diameter 3))
+        wire-channel-diameter (+ 0.3 wire-diameter); elegoo saturn prints 1.75mm tubes ~1.62mm
+        wire-channel-offset  (-(/ solderless-z 2) (/ wire-channel-diameter 3))
         led-cutout-x-offset  0
         led-cutout-y-offset -6
         led-cutout          (translate [0 -6 0] 
@@ -301,7 +304,7 @@
         diode-body (translate [-0.2 3.0 (/ solderless-z 2)]
                        (cube 4 1.95 3))
 
-        wire-radius          (/ wire-diameter 2)
+        wire-radius          (/ wire-channel-diameter 2)
         row-wire-channel-end-radius 4
         row-wire-channel-end (->> (circle wire-radius)
                                   (with-fn 50)
@@ -313,9 +316,9 @@
                                               (+ wire-channel-offset (- row-wire-channel-end-radius))])
                              )
         row-wire-channel-ends (translate [8 5.08 -1.15] 
-                                  (union (cube 3 wire-diameter solderless-z)
+                                  (union (cube 3 wire-channel-diameter solderless-z)
                                          (translate [(/ 3 -2) 0 0] 
-                                             (->> (cylinder (/ wire-diameter 2) solderless-z)
+                                             (->> (cylinder (/ wire-channel-diameter 2) solderless-z)
                                                   (with-fn 50)))))
         row-wire-channel-curve-radius 45
         row-wire-channel (union
@@ -508,9 +511,13 @@
                                 (->> keycap-top
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
                                      (translate [0 0 sa-height])))
+           key-cap-display (if rendered-caps
+                               (translate [0 0 0] 
+                                   (import "../things/SA-R3.stl"))
+                               key-cap)
          ]
-         (union 
-           (->> key-cap
+         (union
+           (->> key-cap-display
                 (translate [0 0 sa-cap-bottom-height])
                 (color KEYCAP))
            (debug (->> key-cap
@@ -1616,10 +1623,11 @@ need to adjust for difference for thumb-z only"
     (union
       (key-holes mirror-internals)
       (if use_flex_pcb_holder flex-pcb-holders)
-      connectors
+      caps
+      ; connectors
     )
     
-    caps-cutout
+    ; caps-cutout
     (if (not (or use_hotswap use_solderless)) key-space-below)
   ))
 (spit "things/alphas.scad"
