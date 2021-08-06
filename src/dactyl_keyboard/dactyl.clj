@@ -1209,7 +1209,7 @@ need to adjust for difference for thumb-z only"
 (def thumb-wall
   (union 
     ; thumb walls
-    (->> (wall-brace thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
+    (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
     (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
     (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
     (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl) (color GRE))
@@ -1258,7 +1258,7 @@ need to adjust for difference for thumb-z only"
          (->> (screw-insert 0             1 bottom-radius top-radius height [ -6  -13   screw-insert-bottom-offset]) (color PIN))    ; left
          (->> (screw-insert 0       lastrow bottom-radius top-radius height [-24  -15   screw-insert-bottom-offset]) (color BRO))    ;thumb
          (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height [ 15    1.5 screw-insert-bottom-offset]) (color PUR))    ; top right
-         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height [ 17.5  9.5 screw-insert-bottom-offset]) (color BLA)) )) ;bottom middle
+         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height [ 16.5  7.5 screw-insert-bottom-offset]) (color BLA)) )) ;bottom middle
 
 ; Hole Depth Y: 4.4
 (def screw-insert-height 5.5)
@@ -1358,7 +1358,7 @@ need to adjust for difference for thumb-z only"
 ; begin heavily modified crystalhand wrist rest code
 (def wrist-rest-x-angle 16)
 (def wrist-rest-y-angle-adj 0)   ; additional tenting angle for wrist rest
-(def wrist-rest-z-height-adj 23) ; additional z height for wrist rest
+(def wrist-rest-z-height-adj 25) ; additional z height for wrist rest
 
 ;magic numbers to tweak how well the gel wrist rest is held
 (def wrist-rest-recess-depth 4)
@@ -1505,7 +1505,7 @@ need to adjust for difference for thumb-z only"
                                          case-walls-bottom
                                      )
                                      (extrude-linear {:height 0.01
-                                                      :scale 1.11
+                                                      :scale 1.05
                                                       :center true} 
                                          case-walls-bottom
                                      )
@@ -1544,7 +1544,7 @@ need to adjust for difference for thumb-z only"
                                    )
                                    (project
                                        (if recess-bottom-plate
-                                               usb-holder
+                                           usb-holder
                                        )
                                    )
                                )
