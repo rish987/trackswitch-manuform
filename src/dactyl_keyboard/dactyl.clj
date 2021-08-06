@@ -528,7 +528,8 @@
 
 (defn sa-cap-cutout [keysize]
     (let [ cutout-x 0.3
-           cutout-y 1.3
+           cutout-y 1.95
+           cutout-z-offset (- sa-cap-bottom-height-pressed 2.99)
            bl2 (case keysize 
                      1   (+ (/ sa-length 2) cutout-y)
                      1.5 (+ (/ sa-length 2) cutout-y)
@@ -546,7 +547,7 @@
                                      (translate [0 0 sa-height])))
          ]
          (->> key-cap-cutout
-              (translate [0 0 (- sa-cap-bottom-height-pressed 2.99)]))
+              (translate [0 0 cutout-z-offset]))
     )
 )
 
