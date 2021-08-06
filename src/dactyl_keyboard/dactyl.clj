@@ -570,17 +570,17 @@
         extra-rotation (if (and extra-curve-bottom-row
                                (.contains [2 3] column)
                                (= row lastrow))
-                           -0.3
+                           -0.33
                            0)
         extra-rotation-offset (if (and extra-curve-bottom-row
                                        (.contains [2 3] column)
                                        (= row lastrow))
-                           0.05
+                           0.07
                            0)
         extra-rotation-zheight (if (and extra-curve-bottom-row 
                                         (.contains [2 3] column)
                                         (= row lastrow))
-                   4
+                   5.5
                    0)
         placed-shape (->> shape
                           (rotate-x-fn extra-rotation )
