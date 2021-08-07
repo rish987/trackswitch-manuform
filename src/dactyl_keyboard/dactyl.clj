@@ -873,7 +873,7 @@ need to adjust for difference for thumb-z only"
 
 ; convexer
 (defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14.5 -10 5] shape)) ; right
-(defn thumb-m-place [shape] (thumb-place [10 -23 20] [-33 -15.2 -6] shape)) ; middle
+(defn thumb-m-place [shape] (thumb-place [8 -21.5 20] [-33 -15.2 -6] shape)) ; middle
 (defn thumb-l-place [shape] (thumb-place [6 -5 25] [-53 -23.5 -11.5] shape)) ; left
 
 (defn thumb-layout [shape]
@@ -882,7 +882,10 @@ need to adjust for difference for thumb-z only"
     (thumb-m-place shape)
     (thumb-l-place shape)))
 
-(def thumbcaps (thumb-layout (sa-cap 1)))
+(def thumbcaps (thumb-layout (if rendered-caps  
+                                    (translate [0 0 sa-cap-bottom-height] 
+                                        (import "../things/SA-R3C_16.stl"))
+                                    (sa-cap 1))))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
 (defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
 (def thumb-space-below (thumb-layout switch-bottom))
