@@ -75,7 +75,7 @@
                   (>= column 5) [0 -14  6  ] ;;pinky outer
                   :else [0 0 0]))
 
-(def keyboard-z-offset 22.5)  ; controls overall height
+(def keyboard-z-offset 23.5)  ; controls overall height
 
 (def  extra-width 2)          ; extra horizontal space between the base of keys
 (defn extra-height [column]   ; extra vertical space between the base of keys
@@ -1359,7 +1359,7 @@ need to adjust for difference for thumb-z only"
 ; begin heavily modified crystalhand wrist rest code
 (def wrist-rest-x-angle 16)
 (def wrist-rest-y-angle-adj 0)   ; additional tenting angle for wrist rest
-(def wrist-rest-z-height-adj 25) ; additional z height for wrist rest
+(def wrist-rest-z-height-adj 26) ; additional z height for wrist rest
 
 ;magic numbers to tweak how well the gel wrist rest is held
 (def wrist-rest-recess-depth 4)
