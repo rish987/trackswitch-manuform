@@ -1037,7 +1037,7 @@ need to adjust for difference for thumb-z only"
       ; (place2 (translate (wall-locate2 dx2 dy2) post2))
       (place2 (translate (wall-locate2 dx2 dy2) post2))
       )
-    (color BRO))
+    (color YEL))
     (->> (bottom-hull
       (place1 (translate (wall-locate2 dx1 dy1) post1))
       ; (place1 (translate (wall-locate2 dx1 dy1) post1))
@@ -1226,7 +1226,7 @@ need to adjust for difference for thumb-z only"
     (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br) (color PIN))
     (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
     (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
-    (->> (wall-brace-back   thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr) (color BRO))
+    (->> (wall-brace-deeper   thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr) (color BRO))
     (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place -1  0 fat-web-post-tl) (color BLA))
   )
 )
