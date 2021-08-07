@@ -729,10 +729,10 @@
                  (key-place (inc column) row plate-post-bl)
                  (key-place      column  row plate-post-br))
                (triangle-hulls
-                 (key-place (inc column) row web-post-tl)
-                 (key-place      column  row web-post-tr)
-                 (key-place (inc column) row web-post-bl)
-                 (key-place      column  row web-post-br))
+                 (key-place (inc column) row fat-web-post-tl)
+                 (key-place      column  row fat-web-post-tr)
+                 (key-place (inc column) row fat-web-post-bl)
+                 (key-place      column  row fat-web-post-br))
               ) 
            )
 
@@ -740,10 +740,10 @@
            (for [column columns
                  row (range 0 cornerrow)]
              (triangle-hulls
-               (key-place column row web-post-bl)
-               (key-place column row web-post-br)
-               (key-place column (inc row) web-post-tl)
-               (key-place column (inc row) web-post-tr)))
+               (key-place column row fat-web-post-bl)
+               (key-place column row fat-web-post-br)
+               (key-place column (inc row) fat-web-post-tl)
+               (key-place column (inc row) fat-web-post-tr)))
 
            ;; Diagonal connections
            (for [column (range 0 (dec ncols))
@@ -755,10 +755,10 @@
                  (key-place (inc column)      row  plate-post-bl)
                  (key-place (inc column) (inc row) plate-post-tl))
                (triangle-hulls
-                 (key-place      column       row  web-post-br)
-                 (key-place      column  (inc row) web-post-tr)
-                 (key-place (inc column)      row  web-post-bl)
-                 (key-place (inc column) (inc row) web-post-tl))
+                 (key-place      column       row  fat-web-post-br)
+                 (key-place      column  (inc row) fat-web-post-tr)
+                 (key-place (inc column)      row  fat-web-post-bl)
+                 (key-place (inc column) (inc row) fat-web-post-tl))
              )
            )
            
@@ -770,22 +770,22 @@
                     (key-place 2 lastrow plate-post-tr)
                     (key-place 3 lastrow plate-post-tl)
                     (key-place 3 cornerrow plate-post-bl)
-                    (key-place 3 lastrow web-post-tl)
-                    (key-place 3 cornerrow web-post-bl)
-                    (key-place 3 lastrow web-post-tr)
-                    (key-place 3 cornerrow web-post-br)
+                    (key-place 3 lastrow fat-web-post-tl)
+                    (key-place 3 cornerrow fat-web-post-bl)
+                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 cornerrow fat-web-post-br)
                     (key-place 3 lastrow plate-post-tr)
                     (key-place 3 cornerrow plate-post-br)
                     (key-place 4 cornerrow plate-post-bl))
                   (triangle-hulls
-                    (key-place 2 lastrow web-post-br)
-                    (key-place 3 lastrow web-post-bl)
-                    (key-place 2 lastrow web-post-tr)
-                    (key-place 3 lastrow web-post-tl)
-                    (key-place 3 cornerrow web-post-bl)
-                    (key-place 3 lastrow web-post-tr)
-                    (key-place 3 cornerrow web-post-br)
-                    (key-place 4 cornerrow web-post-bl)))
+                    (key-place 2 lastrow fat-web-post-br)
+                    (key-place 3 lastrow fat-web-post-bl)
+                    (key-place 2 lastrow fat-web-post-tr)
+                    (key-place 3 lastrow fat-web-post-tl)
+                    (key-place 3 cornerrow fat-web-post-bl)
+                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 cornerrow fat-web-post-br)
+                    (key-place 4 cornerrow fat-web-post-bl)))
                 (color BLA))
 
            (->> (if use_hotswap
@@ -793,20 +793,20 @@
                     (key-place 1 cornerrow plate-post-br)
                     (key-place 2 lastrow plate-post-tl)
                     (key-place 2 cornerrow plate-post-bl)
-                    (key-place 2 lastrow web-post-tl)
-                    (key-place 2 cornerrow web-post-bl)
-                    (key-place 2 lastrow web-post-tr)
-                    (key-place 2 cornerrow web-post-br)
+                    (key-place 2 lastrow fat-web-post-tl)
+                    (key-place 2 cornerrow fat-web-post-bl)
+                    (key-place 2 lastrow fat-web-post-tr)
+                    (key-place 2 cornerrow fat-web-post-br)
                     (key-place 2 lastrow plate-post-tr)
                     (key-place 2 cornerrow plate-post-br)
                     (key-place 3 cornerrow plate-post-bl))
                   (triangle-hulls
-                    (key-place 1 cornerrow web-post-br)
-                    (key-place 2 lastrow web-post-tl)
-                    (key-place 2 cornerrow web-post-bl)
-                    (key-place 2 lastrow web-post-tr)
-                    (key-place 2 cornerrow web-post-br)
-                    (key-place 3 cornerrow web-post-bl)))
+                    (key-place 1 cornerrow fat-web-post-br)
+                    (key-place 2 lastrow fat-web-post-tl)
+                    (key-place 2 cornerrow fat-web-post-bl)
+                    (key-place 2 lastrow fat-web-post-tr)
+                    (key-place 2 cornerrow fat-web-post-br)
+                    (key-place 3 cornerrow fat-web-post-bl)))
                 (color GRE))
 
            (->> (if use_hotswap
@@ -816,10 +816,10 @@
                     (key-place 3 lastrow plate-post-tr)
                     (key-place 4 cornerrow plate-post-bl))
                   (triangle-hulls
-                    (key-place 3 lastrow web-post-tr)
-                    (key-place 3 lastrow web-post-br)
-                    (key-place 3 lastrow web-post-tr)
-                    (key-place 4 cornerrow web-post-bl)))
+                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 lastrow fat-web-post-br)
+                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 4 cornerrow fat-web-post-bl)))
                 (color CYA))
 
            (->> (if use_hotswap
@@ -829,9 +829,9 @@
                     (key-place 2 lastrow plate-post-bl))
                      
                    (triangle-hulls
-                    (key-place 1 cornerrow web-post-br)
-                    (key-place 2 lastrow web-post-tl)
-                    (key-place 2 lastrow web-post-bl)))
+                    (key-place 1 cornerrow fat-web-post-br)
+                    (key-place 2 lastrow fat-web-post-tl)
+                    (key-place 2 lastrow fat-web-post-bl)))
                 (color MAG))
   )
 )
@@ -1637,10 +1637,10 @@ need to adjust for difference for thumb-z only"
       (key-holes mirror-internals)
       (if use_flex_pcb_holder flex-pcb-holders)
       caps
-      ; connectors
+      connectors
     )
     
-    ; caps-cutout
+    caps-cutout
     (if (not (or use_hotswap use_solderless)) key-space-below)
   ))
 (spit "things/alphas.scad"
