@@ -50,7 +50,7 @@
                      (= column 1)  (deg2rad 20) ;;index
                      (= column 2)  (deg2rad 17) ;;middle
                      (= column 3)  (deg2rad 17) ;;ring
-                     (= column 4)  (deg2rad 22) ;;pinky outer
+                     (= column 4)  (deg2rad 22) ;;pinky
                      (>= column 5) (deg2rad 22) ;;pinky outer
                      :else 0 ))
 (def row-curvature (deg2rad 1))  ; curvature of the rows
@@ -59,7 +59,7 @@
               (= column 1)  2.0 ;;index
               (= column 2)  2.1 ;;middle
               (= column 3)  2.1 ;;ring
-              (= column 4)  1.8 ;;pinky outer
+              (= column 4)  1.8 ;;pinky
               (>= column 5) 1.8 ;;pinky outer
               :else 0 ))
 
@@ -71,7 +71,7 @@
                   (= column 1)  [0  -5  1  ] ;;index
                   (= column 2)  [0   3 -5.5] ;;middle
                   (= column 3)  [0   0  0  ] ;;ring
-                  (= column 4)  [0 -12  6  ] ;;pinky outer
+                  (= column 4)  [0 -12  6  ] ;;pinky
                   (>= column 5) [0 -14  6  ] ;;pinky outer
                   :else [0 0 0]))
 
@@ -83,7 +83,7 @@
                  (= column 1)  1.9 ;;index
                  (= column 2)  1.7 ;;middle
                  (= column 3)  1.7 ;;ring
-                 (= column 4)  2.0 ;;pinky outer
+                 (= column 4)  2.0 ;;pinky
                  (>= column 5) 2.0 ;;pinky outer
                  :else 0 ))
 
