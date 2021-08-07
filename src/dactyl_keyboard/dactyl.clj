@@ -1279,7 +1279,7 @@ need to adjust for difference for thumb-z only"
                            screw-insert-height
                          ))
 
-(def usb-holder (import "../things/usb_holder_w_reset.stl"))
+(def usb-holder-stl (import "../things/usb_holder_w_reset.stl"))
 (def usb-holder-cutout-height 30.3)
 (def usb-holder-clearance 0.15)
 (def usb-holder-bottom-offset 0.15)
@@ -1288,7 +1288,10 @@ need to adjust for difference for thumb-z only"
   (if use_hotswap
     [-31.2 56.5 usb-holder-bottom-offset]
     [-29.9 54.5 usb-holder-bottom-offset]))
-(def usb-holder (translate usb-holder-offset-coordinates usb-holder))
+(defn usb-holder-place [shape]
+    (translate usb-holder-offset-coordinates 
+        shape))
+(def usb-holder (usb-holder-place usb-holder-stl))
 (def usb-holder-space
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
   (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
@@ -1501,7 +1504,7 @@ need to adjust for difference for thumb-z only"
 (def case-walls-bottom-projection (project
                                     (union
                                      (extrude-linear {:height 0.01
-                                                      :scale 0.98
+                                                      :scale 0.995
                                                       :center true} 
                                          case-walls-bottom
                                      )
@@ -1545,7 +1548,7 @@ need to adjust for difference for thumb-z only"
                                    )
                                    (project
                                        (if recess-bottom-plate
-                                           usb-holder
+                                           (hull usb-holder)
                                        )
                                    )
                                )
@@ -1591,7 +1594,7 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
                        (cube 350 350 40))
             (translate [0 0 (- (/ bottom-plate-thickness 2))] 
-                       (scale [1 1 1.1] bottom-plate))
+                       (scale [1.005 1.005 1.15] bottom-plate))
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
