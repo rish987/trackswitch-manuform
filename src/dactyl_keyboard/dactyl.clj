@@ -1258,14 +1258,20 @@ need to adjust for difference for thumb-z only"
 
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
-  (union (->> (screw-insert 2             0 bottom-radius top-radius height [  1    5 screw-insert-bottom-offset]) (color RED))    ; top middle
-         (->> (screw-insert 0             1 bottom-radius top-radius height [ -6  -13   screw-insert-bottom-offset]) (color PIN))    ; left
-         (->> (screw-insert 0       lastrow bottom-radius top-radius height [-24  -15   screw-insert-bottom-offset]) (color BRO))    ;thumb
-         (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height [ 15    1.5 screw-insert-bottom-offset]) (color PUR))    ; top right
-         (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height [ 16.5  7.5 screw-insert-bottom-offset]) (color BLA)) )) ;bottom middle
+  (union 
+    (->> (screw-insert 2             0 bottom-radius top-radius height       [  1    5   screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert 0             1 bottom-radius top-radius height       [ -5.5  -9   screw-insert-bottom-offset]) (color PIN)) ; leff
+    (if recess-bottom-plate
+        (->> (screw-insert 0         3 bottom-radius top-radius height       [ 0  -9   screw-insert-bottom-offset]) (color NBL))) ; left-thumb
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-24  -15   screw-insert-bottom-offset]) (color BRO)) ; thumb
+    (if recess-bottom-plate
+        (->> (screw-insert (- lastcol 2) 0 bottom-radius top-radius height   [ 9  -9   screw-insert-bottom-offset]) (color WHI))) ; top-middle
+    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius (/ height 3) [ 15    1.5 screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius (/ height 2) [ 16.5  7.5 screw-insert-bottom-offset]) (color BLA)) ; bottom middle
+)) 
 
 ; Hole Depth Y: 4.4
-(def screw-insert-height 5.5)
+(def screw-insert-height 16.5)
 
 ; Hole Diameter C: 4.1-4.4
 (def screw-insert-radius (/ 4.4 2))
