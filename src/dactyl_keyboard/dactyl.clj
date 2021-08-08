@@ -914,9 +914,11 @@ need to adjust for difference for thumb-z only"
     (thumb-m-place shape)
     (thumb-l-place shape)))
 
-(def thumbcaps (thumb-layout (if rendered-caps  
-                                    (translate [0 0 sa-cap-bottom-height] 
-                                        (import "../things/SA-R3C_16.stl"))
+(def thumbcaps (thumb-layout (if rendered-caps
+                                    (->> (import "../things/SA-R3C_16.stl")
+                                         (translate [0 0 sa-cap-bottom-height])
+                                         (color KEYCAP)
+                                    )
                                     (sa-cap 1))))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
 (defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
@@ -1686,10 +1688,10 @@ need to adjust for difference for thumb-z only"
       (write-scad
         ; (difference
           (union
-            ; (->>  
+            (->>  
               (model-right false)
-              ; (color BLU)
-            ; )
+              (color BLU)
+            )
             caps
             ; (debug caps-cutout)
             thumbcaps
@@ -1702,7 +1704,7 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (union wrist-rest-right-holes
+                    (union (color BLU wrist-rest-right-holes)
                            ; (debug wrist-rest-right-stl)
                     ))
             )
