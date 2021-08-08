@@ -1299,8 +1299,6 @@ need to adjust for difference for thumb-z only"
     (if recess-bottom-plate
         (->> (screw-insert 0         3 bottom-radius top-radius height       [ 0  -9   screw-insert-bottom-offset]) (color NBL))) ; left-thumb
     (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-24  -15   screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (if recess-bottom-plate
-        (->> (screw-insert (- lastcol 2) 0 bottom-radius top-radius height   [ 9  -9   screw-insert-bottom-offset]) (color WHI))) ; top-middle
     (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius (/ height 3) [ 15    1.5 screw-insert-bottom-offset]) (color PUR)) ; top right
     (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius (/ height 2) [ 16.5  7.5 screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
@@ -1351,7 +1349,7 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
                                        screw-insert-bottom-plate-top-radius 
                                        screw-insert-bottom-plate-top-radius 
-                                       (+ bottom-plate-thickness 0.1)
+                                       99
                                      ))
 
 (def screw-insert-fillets-bottom-plate ( screw-insert-all-shapes 
@@ -1675,7 +1673,7 @@ need to adjust for difference for thumb-z only"
     (union
       (key-holes mirror-internals)
       (if use_flex_pcb_holder flex-pcb-holders)
-      caps
+      ; caps
       connectors
     )
     
