@@ -1322,7 +1322,7 @@ need to adjust for difference for thumb-z only"
 
 (def usb-holder-stl (import "../things/usb_holder_w_reset.stl"))
 (def usb-holder-cutout-height 30.3)
-(def usb-holder-clearance 0.15)
+(def usb-holder-clearance 0.2)
 (def usb-holder-bottom-offset 0.15)
 
 (def usb-holder-offset-coordinates 
@@ -1337,7 +1337,7 @@ need to adjust for difference for thumb-z only"
   (translate [0 0 (/ usb-holder-bottom-offset 2)]
   (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
                   (offset usb-holder-clearance
-                          (project usb-holder))))
+                          (project (scale [1.001 1 1] usb-holder)))))
   )
 
 (def bottom-plate-thickness 3)
@@ -1589,7 +1589,11 @@ need to adjust for difference for thumb-z only"
                                    )
                                    (project
                                        (if recess-bottom-plate
-                                           (hull usb-holder)
+                                           (union 
+                                               (hull usb-holder)
+                                               ; fill stupid gap by back red screw hole
+                                               (translate [2 0 0] (hull usb-holder))
+                                           )
                                        )
                                    )
                                )
