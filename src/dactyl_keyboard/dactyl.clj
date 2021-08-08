@@ -320,6 +320,17 @@
                                          (translate [(/ 3 -2) 0 0] 
                                              (->> (cylinder (/ wire-channel-diameter 2) solderless-z)
                                                   (with-fn 50)))))
+        row-wire-channel-cube-end (union (->> (cube wire-channel-diameter
+                                                    wire-channel-diameter 
+                                                    wire-channel-diameter)
+                                              (translate [6 5.08 (+ 0 wire-channel-offset)])
+                                         )
+                                         (->> (cylinder (/ wire-channel-diameter 2)
+                                                        wire-channel-diameter)
+                                              (with-fn 50)
+                                              (translate [5 5.08 (+ 0 wire-channel-offset)])
+                                         )
+                                  )
         row-wire-channel-curve-radius 45
         row-wire-channel (union
                              (->> (circle wire-radius)
@@ -334,8 +345,10 @@
                              )
                              row-wire-channel-end
                              row-wire-channel-ends
+                             row-wire-channel-cube-end
                              (->> (union row-wire-channel-end
                                          row-wire-channel-ends
+                                         row-wire-channel-cube-end
                                   )
                                   (mirror [1 0 0])
                              )
@@ -350,15 +363,33 @@
                                           0 
                                           (- 0.2 wire-channel-offset)])
                          )
+        col-wire-channel-sidewall (union
+            (->> (square wire-channel-diameter (/ wire-channel-diameter 2))
+                 (with-fn 50)
+                 (translate [col-wire-channel-curve-radius 0 0])
+                 (extrude-rotate {:angle 30})
+                 (rotate (deg2rad 134) [0 0 1])
+                 (translate [(+ 3.25 col-wire-channel-curve-radius) 
+                             0 
+                             (- -0.2 wire-channel-offset)])
+            )
+            (->> (square wire-channel-diameter (/ wire-channel-diameter 2))
+                 (with-fn 50)
+                 (translate [col-wire-channel-curve-radius 0 0])
+                 (extrude-rotate {:angle 50})
+                 (rotate (deg2rad 177) [0 0 1])
+                 (translate [(+ 3.25 col-wire-channel-curve-radius) 
+                             0 
+                             (- -0.2 wire-channel-offset)])
+            )
+        )
 
         solderless-shape 
             (translate [solderless-offset-x 
                         solderless-offset-y
                         solderless-offset-z]
                 (difference (union switch_socket_base
-                                   ; (debug row-wire-channel) ; may have to disable below to appear
-                                   ; (debug row-wire-channel-ends) ; may have to disable below to appear
-                                   ; (debug col-wire-channel) ; may have to disable below to appear
+                                   ;(debug row-wire-channel-cube-end) ; may have to disable below to appear
                             )
                             main-axis-hole
                             plus-hole
@@ -368,6 +399,7 @@
                             diode-row-hole
                             row-wire-channel
                             col-wire-channel
+                            col-wire-channel-sidewall
                             diode-pin
                             diode-body
                             diode-wire
