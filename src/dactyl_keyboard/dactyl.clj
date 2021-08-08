@@ -559,7 +559,7 @@
 )
 
 (defn sa-cap-cutout [keysize]
-    (let [ cutout-x 0.3
+    (let [ cutout-x 0.40
            cutout-y 1.95
            cutout-z-offset (- sa-cap-bottom-height-pressed 2.99)
            bl2 (case keysize 
@@ -992,15 +992,16 @@ need to adjust for difference for thumb-z only"
       (key-place 0 cornerrow (translate (wall-locate1 -1 0) web-post-bl))
       (thumb-m-place web-post-tr)
       (thumb-m-place web-post-tl))
-    (piramid-hulls                                          ; top ridge thumb side
+    (->> (piramid-hulls                                          ; top ridge thumb side
       (key-place 0 cornerrow (translate (wall-locate1 -1 0) fat-web-post-bl))
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0) web-post-bl))
+      (key-place 0 cornerrow (translate (wall-locate2 -1 0) fat-web-post-bl))
       (key-place 0 cornerrow web-post-bl)
       ;(thumb-r-place web-post-tr)
       (thumb-r-place web-post-tl)
-      (thumb-m-place web-post-tr)
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0) web-post-bl))
-      )
+      (thumb-m-place fat-web-post-tr)
+      (thumb-m-place fat-web-post-tl)
+      (key-place 0 cornerrow (translate (wall-locate2 -1 0) fat-web-post-bl))
+      ) (color PIN))
     (->> (triangle-hulls
       (key-place 0 cornerrow fat-web-post-br)
       (key-place 0 cornerrow fat-web-post-bl)
@@ -1576,7 +1577,7 @@ need to adjust for difference for thumb-z only"
                                    (difference
                                        (project 
                                           (extrude-linear {:height 0.01
-                                                           :scale  0
+                                                           :scale  0 ;scale 0 creates a filled plate from the case walls
                                                            :center true} 
                                               case-walls-bottom
                                           )
