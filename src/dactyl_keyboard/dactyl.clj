@@ -262,7 +262,7 @@
   (let [
         solderless-x        holder-x
         solderless-y        holder-y ; should be less than or equal to holder-y
-        solderless-z        4; swap-z 3 ;pcb_thickness 4
+        solderless-z        4;
         solderless-cutout-z (* 1.01 solderless-z)
         solderless-offset-x 0
         solderless-offset-y (/ (- holder-y solderless-y) 2)
@@ -271,7 +271,7 @@
                                   solderless-y 
                                   solderless-z)
         wire-channel-diameter (+ 0.3 wire-diameter); elegoo saturn prints 1.75mm tubes ~1.62mm
-        wire-channel-offset  (-(/ solderless-z 2) (/ wire-channel-diameter 3))
+        wire-channel-offset  (- (/ solderless-z 2) (/ wire-channel-diameter 3))
         led-cutout-x-offset  0
         led-cutout-y-offset -6
         led-cutout          (translate [0 -6 0] 
@@ -304,9 +304,9 @@
         diode-body (translate [-0.2 3.0 (/ solderless-z 2)]
                        (cube 4 1.95 3))
 
-        wire-radius          (/ wire-channel-diameter 2)
-        row-wire-channel-end-radius 4
-        row-wire-channel-end (->> (circle wire-radius)
+        row-wire-radius             (/ wire-channel-diameter 2)
+        row-wire-channel-end-radius 3.25
+        row-wire-channel-end (->> (circle row-wire-radius)
                                   (with-fn 50)
                                   (translate [row-wire-channel-end-radius 0 0])
                                   (extrude-rotate {:angle 90})
@@ -328,12 +328,12 @@
                                          (->> (cylinder (/ wire-channel-diameter 2)
                                                         wire-channel-diameter)
                                               (with-fn 50)
-                                              (translate [5 5.08 (+ 0 wire-channel-offset)])
+                                              (translate [5 5.08 (+ (/ wire-channel-diameter 2) wire-channel-offset)])
                                          )
                                   )
         row-wire-channel-curve-radius 45
         row-wire-channel (union
-                             (->> (circle wire-radius)
+                             (->> (circle row-wire-radius)
                                   (with-fn 50)
                                   (translate [row-wire-channel-curve-radius 0 0])
                                   (extrude-rotate {:angle 90})
@@ -341,7 +341,7 @@
                                   (rotate (deg2rad -45) [0 1 0])
                                   (translate [0 
                                               5.08 
-                                              (+ 0.35 wire-channel-offset (- row-wire-channel-curve-radius))])
+                                              (+ 0.25 wire-channel-offset (- row-wire-channel-curve-radius))])
                              )
                              row-wire-channel-end
                              row-wire-channel-ends
@@ -353,34 +353,37 @@
                                   (mirror [1 0 0])
                              )
                          )
+        col-wire-radius       (+ 0.025 (/ wire-channel-diameter 2))
+        col-wire-ends-radius  (+ 0.1   (/ wire-channel-diameter 2))
+        col-wire-ends-zoffset    0.0725 ; should be diff of two magic numbers above
         col-wire-channel-curve-radius 15
-        col-wire-channel (->> (circle wire-radius)
+        col-wire-channel (->> (circle col-wire-radius)
                               (with-fn 50)
                               (translate [col-wire-channel-curve-radius 0 0])
                               (extrude-rotate {:angle 90})
                               (rotate (deg2rad 135) [0 0 1])
-                              (translate [(+ 3.25 col-wire-channel-curve-radius) 
+                              (translate [(+ 3.10 col-wire-channel-curve-radius) 
                                           0 
-                                          (- 0.2 wire-channel-offset)])
+                                          (- 0.1 wire-channel-offset)])
                          )
-        col-wire-channel-sidewall (union
-            (->> (square wire-channel-diameter (/ wire-channel-diameter 2))
+        col-wire-channel-ends (union
+            (->> (circle col-wire-ends-radius)
                  (with-fn 50)
                  (translate [col-wire-channel-curve-radius 0 0])
                  (extrude-rotate {:angle 30})
                  (rotate (deg2rad 134) [0 0 1])
                  (translate [(+ 3.25 col-wire-channel-curve-radius) 
                              0 
-                             (- -0.2 wire-channel-offset)])
+                             (- (* col-wire-ends-zoffset 1) wire-channel-offset)])
             )
-            (->> (square wire-channel-diameter (/ wire-channel-diameter 2))
+            (->> (circle col-wire-ends-radius)
                  (with-fn 50)
                  (translate [col-wire-channel-curve-radius 0 0])
                  (extrude-rotate {:angle 50})
                  (rotate (deg2rad 177) [0 0 1])
                  (translate [(+ 3.25 col-wire-channel-curve-radius) 
                              0 
-                             (- -0.2 wire-channel-offset)])
+                             (- (* col-wire-ends-zoffset 1) wire-channel-offset)])
             )
         )
 
@@ -399,7 +402,7 @@
                             diode-row-hole
                             row-wire-channel
                             col-wire-channel
-                            col-wire-channel-sidewall
+                            col-wire-channel-ends
                             diode-pin
                             diode-body
                             diode-wire
