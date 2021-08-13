@@ -478,11 +478,11 @@
    )))
 
 (defn single-plate [mirror-internals]
-  (let [top-wall (->> (cube (+ keyswitch-height 3) 1.5 plate-thickness)
+  (let [top-wall (->> (cube mount-height 1.5 plate-thickness)
                       (translate [0
                                   (+ (/ 1.5 2) (/ keyswitch-height 2))
                                   (/ plate-thickness 2)]))
-        left-wall (->> (cube 1.5 (+ keyswitch-height 3) plate-thickness)
+        left-wall (->> (cube 1.5 mount-width plate-thickness)
                        (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
                                    0
                                    (/ plate-thickness 2)]))
