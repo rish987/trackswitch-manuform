@@ -706,6 +706,8 @@
 ;
 
 (def post-size 0.1)
+(def fat-post-size 1.2)
+
 (def web-post (->> (cube post-size post-size web-thickness)
                    (translate [0 0 (+ (/ web-thickness -2)
                                       plate-thickness)])))
@@ -720,7 +722,7 @@
 ; plate posts for connecting columns together without wasting material
 ; or blocking sides of hotswap sockets
 (def plate-post-thickness (- web-thickness 2))
-(def plate-post (->> (cube post-size post-size plate-post-thickness)
+(def plate-post (->> (cube fat-post-size fat-post-size plate-post-thickness)
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5)
                                       )])))
 (def plate-post-tr (translate [(- (/ mount-width  2) post-adj) (- (/ mount-height  2) post-adj) 0] plate-post))
@@ -730,7 +732,6 @@
 
 ; fat web post for very steep angles between thumb and finger clusters
 ; this ensures the walls stay somewhat thicker
-(def fat-post-size 1.2)
 (def fat-web-post (->> (cube fat-post-size fat-post-size web-thickness)
                        (translate [0 0 (+ (/ web-thickness -2)
                                           plate-thickness)])))
