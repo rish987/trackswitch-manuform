@@ -1747,7 +1747,7 @@ need to adjust for difference for thumb-z only"
       (write-scad
           (union
             (->> (model-right false)
-                 (color BLU)
+                 ; (color BLU)
             )
             caps
             ; (debug caps-cutout)
@@ -1761,7 +1761,10 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (color BLU wrist-rest-right-holes))
+                    (->> wrist-rest-right-holes
+                         ; (color BLU) 
+                    )
+                )
             )
           )
       ))

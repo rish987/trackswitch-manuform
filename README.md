@@ -108,7 +108,7 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 	* def wrist-rest-z-height-adj
 	* defn usb-holder-offset-coordinates
 	* defn screw-insert-all-shapes
-* When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you don't use.
+* When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you aren't changing / don't use.
 * If you're not sure what things are generted by a piece of code, color them in using something like
 `(->> SOMETHING_HERE (color RED))` (see examples in dactyl.clj).
 
