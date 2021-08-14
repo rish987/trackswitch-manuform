@@ -700,8 +700,6 @@
 ;
 
 (def post-size 0.1)
-(def fat-post-size 1.2)
-
 (def web-post (->> (cube post-size post-size web-thickness)
                    (translate [0 0 (+ (/ web-thickness -2)
                                       plate-thickness)])))
@@ -715,17 +713,20 @@
 
 ; plate posts for connecting columns together without wasting material
 ; or blocking sides of hotswap sockets
+(def plate-post-size 1.2)
 (def plate-post-thickness (- web-thickness 2))
-(def plate-post (->> (cube fat-post-size fat-post-size plate-post-thickness)
+(def plate-post (->> (cube plate-post-size plate-post-size plate-post-thickness)
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5)
                                       )])))
-(def plate-post-tr (translate [(- (/ mount-width  2) post-adj) (- (/ mount-height  2) post-adj) 0] plate-post))
-(def plate-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height  2) post-adj) 0] plate-post))
-(def plate-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] plate-post))
-(def plate-post-br (translate [(- (/ mount-width  2) post-adj) (+ (/ mount-height -2) post-adj) 0] plate-post))
+(def plate-post-adj (/ plate-post-size 2))
+(def plate-post-tr (translate [(- (/ mount-width  2) plate-post-adj) (- (/ mount-height  2) plate-post-adj) 0] plate-post))
+(def plate-post-tl (translate [(+ (/ mount-width -2) plate-post-adj) (- (/ mount-height  2) plate-post-adj) 0] plate-post))
+(def plate-post-bl (translate [(+ (/ mount-width -2) plate-post-adj) (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
+(def plate-post-br (translate [(- (/ mount-width  2) plate-post-adj) (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
 
 ; fat web post for very steep angles between thumb and finger clusters
 ; this ensures the walls stay somewhat thicker
+(def fat-post-size 1.2)
 (def fat-web-post (->> (cube fat-post-size fat-post-size web-thickness)
                        (translate [0 0 (+ (/ web-thickness -2)
                                           plate-thickness)])))
@@ -770,10 +771,10 @@
            (for [column columns
                  row (range 0 cornerrow)]
              (triangle-hulls
-               (key-place column row fat-web-post-bl)
-               (key-place column row fat-web-post-br)
-               (key-place column (inc row) fat-web-post-tl)
-               (key-place column (inc row) fat-web-post-tr)))
+               (key-place column      row  web-post-bl)
+               (key-place column      row  web-post-br)
+               (key-place column (inc row) web-post-tl)
+               (key-place column (inc row) web-post-tr)))
 
            ;; Diagonal connections
            (for [column (range 0 (dec ncols))
@@ -795,25 +796,25 @@
            ; top two to the main keyboard, starting on the left
            (->> (if use_hotswap
                   (triangle-hulls
-                    (key-place 2 lastrow plate-post-br)
-                    (key-place 3 lastrow plate-post-bl)
-                    (key-place 2 lastrow plate-post-tr)
-                    (key-place 3 lastrow plate-post-tl)
+                    (key-place 2 lastrow   plate-post-br)
+                    (key-place 3 lastrow   plate-post-bl)
+                    (key-place 2 lastrow   plate-post-tr)
+                    (key-place 3 lastrow   plate-post-tl)
                     (key-place 3 cornerrow plate-post-bl)
-                    (key-place 3 lastrow fat-web-post-tl)
+                    (key-place 3 lastrow   fat-web-post-tl)
                     (key-place 3 cornerrow fat-web-post-bl)
-                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 lastrow   fat-web-post-tr)
                     (key-place 3 cornerrow fat-web-post-br)
-                    (key-place 3 lastrow plate-post-tr)
+                    (key-place 3 lastrow   plate-post-tr)
                     (key-place 3 cornerrow plate-post-br)
                     (key-place 4 cornerrow plate-post-bl))
                   (triangle-hulls
-                    (key-place 2 lastrow fat-web-post-br)
-                    (key-place 3 lastrow fat-web-post-bl)
-                    (key-place 2 lastrow fat-web-post-tr)
-                    (key-place 3 lastrow fat-web-post-tl)
+                    (key-place 2 lastrow   fat-web-post-br)
+                    (key-place 3 lastrow   fat-web-post-bl)
+                    (key-place 2 lastrow   fat-web-post-tr)
+                    (key-place 3 lastrow   fat-web-post-tl)
                     (key-place 3 cornerrow fat-web-post-bl)
-                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 lastrow   fat-web-post-tr)
                     (key-place 3 cornerrow fat-web-post-br)
                     (key-place 4 cornerrow fat-web-post-bl)))
                 (color BLA))
@@ -821,47 +822,47 @@
            (->> (if use_hotswap
                   (triangle-hulls
                     (key-place 1 cornerrow plate-post-br)
-                    (key-place 2 lastrow plate-post-tl)
+                    (key-place 2 lastrow   plate-post-tl)
                     (key-place 2 cornerrow plate-post-bl)
-                    (key-place 2 lastrow fat-web-post-tl)
+                    (key-place 2 lastrow   fat-web-post-tl)
                     (key-place 2 cornerrow fat-web-post-bl)
-                    (key-place 2 lastrow fat-web-post-tr)
+                    (key-place 2 lastrow   fat-web-post-tr)
                     (key-place 2 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow plate-post-tr)
+                    (key-place 2 lastrow   plate-post-tr)
                     (key-place 2 cornerrow plate-post-br)
                     (key-place 3 cornerrow plate-post-bl))
                   (triangle-hulls
                     (key-place 1 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow fat-web-post-tl)
+                    (key-place 2 lastrow   fat-web-post-tl)
                     (key-place 2 cornerrow fat-web-post-bl)
-                    (key-place 2 lastrow fat-web-post-tr)
+                    (key-place 2 lastrow   fat-web-post-tr)
                     (key-place 2 cornerrow fat-web-post-br)
                     (key-place 3 cornerrow fat-web-post-bl)))
                 (color GRE))
 
            (->> (if use_hotswap
                   (triangle-hulls
-                    (key-place 3 lastrow plate-post-tr)
-                    (key-place 3 lastrow plate-post-br)
-                    (key-place 3 lastrow plate-post-tr)
+                    (key-place 3 lastrow   plate-post-tr)
+                    (key-place 3 lastrow   plate-post-br)
+                    (key-place 3 lastrow   plate-post-tr)
                     (key-place 4 cornerrow plate-post-bl))
                   (triangle-hulls
-                    (key-place 3 lastrow fat-web-post-tr)
-                    (key-place 3 lastrow fat-web-post-br)
-                    (key-place 3 lastrow fat-web-post-tr)
+                    (key-place 3 lastrow   fat-web-post-tr)
+                    (key-place 3 lastrow   fat-web-post-br)
+                    (key-place 3 lastrow   fat-web-post-tr)
                     (key-place 4 cornerrow fat-web-post-bl)))
                 (color CYA))
 
            (->> (if use_hotswap
                   (triangle-hulls
                     (key-place 1 cornerrow plate-post-br)
-                    (key-place 2 lastrow plate-post-tl)
-                    (key-place 2 lastrow plate-post-bl))
+                    (key-place 2 lastrow   plate-post-tl)
+                    (key-place 2 lastrow   plate-post-bl))
                      
                    (triangle-hulls
                     (key-place 1 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow fat-web-post-tl)
-                    (key-place 2 lastrow fat-web-post-bl)))
+                    (key-place 2 lastrow   fat-web-post-tl)
+                    (key-place 2 lastrow   fat-web-post-bl)))
                 (color MAG))
   )
 )
@@ -871,7 +872,9 @@
 ;;;;;;;;;;;;
 
 (def thumborigin
-  (map + (key-position 1 cornerrow [(/ mount-width 2) (- (/ mount-height 2)) 0])
+  (map + (key-position 1 cornerrow [(/ mount-width 2) 
+                                    (- (/ mount-height 2)) 
+                                    0])
        thumb-pos))
 
 "need to account for plate thickness which is baked into thumb-_-place rotation & move values
@@ -902,7 +905,7 @@ need to adjust for difference for thumb-z only"
      (rotate (deg2rad (nth thumb-rot 2)) [0 0 1])))
 
 ; convexer
-(defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14.5 -10 5] shape)) ; right
+(defn thumb-r-place [shape] (thumb-place [14 -35 10] [-14.5 -10 5]   shape)) ; right
 (defn thumb-m-place [shape] (thumb-place [8 -21.5 20] [-33 -15.2 -6] shape)) ; middle
 (defn thumb-l-place [shape] (thumb-place [6 -5 25] [-53 -23.5 -11.5] shape)) ; left
 
@@ -918,7 +921,7 @@ need to adjust for difference for thumb-z only"
                                          (color KEYCAP)
                                     )
                                     (sa-cap 1))))
-(def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
+(def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
 (defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
 (def thumb-blank (thumb-layout single-plate-blank ))
 (def thumb-space-below (thumb-layout switch-bottom))
@@ -1022,7 +1025,8 @@ need to adjust for difference for thumb-z only"
     (->> (triangle-hulls
       (thumb-r-place web-post-br)
       (key-place 2 lastrow web-post-bl)
-      (key-place 3 lastrow web-post-bl)
+      (if use_hotswap (key-place 3 lastrow plate-post-bl)
+                      (key-place 3 lastrow web-post-bl))
       (key-place 2 lastrow web-post-br)) (color PIN))
     ))
 
