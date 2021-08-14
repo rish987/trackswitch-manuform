@@ -34,8 +34,8 @@
 
 ;select only one of the following
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
-(def use_hotswap false)         ; kailh hotswap holder
-(def use_solderless true)       ; solderless switch plate, RESIN PRINTER RECOMMENDED!
+(def use_hotswap true)          ; kailh hotswap holder
+(def use_solderless false)      ; solderless switch plate, RESIN PRINTER RECOMMENDED!
 (def wire-diameter 1.75)        ; outer diameter of silicone covered 22awg ~1.75mm 26awg ~1.47mm)
 
 (def north_facing true)
@@ -366,26 +366,6 @@
                                           0 
                                           (- 0.1 wire-channel-offset)])
                          )
-        col-wire-channel-ends (union
-            (->> (circle col-wire-ends-radius)
-                 (with-fn 50)
-                 (translate [col-wire-channel-curve-radius 0 0])
-                 (extrude-rotate {:angle 30})
-                 (rotate (deg2rad 134) [0 0 1])
-                 (translate [(+ 3.25 col-wire-channel-curve-radius) 
-                             0 
-                             (- (* col-wire-ends-zoffset 1) wire-channel-offset)])
-            )
-            (->> (circle col-wire-ends-radius)
-                 (with-fn 50)
-                 (translate [col-wire-channel-curve-radius 0 0])
-                 (extrude-rotate {:angle 50})
-                 (rotate (deg2rad 177) [0 0 1])
-                 (translate [(+ 3.25 col-wire-channel-curve-radius) 
-                             0 
-                             (- (* col-wire-ends-zoffset 1) wire-channel-offset)])
-            )
-        )
 
         solderless-shape 
             (translate [solderless-offset-x 
@@ -402,7 +382,6 @@
                             diode-row-hole
                             row-wire-channel
                             col-wire-channel
-                            col-wire-channel-ends
                             diode-pin
                             diode-body
                             diode-wire
@@ -505,10 +484,23 @@
   )
 )
 
+(def single-plate-blank
+    (union 
+        (translate [0 0  (/ plate-thickness 2)]
+            (cube mount-width
+                  mount-height
+                  (+ plate-thickness 0.01)
+            )
+        )
+        (if use_hotswap (translate [0 0 (- (/ hotswap-z 2))] 
+                            (cube mount-width mount-height hotswap-z)))
+        (if use_solderless (hull solderless-plate))
+    )
+)
+
 (defn filled-plate [mirror-internals]
   (difference 
-    (->> (cube mount-height mount-width plate-thickness)
-       (translate [0 0 (/ plate-thickness 2)]))
+    single-plate-blank
     (single-plate mirror-internals)
   )
 )
@@ -675,6 +667,8 @@
                 (key-place column row)))))
 (defn key-holes [mirror-internals]
   (key-places (single-plate mirror-internals)))
+(def key-hole-blanks
+  (key-places single-plate-blank))
 (def key-space-below
   (key-places switch-bottom))
 (def caps
@@ -926,6 +920,7 @@ need to adjust for difference for thumb-z only"
                                     (sa-cap 1))))
 (def thumbcaps-cutout (thumb-layout (sa-cap-cutout 1)))
 (defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
+(def thumb-blank (thumb-layout single-plate-blank ))
 (def thumb-space-below (thumb-layout switch-bottom))
 (defn thumb-space-hotswap [mirror-internals]
   (let [
@@ -1608,7 +1603,6 @@ need to adjust for difference for thumb-z only"
                        bottom-plate-blank
                        (translate [8 -100 0] 
                            ; (debug wrist-rest-right-holes)
-                           ; (debug wrist-rest-right-stl)
                        )
                 )
                 screw-cutouts
@@ -1622,6 +1616,76 @@ need to adjust for difference for thumb-z only"
 )
 (spit "things/single-plate.scad"
       (write-scad (single-plate false)))
+
+(defn model-switch-plates [mirror-internals]
+  (difference
+    (union
+      (key-holes mirror-internals)
+      (if use_flex_pcb_holder flex-pcb-holders)
+      connectors
+      (thumb mirror-internals)
+      thumb-connectors
+    )
+    
+    caps-cutout
+    thumbcaps-cutout
+    thumb-key-cutout
+    (if (not (or use_hotswap use_solderless)) 
+        (union key-space-below
+              thumb-space-below))
+    (if use_hotswap (thumb-space-hotswap mirror-internals))
+  ))
+
+(spit "things/switch-plates.scad"
+      (write-scad (model-switch-plates false)))
+
+(defn model-switch-plate-cutouts [mirror-internals]
+  (difference
+    (union
+      key-hole-blanks
+      (if use_flex_pcb_holder flex-pcb-holders)
+      connectors
+      thumb-blank
+      thumb-connectors
+    )
+  )
+)
+(spit "things/switch-plate-cutouts.scad"
+      (write-scad (model-switch-plate-cutouts false)))
+
+(defn model-case-walls [mirror-internals]
+  (difference
+    (union
+      (if use_flex_pcb_holder flex-pcb-holders)
+      (difference (union case-walls
+                         screw-insert-outers
+                         )
+                  (model-switch-plate-cutouts mirror-internals)
+                  usb-holder-space
+                  screw-insert-holes
+                  )
+    )
+    
+    (if recess-bottom-plate
+        (union
+            (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
+                       (cube 350 350 40))
+            (translate [0 0 (- (/ bottom-plate-thickness 2))] 
+                       (scale [1.005 1.005 1.15] bottom-plate))
+        )
+        (translate [0 0 -20] (cube 350 350 40))
+    )
+    
+    caps-cutout
+    thumbcaps-cutout
+    thumb-key-cutout
+    (if (not (or use_hotswap use_solderless)) 
+        (union key-space-below
+              thumb-space-below))
+    (if use_hotswap (thumb-space-hotswap mirror-internals))
+  ))
+(spit "things/case-walls.scad"
+      (write-scad (model-case-walls false)))
 
 (defn model-right [mirror-internals]
   (difference
@@ -1666,34 +1730,17 @@ need to adjust for difference for thumb-z only"
 (spit "things/left.scad"
       (write-scad model-left))
 
-(spit "things/right-plate.scad"
+(spit "things/bottom-plate-right.scad"
       (write-scad bottom-plate))
 
 (spit "things/wrist-rest-right-holes.scad"
       (write-scad wrist-rest-right-holes))
 
-(defn model-alphas [mirror-internals]
-  (difference
-    (union
-      (key-holes mirror-internals)
-      (if use_flex_pcb_holder flex-pcb-holders)
-      ; caps
-      connectors
-    )
-    
-    caps-cutout
-    (if (not (or use_hotswap use_solderless)) key-space-below)
-  ))
-(spit "things/alphas.scad"
-      (write-scad (model-alphas false)))
-
 (spit "things/test.scad"
       (write-scad
-        ; (difference
           (union
-            (->>  
-              (model-right false)
-              (color BLU)
+            (->> (model-right false)
+                 (color BLU)
             )
             caps
             ; (debug caps-cutout)
@@ -1707,10 +1754,7 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (union (color BLU wrist-rest-right-holes)
-                           ; (debug wrist-rest-right-stl)
-                    ))
+                    (color BLU wrist-rest-right-holes))
             )
           )
-        ; )
       ))
