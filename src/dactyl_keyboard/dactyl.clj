@@ -504,7 +504,7 @@
         (translate [0 0  (/ plate-thickness 2)]
             (cube mount-width
                   mount-height
-                  (+ plate-thickness 0.01)
+                  (+ plate-thickness 0.001)
             )
         )
         (if use_hotswap (translate [0 0 (- (/ hotswap-z 2))] 
@@ -680,10 +680,6 @@
                          (not= row lastrow))]
              (->> shape
                 (key-place column row)))))
-(defn key-holes [mirror-internals]
-  (key-places (single-plate mirror-internals)))
-(def key-hole-blanks
-  (key-places single-plate-blank))
 (def key-space-below
   (key-places switch-bottom))
 (def caps
@@ -937,9 +933,8 @@ need to adjust for difference for thumb-z only"
                                     )
                                     (sa-cap 1))))
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
-(def thumb-blanks (thumb-layout single-plate-blank ))
 (def thumb-space-below (thumb-layout switch-bottom))
-(defn thumb-key-cuts [mirror-internals] 
+(defn thumb-key-cutouts [mirror-internals] 
     (thumb-layout (single-plate-cut mirror-internals)))
 
 ;;;;;;;;;;
@@ -1622,16 +1617,16 @@ need to adjust for difference for thumb-z only"
 (defn model-switch-plates [mirror-internals]
   (difference
     (union
-      (key-holes mirror-internals)
+      (key-places (single-plate mirror-internals))
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      thumb-blanks
+      (thumb-layout (single-plate mirror-internals))
       thumb-connectors
     )
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cuts mirror-internals)
+    (thumb-key-cutouts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
@@ -1645,10 +1640,10 @@ need to adjust for difference for thumb-z only"
 (defn model-switch-plate-cutouts [mirror-internals]
   (difference
     (union
-      key-hole-blanks
+      (key-places single-plate-blank)
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      thumb-blanks
+      (thumb-layout single-plate-blank)
       thumb-connectors
     )
   )
@@ -1681,7 +1676,7 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cuts mirror-internals)
+    (thumb-key-cutouts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
@@ -1693,10 +1688,10 @@ need to adjust for difference for thumb-z only"
 (defn model-right [mirror-internals]
   (difference
     (union
-      (key-holes mirror-internals)
+      (key-places (single-plate mirror-internals))
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      thumb-blanks
+      (thumb-layout (single-plate mirror-internals))
       thumb-connectors
       (difference (union case-walls
                          screw-insert-outers
@@ -1718,7 +1713,7 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cuts mirror-internals)
+    (thumb-key-cutouts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
