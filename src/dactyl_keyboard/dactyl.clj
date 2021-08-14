@@ -562,8 +562,8 @@
            (->> key-cap-display
                 (translate [0 0 sa-cap-bottom-height])
                 (color KEYCAP))
-           (debug (->> key-cap
-                (translate [0 0 sa-cap-bottom-height-pressed])))
+           ; (debug (->> key-cap
+           ;      (translate [0 0 sa-cap-bottom-height-pressed])))
          )
     )
 )

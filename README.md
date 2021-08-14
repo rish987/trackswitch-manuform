@@ -2,6 +2,23 @@
 
 This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
+## V2.1 Features
+- Increased tent angle
+	- Added global thumb angle adjustment
+	- Adjusted case to still accommodate usb-holder with increased tent
+- Reworked gel wrist rest holder to not distort at higher tenting angles
+- Reinforced connection between columns with cutouts for connector / wiring clearance
+- Added option to increase angle of lower two lower keys (inspired by rmtz Naive design)
+- Added rendered option for keycap preview
+- (Experimental) Added optional retention clip to assist with one-piece flexible PCB
+- (Experimental) Added optional solderless socket option
+- NOTE: you will probably have to increase OpenSCAD params:
+	- Turn off rendering at ~2,000,000 
+	- CGAL cache size ~4000mb
+	- PolySet cache size ~4000mb
+![Compactyl V2](compactyl-V2.1.png)
+![Compactyl V2 back](compactyl-V2.1-back.png)
+
 ## V2 Features
 - Returned back to one solid piece top case deisgn for easier printing
 - Subtraced space around keycaps to improve clearances
