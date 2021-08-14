@@ -940,7 +940,8 @@ need to adjust for difference for thumb-z only"
     (thumb-layout mirrored)
   )
 )
-(def thumb-key-cutout (thumb-layout (filled-plate false)))
+(defn thumb-key-cutout [mirror-internals] 
+    (thumb-layout (filled-plate mirror-internals)))
 ;;;;;;;;;;
 ;; Case ;;
 ;;;;;;;;;;
@@ -1403,7 +1404,7 @@ need to adjust for difference for thumb-z only"
 ; begin heavily modified crystalhand wrist rest code
 (def wrist-rest-x-angle 16)
 (def wrist-rest-y-angle-adj 0)   ; additional tenting angle for wrist rest
-(def wrist-rest-z-height-adj 26) ; additional z height for wrist rest
+(def wrist-rest-z-height-adj 28) ; additional z height for wrist rest
 
 ;magic numbers to tweak how well the gel wrist rest is held
 (def wrist-rest-recess-depth 4)
@@ -1629,7 +1630,7 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    thumb-key-cutout
+    (thumb-key-cutout mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
@@ -1678,7 +1679,7 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    thumb-key-cutout
+    (thumb-key-cutout mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
@@ -1715,7 +1716,7 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    thumb-key-cutout
+    (thumb-key-cutout mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
