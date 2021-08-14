@@ -1331,11 +1331,19 @@ need to adjust for difference for thumb-z only"
         shape))
 (def usb-holder (usb-holder-place usb-holder-stl))
 (def usb-holder-space
-  (translate [0 0 (/ usb-holder-bottom-offset 2)]
-  (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
-                  (offset usb-holder-clearance
-                          (project (scale [1.001 1 1] usb-holder)))))
-  )
+    (let [usb-holder-cutout (usb-holder-place
+                                (union usb-holder-stl
+                                       (mirror [-1 0 0] usb-holder-stl)
+                                )
+                            )
+          cutout (translate [0 0 (/ usb-holder-bottom-offset 2)]
+                     (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
+                                     (offset usb-holder-clearance
+                                             (project 
+                                                 (scale [1.001 1 1] usb-holder-cutout)))))
+         ]
+     cutout)
+)
 
 (def bottom-plate-thickness 3)
 (def screw-insert-fillets-z 2)
