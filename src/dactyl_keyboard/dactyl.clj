@@ -149,18 +149,33 @@
 (def hotswap-cutout-1-y-offset 4.95)
 (def hotswap-cutout-2-y-offset 4)
 (def hotswap-case-cutout-x-extra 3.01)
-(def hotswap-case-cutout
-  (union
-    (translate [0 
-                hotswap-cutout-1-y-offset 
-                hotswap-cutout-z-offset] 
-               (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
-                     hotswap-y1 
-                     hotswap-z))
-    (translate [hotswap-cutout-2-x-offset 
-                hotswap-cutout-2-y-offset 
-                hotswap-cutout-z-offset]
-               (cube hotswap-x2 hotswap-y2 hotswap-z))
+(defn hotswap-case-cutout [mirror-internals]
+  (let [shape (union
+                (translate [0 
+                            hotswap-cutout-1-y-offset 
+                            hotswap-cutout-z-offset] 
+                           (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
+                                 hotswap-y1 
+                                 hotswap-z))
+                (translate [hotswap-cutout-2-x-offset 
+                            hotswap-cutout-2-y-offset 
+                            hotswap-cutout-z-offset]
+                           (cube hotswap-x2 hotswap-y2 hotswap-z))
+              )
+        rotated
+             (if north_facing
+                 (->> shape
+                      (mirror [1 0 0])
+                      (mirror [0 1 0])
+                 )
+                 shape
+             )
+        mirrored 
+          (->> (if mirror-internals
+                   (->> rotated (mirror [1 0 0]))
+                   rotated))
+        ]
+    mirrored
   )
 )
 (def hotswap-holder
@@ -498,7 +513,7 @@
     )
 )
 
-(defn filled-plate [mirror-internals]
+(defn single-plate-cut [mirror-internals]
   (difference 
     single-plate-blank
     (single-plate mirror-internals)
@@ -922,29 +937,11 @@ need to adjust for difference for thumb-z only"
                                     )
                                     (sa-cap 1))))
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
-(defn thumb [mirror-internals] (thumb-layout (single-plate mirror-internals)))
-(def thumb-blank (thumb-layout single-plate-blank ))
+(def thumb-blanks (thumb-layout single-plate-blank ))
 (def thumb-space-below (thumb-layout switch-bottom))
-(defn thumb-space-hotswap [mirror-internals]
-  (let [
-    rotated
-         (if north_facing
-             (->> hotswap-case-cutout
-                  (mirror [1 0 0])
-                  (mirror [0 1 0])
-             )
-             hotswap-case-cutout
-         )
-     mirrored 
-       (->> (if mirror-internals
-                (->> rotated (mirror [1 0 0]))
-                rotated))
-  ]
-    (thumb-layout mirrored)
-  )
-)
-(defn thumb-key-cutout [mirror-internals] 
-    (thumb-layout (filled-plate mirror-internals)))
+(defn thumb-key-cuts [mirror-internals] 
+    (thumb-layout (single-plate-cut mirror-internals)))
+
 ;;;;;;;;;;
 ;; Case ;;
 ;;;;;;;;;;
@@ -1628,17 +1625,18 @@ need to adjust for difference for thumb-z only"
       (key-holes mirror-internals)
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      (thumb mirror-internals)
+      thumb-blanks
       thumb-connectors
     )
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cutout mirror-internals)
+    (thumb-key-cuts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
-    (if use_hotswap (thumb-space-hotswap mirror-internals))
+    (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
+    (if use_hotswap (key-places (hotswap-case-cutout mirror-internals)))
   ))
 
 (spit "things/switch-plates.scad"
@@ -1650,7 +1648,7 @@ need to adjust for difference for thumb-z only"
       key-hole-blanks
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      thumb-blank
+      thumb-blanks
       thumb-connectors
     )
   )
@@ -1683,11 +1681,11 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cutout mirror-internals)
+    (thumb-key-cuts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
-    (if use_hotswap (thumb-space-hotswap mirror-internals))
+    (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
   ))
 (spit "things/case-walls.scad"
       (write-scad (model-case-walls false)))
@@ -1698,7 +1696,7 @@ need to adjust for difference for thumb-z only"
       (key-holes mirror-internals)
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
-      (thumb mirror-internals)
+      thumb-blanks
       thumb-connectors
       (difference (union case-walls
                          screw-insert-outers
@@ -1720,11 +1718,12 @@ need to adjust for difference for thumb-z only"
     
     caps-cutout
     thumbcaps-cutout
-    (thumb-key-cutout mirror-internals)
+    (thumb-key-cuts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
               thumb-space-below))
-    (if use_hotswap (thumb-space-hotswap mirror-internals))
+    (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
+    (if use_hotswap (key-places (hotswap-case-cutout mirror-internals)))
   ))
 (spit "things/right.scad"
       (write-scad (model-right false)))
