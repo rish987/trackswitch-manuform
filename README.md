@@ -31,7 +31,7 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- slanted, removed case connector tubes, added threaded insert holes
 ![Compactyl V2](compactyl-V2.png)
 
-## Features
+## V1 Features
 - Hotswap north facing switch plates
 - Increase pinky stagger
 - Adjusted column spacing for better clearance
@@ -99,6 +99,15 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Tips
 
+* I gave up trying to keep good values for both 4x6 and 5x6 options. So when adjusting the number of rows / cols, or tenting angles, (amoung other larger design changes) you will most likely have to update some magic numbers. I recommend opening the test.scad file and manipulate:
+	* defn column-curvature 
+	* defn centerrow
+	* def centercol
+	* defn column-offset
+	* def keyboard-z-offset
+	* def wrist-rest-z-height-adj
+	* defn usb-holder-offset-coordinates
+	* defn screw-insert-all-shapes
 * When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you don't use.
 * If you're not sure what things are generted by a piece of code, color them in using something like
 `(->> SOMETHING_HERE (color RED))` (see examples in dactyl.clj).
