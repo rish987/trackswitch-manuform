@@ -508,7 +508,9 @@
             )
         )
         (if use_hotswap (translate [0 0 (- (/ hotswap-z 2))] 
-                            (cube mount-width mount-height hotswap-z)))
+                            (cube mount-width 
+                                  mount-height 
+                                  hotswap-z)))
         (if use_solderless (hull solderless-plate))
     )
 )
@@ -949,9 +951,19 @@ need to adjust for difference for thumb-z only"
 (defn bottom-hull [& p]
   (hull p (bottom 0.001 p)))
 
-(defn wall-locate1 [dx dy] [(* dx wall-thickness)                    (* dy wall-thickness)                    0])
-(defn wall-locate2 [dx dy] [(* dx wall-xy-offset)                    (* dy wall-xy-offset)                    wall-z-offset])
-(defn wall-locate3 [dx dy] [(* dx (+ wall-xy-offset wall-thickness)) (* dy (+ wall-xy-offset wall-thickness)) (* 2 wall-z-offset)])
+(def wall-border-z-offset -0.75)  ; length of the first downward-sloping part of the wall (negative)
+(def wall-border-xy-offset 1.1)
+(def wall-border-thickness 1)  ; wall thickness parameter
+
+(defn wall-locate1 [dx dy border] [(* dx (if border wall-border-thickness wall-thickness))
+                                   (* dy (if border wall-border-thickness wall-thickness))
+                                   0])
+(defn wall-locate2 [dx dy border] [(* dx (if border wall-border-xy-offset wall-xy-offset))
+                                   (* dy (if border wall-border-xy-offset wall-xy-offset))
+                                   (if border wall-border-z-offset wall-z-offset)])
+(defn wall-locate3 [dx dy border] [(* dx (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
+                                   (* dy (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
+                                   (* 2 (if border wall-border-z-offset wall-z-offset))])
 
 (def thumb-connectors
   (union
@@ -984,18 +996,18 @@ need to adjust for difference for thumb-z only"
            ) (color ORA))
 
     (hull                                                   ; between thumb m and top key
-      (key-place 0 cornerrow (translate (wall-locate1 -1 0) web-post-bl))
+      (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) web-post-bl))
       (thumb-m-place web-post-tr)
       (thumb-m-place web-post-tl))
     (->> (piramid-hulls                                          ; top ridge thumb side
-      (key-place 0 cornerrow (translate (wall-locate1 -1 0) fat-web-post-bl))
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0) fat-web-post-bl))
+      (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-bl))
+      (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
       (key-place 0 cornerrow web-post-bl)
       ;(thumb-r-place web-post-tr)
       (thumb-r-place web-post-tl)
       (thumb-m-place fat-web-post-tr)
       (thumb-m-place fat-web-post-tl)
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0) fat-web-post-bl))
+      (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
       ) (color PIN))
     (->> (triangle-hulls
       (key-place 0 cornerrow fat-web-post-br)
@@ -1026,7 +1038,8 @@ need to adjust for difference for thumb-z only"
 ; place1, place2 = function that places an object at a location, typically refers to the center of a key position.
 ; post1, post2 = the shape that should be rendered
 (defn wall-brace [place1 dx1 dy1 post1 
-                  place2 dx2 dy2 post2]
+                  place2 dx2 dy2 post2
+                  border]
   "If you want to change the wall, use this.
    place1 means the location at the keyboard, marked by key-place or thumb-xx-place
    dx1 means the movement from place1 in x coordinate, multiplied by wall-xy-locate.
@@ -1063,215 +1076,244 @@ need to adjust for difference for thumb-z only"
   (union
     (->> (hull
       (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1) post1))
-      ; (place1 (translate (wall-locate2 dx1 dy1) post1))
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
+      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+      ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
       (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate2 dx2 dy2) post2))
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
+      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+      ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
       )
     (color YEL))
-    (->> (bottom-hull
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
-      ; (place1 (translate (wall-locate2 dx1 dy1) post1))
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate2 dx2 dy2) post2))
-      )
-     (color ORA))
+    (if (not border)
+      (->> (bottom-hull
+        (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+        ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        )
+        (color ORA))
+    )
   ))
 
 (defn wall-brace-deeper [place1 dx1 dy1 post1 
-                         place2 dx2 dy2 post2]
+                         place2 dx2 dy2 post2
+                         border]
   "try to extend back wall further back for certain sections"
   (union
     (->> (hull
       (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1) post1))
-      ; (place1 (translate (wall-locate3 dx1 dy1) post1))
-      (place1 (translate (wall-locate3 dx1 dy1) post1))
+      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+      ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+      (place1 (translate (wall-locate3 dx1 dy1 border) post1))
 
       (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2) post2))
-      (place2 (translate (wall-locate3 dx2 dy2) post2))
+      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+      (place2 (translate (wall-locate3 dx2 dy2 border) post2))
       )
     (color BLU))
-    (->> (bottom-hull
-      (place1 (translate (wall-locate3 dx1 dy1) post1))
-      ; (place1 (translate (wall-locate3 dx1 dy1) post1))
-
-      (place2 (translate (wall-locate3 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2) post2))
-      )
-     (color YEL))
+    (if (not border)
+      (->> (bottom-hull
+        (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+        ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+  
+          (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+          ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+          )
+        (color YEL))
+    )
   ))
 
 (defn wall-brace-back [place1 dx1 dy1 post1 
-                       place2 dx2 dy2 post2]
+                       place2 dx2 dy2 post2
+                       border]
   (union
     (->> (hull
       (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1) post1))
-      ; (place1 (translate (wall-locate3 dx1 dy1) post1))
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
+      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+      ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
 
       (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2) post2))
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
+      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
       )
     (color PUR))
-    (->> (bottom-hull
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
-
-      (place2 (translate (wall-locate3 dx2 dy2) post2))
-      (place2 (translate (wall-locate3 dx2 dy2) post2))
-      )
-     (color MAG))
+    (if (not border)
+      (->> (bottom-hull
+          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+  
+        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+        )
+       (color MAG))
+    )
   )
 )
 
 (defn wall-brace-left [place1 dx1 dy1 post1 
-                       place2 dx2 dy2 post2]
+                       place2 dx2 dy2 post2
+                       border]
   (union
     (->> (hull
       (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1) post1))
-      (place1 (translate (wall-locate3 dx1 dy1) post1))
-      (place1 (translate (wall-locate2 dx1 dy1) post1))
+      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+      (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
 
       (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2) post2))
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
+      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
       )
     (color CYA))
-    (->> (bottom-hull
-      (place1 (translate (wall-locate3 dx1 dy1) post1))
-      (place1 (translate (wall-locate3 dx1 dy1) post1))
-
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
-      (place2 (translate (wall-locate2 dx2 dy2) post2))
-      )
-     (color NBL))
+    (if (not border)
+      (->> (bottom-hull
+          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+  
+        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        )
+       (color NBL))
+    )
   )
 )
 
 (defn key-wall-brace [x1 y1 dx1 dy1 post1 
-                      x2 y2 dx2 dy2 post2]
+                      x2 y2 dx2 dy2 post2
+                      border]
   (wall-brace (partial key-place x1 y1) dx1 dy1 post1
-              (partial key-place x2 y2) dx2 dy2 post2))
+              (partial key-place x2 y2) dx2 dy2 post2
+              border))
 
 
 (defn key-wall-brace-left [x1 y1 dx1 dy1 post1 
-                           x2 y2 dx2 dy2 post2]
+                           x2 y2 dx2 dy2 post2
+                           border]
   (wall-brace-left
               (partial key-place x1 y1) dx1 dy1 post1
-              (partial key-place x2 y2) dx2 dy2 post2))
+              (partial key-place x2 y2) dx2 dy2 post2
+              border))
 
 (defn key-wall-brace-back [x1 y1 dx1 dy1 post1 
-                           x2 y2 dx2 dy2 post2]
+                           x2 y2 dx2 dy2 post2
+                           border]
   (wall-brace-back
               (partial key-place x1 y1) dx1 dy1 post1
-              (partial key-place x2 y2) dx2 dy2 post2))
+              (partial key-place x2 y2) dx2 dy2 post2
+              border))
 
 (defn key-wall-brace-deeper [x1 y1 dx1 dy1 post1 
-                             x2 y2 dx2 dy2 post2]
+                             x2 y2 dx2 dy2 post2
+                             border]
   (wall-brace-deeper
               (partial key-place x1 y1) dx1 dy1 post1
-              (partial key-place x2 y2) dx2 dy2 post2))
+              (partial key-place x2 y2) dx2 dy2 post2 
+              border))
 
-(defn key-corner [x y loc]
+(defn key-corner [x y loc border]
   (case loc
-    :tl (key-wall-brace x y 0  1 web-post-tl x y -1 0 web-post-tl)
-    :tr (key-wall-brace x y 0  1 web-post-tr x y  1 0 web-post-tr)
-    :bl (key-wall-brace x y 0 -1 web-post-bl x y -1 0 web-post-bl)
-    :br (key-wall-brace x y 0 -1 web-post-br x y  1 0 web-post-br)))
+    :tl (key-wall-brace x y 0  1 web-post-tl x y -1 0 web-post-tl border)
+    :tr (key-wall-brace x y 0  1 web-post-tr x y  1 0 web-post-tr border)
+    :bl (key-wall-brace x y 0 -1 web-post-bl x y -1 0 web-post-bl border)
+    :br (key-wall-brace x y 0 -1 web-post-br x y  1 0 web-post-br border)))
 
-(def right-wall
+(defn right-wall [border]
   (union 
-    (key-corner lastcol 0 :tr)
-    (for [y (range 0 lastrow)] (key-wall-brace lastcol      y  1 0 web-post-tr lastcol y 1 0 web-post-br))
-    (for [y (range 1 lastrow)] (key-wall-brace lastcol (dec y) 1 0 web-post-br lastcol y 1 0 web-post-tr))
-    (key-corner lastcol cornerrow :br)
+    (key-corner lastcol 0 :tr border)
+    (for [y (range 0 lastrow)] (key-wall-brace lastcol      y  1 0 web-post-tr lastcol y 1 0 web-post-br border))
+    (for [y (range 1 lastrow)] (key-wall-brace lastcol (dec y) 1 0 web-post-br lastcol y 1 0 web-post-tr border))
+    (key-corner lastcol cornerrow :br border)
    )
 )
 
-(def back-wall
+(defn back-wall [border]
   (union 
     (for [c (range 0 ncols)] 
-                  (case c  0 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
-                           1 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
-                             (key-wall-brace        c 0 0 1 web-post-tl          c  0 0 1 web-post-tr)
+                  (case c  0 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr border)
+                           1 (key-wall-brace-deeper c 0 0 1 web-post-tl          c  0 0 1 web-post-tr border)
+                             (key-wall-brace        c 0 0 1 web-post-tl          c  0 0 1 web-post-tr border)
                   ))
     (for [c (range 1 ncols)]
-                  (case c  1 (key-wall-brace-deeper c 0 0 1     web-post-tl (dec c) 0 0 1     web-post-tr)
-                           2 (key-wall-brace-back   c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr)
-                        (->> (key-wall-brace        c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr) (color PUR))
+                  (case c  1 (key-wall-brace-deeper c 0 0 1     web-post-tl (dec c) 0 0 1     web-post-tr border)
+                           2 (key-wall-brace-back   c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr border)
+                        (->> (key-wall-brace        c 0 0 1 fat-web-post-tl (dec c) 0 0 1 fat-web-post-tr border) (color PUR))
                   ))
   )
 )
 
-(def left-wall
+(defn left-wall [border]
   (union 
     ; left-back-corner
-    (->> (key-wall-brace-deeper 0 0 0 1 web-post-tl 0 0 -1 0 web-post-tl)
+    (->> (key-wall-brace-deeper 0 0 0 1 web-post-tl 0 0 -1 0 web-post-tl border)
          (color GRE))
-    (key-wall-brace-left  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl)
+    (key-wall-brace-left  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
 
-    (for [y (range 2 lastrow)] (key-wall-brace      0 y  -1 0 web-post-tl 0 y -1 0 web-post-bl))
-    (for [y (range 2 lastrow)] (key-wall-brace 0 (dec y) -1 0 web-post-bl 0 y -1 0 web-post-tl))
+    (for [y (range 2 lastrow)] (key-wall-brace      0 y  -1 0 web-post-tl 0 y -1 0 web-post-bl border))
+    (for [y (range 2 lastrow)] (key-wall-brace 0 (dec y) -1 0 web-post-bl 0 y -1 0 web-post-tl border))
 
     ; thumb connector
-    (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-m-place 0 1 fat-web-post-tl) 
+    (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-m-place 0 1 fat-web-post-tl border) 
          (color WHI))
   )
 )
 
-(def front-wall
+(defn front-wall [border]
   (union 
-    (key-wall-brace 3 lastrow 0   -1 web-post-bl     3   lastrow 0.5 -1 web-post-br)
-    (key-wall-brace 3 lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl)
-    (for [x (range 4 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br)) ; TODO fix extra wall
-    (for [x (range 5 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br))
-    (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl) 
+    (key-wall-brace 3 lastrow 0   -1 web-post-bl     3   lastrow 0.5 -1 web-post-br border)
+    (key-wall-brace 3 lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl border)
+    (for [x (range 4 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br border)) ; TODO fix extra wall
+    (for [x (range 5 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br border))
+    (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl border) 
          (color RED))
   )
 )
 
-(def thumb-wall
+(defn thumb-wall [border]
   (union 
     ; thumb walls
-    (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl) (color ORA))
-    (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
-    (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl) (color YEL))
-    (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl) (color GRE))
-    (->> (wall-brace        thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl) (color GRE))
-    (->> (wall-brace-deeper thumb-l-place  0  1 fat-web-post-tr thumb-l-place  0  1 fat-web-post-tl) (color CYA))
-    (->> (wall-brace        thumb-l-place  0  1 fat-web-post-tr thumb-l-place  0  1 fat-web-post-tl) (color CYA))
-    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl) (color BLU))
+    (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl border) (color ORA))
+    (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl border) (color YEL))
+    (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl border) (color YEL))
+    (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color GRE))
+    (->> (wall-brace        thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color GRE))
+    (->> (wall-brace-deeper thumb-l-place  0  1 fat-web-post-tr thumb-l-place  0  1 fat-web-post-tl border) (color CYA))
+    (->> (wall-brace        thumb-l-place  0  1 fat-web-post-tr thumb-l-place  0  1 fat-web-post-tl border) (color CYA))
+    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLU))
     ; thumb corners
-    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl) (color NBL))
-    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tl) (color PUR))
+    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl border) (color NBL))
+    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tl border) (color PUR))
     ; thumb tweeners
-    (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br) (color PIN))
-    (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br) (color PIN))
-    (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
-    (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br) (color MAG))
-    (->> (wall-brace-deeper   thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr) (color BRO))
-    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place -1  0 fat-web-post-tl) (color BLA))
+    (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
+    (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
+    (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color MAG))
+    (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color MAG))
+    (->> (wall-brace-deeper thumb-m-place  0  1 fat-web-post-tl thumb-l-place  0  1 fat-web-post-tr border) (color BRO))
+    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place -1  0 fat-web-post-tl border) (color BLA))
   )
 )
 
 (def case-walls
   (union
-    right-wall
-    back-wall
-    left-wall
-    front-wall
-    thumb-wall
+    (right-wall false)
+    (back-wall false)
+    (left-wall false)
+    (front-wall false)
+    (thumb-wall false)
+  )
+)
+
+(def case-top-border
+  (union
+    (right-wall true)
+    (back-wall true)
+    (left-wall true)
+    (front-wall true)
+    (thumb-wall true)
   )
 )
 
@@ -1626,6 +1668,7 @@ need to adjust for difference for thumb-z only"
   (difference
     (union
       (key-places (single-plate mirror-internals))
+      case-top-border
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
       (thumb-layout (single-plate mirror-internals))
@@ -1649,6 +1692,7 @@ need to adjust for difference for thumb-z only"
   (difference
     (union
       (key-places single-plate-blank)
+      (debug case-top-border)
       (if use_flex_pcb_holder flex-pcb-holders)
       connectors
       (thumb-layout single-plate-blank)
