@@ -1317,6 +1317,10 @@ need to adjust for difference for thumb-z only"
   )
 )
 
+;;;;;;;;;;;;;;;;;;;
+;; Screw Inserts ;;
+;;;;;;;;;;;;;;;;;;;
+
 ; Screw insert definition & position
 (defn screw-insert-shape [bottom-radius top-radius height]
   (->> (binding [*fn* 30]
@@ -1341,11 +1345,9 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius (/ height 2) [ 16.5  7.5 screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
-; Hole Depth Y: 4.4
-(def screw-insert-height 16.5)
+(def screw-insert-height 16.5) ; Hole Depth Y: 4.4
+(def screw-insert-radius (/ 4.4 2)) ; Hole Diameter C: 4.1-4.4
 
-; Hole Diameter C: 4.1-4.4
-(def screw-insert-radius (/ 4.4 2))
 (def screw-insert-holes ( screw-insert-all-shapes 
                           screw-insert-radius 
                           screw-insert-radius 
@@ -1358,6 +1360,10 @@ need to adjust for difference for thumb-z only"
                            (+ screw-insert-radius screw-insert-wall-thickness) 
                            screw-insert-height
                          ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; USB Controller Holder ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def usb-holder-stl (import "../things/usb_holder_w_reset.stl"))
 (def usb-holder-cutout-height 30.3)
@@ -1386,6 +1392,10 @@ need to adjust for difference for thumb-z only"
          ]
      cutout)
 )
+
+;;;;;;;;;;;;;;;;;;
+;; Bottom Plate ;;
+;;;;;;;;;;;;;;;;;;
 
 (def bottom-plate-thickness 3)
 (def screw-insert-fillets-z 2)
@@ -1661,6 +1671,11 @@ need to adjust for difference for thumb-z only"
     )
   )
 )
+
+;;;;;;;;;;;;;
+;; Outputs ;;
+;;;;;;;;;;;;;
+
 (spit "things/single-plate.scad"
       (write-scad (single-plate false)))
 
@@ -1750,7 +1765,7 @@ need to adjust for difference for thumb-z only"
                          )
                   usb-holder-space
                   screw-insert-holes
-                  )
+      )
     )
     
     (if recess-bottom-plate
@@ -1768,7 +1783,7 @@ need to adjust for difference for thumb-z only"
     (thumb-key-cutouts mirror-internals)
     (if (not (or use_hotswap use_solderless)) 
         (union key-space-below
-              thumb-space-below))
+               thumb-space-below))
     (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
     (if use_hotswap (key-places (hotswap-case-cutout mirror-internals)))
   ))
