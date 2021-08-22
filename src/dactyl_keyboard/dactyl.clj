@@ -1354,12 +1354,44 @@ need to adjust for difference for thumb-z only"
                           (* screw-insert-height 1.5)
                         ))
 
-(def screw-insert-wall-thickness 3.5)
+(def screw-insert-wall-thickness 4)
 (def screw-insert-outers ( screw-insert-all-shapes 
                            (+ screw-insert-radius screw-insert-wall-thickness) 
                            (+ screw-insert-radius screw-insert-wall-thickness) 
                            screw-insert-height
                          ))
+
+(defn top-screw-insert-all-shapes [bottom-radius top-radius height]
+  (union 
+    (->> (screw-insert 3             0 bottom-radius top-radius height [ -4   5    20]) (color RED)) ; top middle
+    (->> (screw-insert 0             1 bottom-radius top-radius height [ -1.5 12.5 53]) (color PIN)) ; leff
+    (->> (screw-insert 0             3 bottom-radius top-radius height [ -6  11.5  46]) (color NBL)) ; left-thumb
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height [-13 -2     35]) (color BRO)) ; thumb
+    (->> (screw-insert (- lastcol 2) 0 bottom-radius top-radius height [ 24   -11.5 9]) (color PUR)) ; top right
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 11.5  -1.5 41]) (color BLA)) ; bottom middle
+)) 
+
+(def top-screw-insert-height 5) ; Hole Depth Y: 4.4
+(def top-screw-insert-radius (/ 4.4 2)) ; Hole Diameter C: 4.1-4.4
+
+(def top-screw-insert-holes ( top-screw-insert-all-shapes 
+                              top-screw-insert-radius 
+                              top-screw-insert-radius 
+                              20
+                            ))
+
+(def top-screw-prev ( top-screw-insert-all-shapes 
+                      1.5
+                      1.5
+                      19.3
+                    ))
+
+(def top-screw-insert-wall-thickness 4)
+(def top-screw-insert-outers ( top-screw-insert-all-shapes 
+                               (+ top-screw-insert-radius top-screw-insert-wall-thickness) 
+                               (+ top-screw-insert-radius top-screw-insert-wall-thickness) 
+                               top-screw-insert-height
+                             ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder ;;
@@ -1680,6 +1712,7 @@ need to adjust for difference for thumb-z only"
       (write-scad (single-plate false)))
 
 (defn model-switch-plates [mirror-internals]
+(union
   (difference
     (union
       (key-places (single-plate mirror-internals))
@@ -1689,7 +1722,7 @@ need to adjust for difference for thumb-z only"
       (thumb-layout (single-plate mirror-internals))
       thumb-connectors
     )
-    
+    top-screw-insert-holes
     caps-cutout
     thumbcaps-cutout
     (thumb-key-cutouts mirror-internals)
@@ -1698,7 +1731,9 @@ need to adjust for difference for thumb-z only"
               thumb-space-below))
     (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
     (if use_hotswap (key-places (hotswap-case-cutout mirror-internals)))
-  ))
+  )
+  ; (debug top-screw-prev)
+))
 
 (spit "things/switch-plates.scad"
       (write-scad (model-switch-plates false)))
@@ -1719,15 +1754,18 @@ need to adjust for difference for thumb-z only"
       (write-scad (model-switch-plate-cutouts false)))
 
 (defn model-case-walls [mirror-internals]
+  (union
   (difference
     (union
       (if use_flex_pcb_holder flex-pcb-holders)
       (difference (union case-walls
                          screw-insert-outers
+                         top-screw-insert-outers
                          )
                   (model-switch-plate-cutouts mirror-internals)
                   usb-holder-space
                   screw-insert-holes
+                  top-screw-insert-holes
                   )
     )
     
@@ -1748,7 +1786,9 @@ need to adjust for difference for thumb-z only"
         (union key-space-below
               thumb-space-below))
     (if use_hotswap (thumb-layout (hotswap-case-cutout mirror-internals)))
-  ))
+  )
+  ; (debug top-screw-prev)
+))
 (spit "things/case-walls.scad"
       (write-scad (model-case-walls false)))
 
@@ -1762,9 +1802,11 @@ need to adjust for difference for thumb-z only"
       thumb-connectors
       (difference (union case-walls
                          screw-insert-outers
+                         ; top-screw-insert-outers
                          )
                   usb-holder-space
                   screw-insert-holes
+                  ; top-screw-insert-holes
       )
     )
     
@@ -1808,6 +1850,7 @@ need to adjust for difference for thumb-z only"
             (->> (model-right false)
                  ; (color BLU)
             )
+            ; (debug top-screw-prev)
             caps
             ; (debug caps-cutout)
             thumbcaps
