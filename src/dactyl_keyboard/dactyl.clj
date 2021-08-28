@@ -1376,10 +1376,10 @@ need to adjust for difference for thumb-z only"
 (def top-screw-insert-height 10)        ; M2 screw insert length 3.5, use higher value to cut through angled things
 (def top-screw-length 16)               ; M2 screw thread length
 (def top-screw-radius (/ 1.95 2))       ; M2 screw diameter
+(def top-screw-head-radius (/ 3.55 2))  ; M2 screw head diameter (3.4 plus some clearance)
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
 (def top-screw-block-wall-thickness 4)
-
 
 (def top-screw ( top-screw-insert-all-shapes 
                       top-screw-radius
@@ -1388,15 +1388,26 @@ need to adjust for difference for thumb-z only"
                     ))
 
 (def top-screw-insert-holes
-    (union 
+    (union
+        ; actual threaded insert hole
         (translate [0 0 top-screw-clear-length]
-            ( top-screw-insert-all-shapes 
+            (top-screw-insert-all-shapes 
                 top-screw-insert-radius 
                 top-screw-insert-radius 
                 top-screw-insert-height
             ))
+
+        ; drainage hole through top of case
         (translate [0 0 2]
             top-screw)
+
+        ; screw head clearance
+        (translate [0 0 (- (* 1.5 top-screw-length))]
+            (top-screw-insert-all-shapes 
+                      top-screw-head-radius
+                      top-screw-head-radius
+                      (* 1.5 top-screw-length)
+            ))
     ))
 
 (def top-screw-block-outers 
