@@ -1367,8 +1367,9 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert 0             1 bottom-radius top-radius height [ -1.5  11.75 58]) (color PIN)) ; leff
     (->> (screw-insert 0             3 bottom-radius top-radius height [ -6    11    50]) (color NBL)) ; left-thumb
     (->> (screw-insert 0       lastrow bottom-radius top-radius height [-13    -2    39]) (color BRO)) ; thumb
-    (->> (screw-insert (- lastcol 2) 0 bottom-radius top-radius height [ 24.25 -11.5 13]) (color PUR)) ; top right
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 11.5  -2    45]) (color BLA)) ; bottom middle
+    (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -4    -10.5  1]) (color PUR)) ; top right
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 11.5  -2.5  45]) (color CYA)) ; bottom thumb
+    (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -11   -5    44]) (color BLA)) ; bottom middle
 )) 
 
 (def top-screw-insert-radius (/ 2.6 2)) ; M2 screw insert diameter
@@ -1379,19 +1380,24 @@ need to adjust for difference for thumb-z only"
 (def top-screw-block-height 4)
 (def top-screw-block-wall-thickness 4)
 
-(def top-screw-insert-holes 
-    (translate [0 0 top-screw-clear-length]
-        ( top-screw-insert-all-shapes 
-            top-screw-insert-radius 
-            top-screw-insert-radius 
-            top-screw-insert-height
-        )))
 
 (def top-screw ( top-screw-insert-all-shapes 
                       top-screw-radius
                       top-screw-radius
                       top-screw-length
                     ))
+
+(def top-screw-insert-holes
+    (union 
+        (translate [0 0 top-screw-clear-length]
+            ( top-screw-insert-all-shapes 
+                top-screw-insert-radius 
+                top-screw-insert-radius 
+                top-screw-insert-height
+            ))
+        (translate [0 0 2]
+            top-screw)
+    ))
 
 (def top-screw-block-outers 
     (difference 
