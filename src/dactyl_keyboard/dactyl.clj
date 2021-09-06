@@ -25,6 +25,13 @@
 (def BLA [0/255 0/255 0/255 1])
 (def KEYCAP [220/255 163/255 163/255 1])
 
+(def WPI [243/255 85/255 136/255 1]) 
+(def WGR [0/255 121/255 68/255 1]) 
+(def LGR [184/255 212/255 173/255 1])
+
+(def KEYCAP [220/255 163/255 163/255 1])
+(def KEYCAP WHI)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -145,10 +152,10 @@
 (def hotswap-y2          6.2) ;second y-size of kailh hotswap holder
 (def hotswap-z           (+ swap-z 0.5));thickness of kailn hotswap holder + some margin of printing error (0.5mm)
 (def hotswap-cutout-z-offset -2.6)
-(def hotswap-cutout-2-x-offset (- (/ holder-x 4.5)))
+(def hotswap-cutout-2-x-offset (- (/ holder-x 4) 1.25))
 (def hotswap-cutout-1-y-offset 4.95)
 (def hotswap-cutout-2-y-offset 4)
-(def hotswap-case-cutout-x-extra 3.01)
+(def hotswap-case-cutout-x-extra 2.75)
 (defn hotswap-case-cutout [mirror-internals]
   (let [shape (union
                 (translate [0 
@@ -1397,7 +1404,7 @@ need to adjust for difference for thumb-z only"
                 top-screw-insert-height
             ))
 
-        ; drainage hole through top of case
+        ; clearance and possible drainage hole through top of case
         (translate [0 0 2]
             top-screw)
 
@@ -1880,8 +1887,12 @@ need to adjust for difference for thumb-z only"
 (spit "things/test.scad"
       (write-scad
           (union
-            (->> (model-right false)
-                 ; (color BLU)
+            (->> (model-case-walls-right false)
+                 (color WGR)
+            )
+            (->> ;(model-right false)
+                 (model-switch-plates-right false)
+                 (color WPI)
             )
             ; (debug top-screw)
             caps
@@ -1897,7 +1908,7 @@ need to adjust for difference for thumb-z only"
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
                     (->> wrist-rest-right-holes
-                         ; (color BLU) 
+                         (color WGR)
                     )
                 )
             )
