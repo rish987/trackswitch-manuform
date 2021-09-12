@@ -50,7 +50,7 @@
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
 
-(def rendered-caps true) ; slows down model viewing but much nicer looking for more accurate clearances
+(def rendered-caps false) ; slows down model viewing but much nicer looking for more accurate clearances
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 20) ;;index outer
@@ -1638,14 +1638,15 @@ need to adjust for difference for thumb-z only"
 ; end heavily modified crystalhand wrist rest code
 
 
+; (spit "things/wrist-rest-right-base.scad"
+;       (write-scad wrist-rest-right-base))
+
 (spit "things/wrist-rest-right.scad"
       (write-scad 
           (union wrist-rest-right
                  ; (debug other thingy)
           )
       ))
-(spit "things/wrist-rest-right-base.scad"
-      (write-scad wrist-rest-right-base))
 
 (def wrist-rest-right-holes
     (if adjustable-wrist-rest-holder-plate
@@ -1787,8 +1788,8 @@ need to adjust for difference for thumb-z only"
     )
   )
 )
-(spit "things/switch-plate-cutouts.scad"
-      (write-scad (model-switch-plate-cutouts false)))
+; (spit "things/switch-plate-cutouts.scad"
+;       (write-scad (model-switch-plate-cutouts false)))
 
 (defn model-case-walls-right [mirror-internals]
   (union
