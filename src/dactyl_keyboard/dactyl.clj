@@ -147,12 +147,12 @@
   )
 )
 
-(def hotswap-x2          (* (/ holder-x 3) 1.95))
+(def hotswap-x2          (* (/ holder-x 3) 1.85))
 (def hotswap-y1          4.3) ;first y-size of kailh hotswap holder
 (def hotswap-y2          6.2) ;second y-size of kailh hotswap holder
 (def hotswap-z           (+ swap-z 0.5));thickness of kailn hotswap holder + some margin of printing error (0.5mm)
 (def hotswap-cutout-z-offset -2.6)
-(def hotswap-cutout-2-x-offset (- (/ holder-x 4) 1.25))
+(def hotswap-cutout-2-x-offset (- (- (/ holder-x 4) 0.70)))
 (def hotswap-cutout-1-y-offset 4.95)
 (def hotswap-cutout-2-y-offset 4)
 (def hotswap-case-cutout-x-extra 2.75)
