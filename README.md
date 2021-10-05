@@ -2,6 +2,10 @@
 
 This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
+## V3 Features
+- Added option for two part design per keyboard half
+![Compactyl V3 back](compactyl-V3-exploded.png)
+
 ## V2.1 Features
 - Increased tent angle
 	- Added global thumb angle adjustment
