@@ -1379,11 +1379,17 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -11   -5    44]) (color BLA)) ; bottom middle
 )) 
 
-(def top-screw-insert-radius (/ 2.6 2)) ; M2 screw insert diameter
-(def top-screw-insert-height 10)        ; M2 screw insert length 3.5, use higher value to cut through angled things
-(def top-screw-length 16)               ; M2 screw thread length
-(def top-screw-radius (/ 1.95 2))       ; M2 screw diameter
-(def top-screw-head-radius (/ 3.55 2))  ; M2 screw head diameter (3.4 plus some clearance)
+(def top-screw-length 16)               ; M2/M3 screw thread length
+(def top-screw-insert-height 10)        ; M2/M3 screw insert length 3.5, use higher value to cut through angled things
+
+; (def top-screw-insert-radius (/ 3.0 2)) ; M2 screw insert diameter
+; (def top-screw-radius (/ 2.1 2))        ; M2 screw diameter
+; (def top-screw-head-radius (/ 3.55 2))  ; M2 screw head diameter (3.4 plus some clearance)
+
+(def top-screw-insert-radius (/ 3.3 2)); M3 screw insert diameter
+(def top-screw-radius (/ 2.6 2))       ; M3 screw diameter
+(def top-screw-head-radius (/ 4.55 2)) ; M3 screw head diameter (4.4 plus some clearance)
+
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
 (def top-screw-block-wall-thickness 4)
