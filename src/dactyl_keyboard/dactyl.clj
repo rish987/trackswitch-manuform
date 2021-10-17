@@ -1437,9 +1437,26 @@ need to adjust for difference for thumb-z only"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(def usb-holder-vertical true)
+(def usb-holder-stl 
+  (if usb-holder-vertical
+    (import "../things/usb_holder_vertical.stl")
+    (import "../things/usb_holder_w_reset.stl")
+  )
+)
+(def usb-holder-cutout-stl 
+  (if usb-holder-vertical
+    (import "../things/usb_holder_vertical_cutout.stl")
+    (import "../things/usb_holder_w_reset_cutout.stl")
+  )
+)
+(def usb-holder-cutout-height 
+  (if usb-holder-vertical 
+    (* 30.6 2)
+    30.3
+  )
+)
 
-(def usb-holder-stl (import "../things/usb_holder_w_reset.stl"))
-(def usb-holder-cutout-height 30.3)
 (def usb-holder-clearance 0.2)
 (def usb-holder-bottom-offset 0.15)
 
@@ -1453,15 +1470,17 @@ need to adjust for difference for thumb-z only"
 (def usb-holder (usb-holder-place usb-holder-stl))
 (def usb-holder-space
     (let [usb-holder-cutout (usb-holder-place
-                                (union usb-holder-stl
-                                       (mirror [-1 0 0] usb-holder-stl)
-                                )
+                                usb-holder-cutout-stl
                             )
           cutout (translate [0 0 (/ usb-holder-bottom-offset 2)]
                      (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
                                      (offset usb-holder-clearance
-                                             (project 
-                                                 (scale [1.001 1 1] usb-holder-cutout)))))
+                                             (projection {:cut false}
+                                                 (scale [1.001 1 1] usb-holder-cutout)
+                                             )
+                                     )
+                     )
+                 )
          ]
      cutout)
 )
@@ -1895,11 +1914,11 @@ need to adjust for difference for thumb-z only"
       (write-scad
           (union
             (->> (model-case-walls-right false)
-                 (color WGR)
+                 (color BLU)
             )
             (->> ;(model-right false)
                  (model-switch-plates-right false)
-                 (color WPI)
+                 (color WHI)
             )
             ; (debug top-screw)
             caps
@@ -1915,7 +1934,7 @@ need to adjust for difference for thumb-z only"
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
                     (->> wrist-rest-right-holes
-                         (color WGR)
+                         (color BLU)
                     )
                 )
             )
