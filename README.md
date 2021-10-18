@@ -81,15 +81,12 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Generate OpenSCAD and STL models
 
-### OLD
-* Run `lein repl`
-* In the repl run `(load-file "src/dactyl_keyboard/dactyl.clj")`
-* This will regenerate the `things/*.scad` files
-* Use OpenSCAD to open a `.scad` file.
-* Make changes to design, repeat `load-file`, OpenSCAD will watch for changes and rerender.
-* When done, use OpenSCAD to render, then export model STL files which can be printed by 3d printer slicing software.
+**Setting up the Clojure environment**
+* [Install the Clojure runtime](https://clojure.org)
+* [Install the Leiningen project manager](http://leiningen.org/)
+* [Install OpenSCAD](http://www.openscad.org/)
 
-### NEW
+### Generating a Design
 * Run `lein auto generate`
 * This will regenerate the `things/*.scad` files whenever the .clr file is saved
 * Use OpenSCAD to open a `.scad` file.
