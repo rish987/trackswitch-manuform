@@ -1,10 +1,19 @@
 # Compactyl - A Compact Dactyl ManuForm Keyboard
 
-This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
+This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
+
+## V3.1 Features
+- Added support for tilting outer index and pinky columns only
+- Increased tent angle to 40 deg
+- Adjusted case to remove jank around top index corner
+- Change to use vertical MCU holder
+- Updated case walls connecting to thumb
+- Update rendered thumb caps to rotated SA R1
+![Compactyl V3.1 top](images/compactyl-v3.1.png)
 
 ## V3 Features
 - Added option for two part design per keyboard half
-![Compactyl V3 back](compactyl-V3-exploded.png)
+![Compactyl V3 back](images/compactyl-V3-exploded.png)
 
 ## V2.1 Features
 - Increased tent angle
@@ -20,8 +29,8 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- Turn off rendering at ~2,000,000 
 	- CGAL cache size ~4000mb
 	- PolySet cache size ~4000mb
-![Compactyl V2](compactyl-V2.1.png)
-![Compactyl V2 back](compactyl-V2.1-back.png)
+![Compactyl V2](images/compactyl-V2.1.png)
+![Compactyl V2 back](images/compactyl-V2.1-back.png)
 
 ## V2 Features
 - Returned back to one solid piece top case deisgn for easier printing
@@ -33,7 +42,7 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- Wrist rest can be positioned to adjust X, Y, or Z placement (adding or removing shims)
 - Added modified version of cyrstalhands wrist rest holder
 	- slanted, removed case connector tubes, added threaded insert holes
-![Compactyl V2](compactyl-V2.png)
+![Compactyl V2](images/compactyl-V2.png)
 
 ## V1 Features
 - Hotswap north facing switch plates
@@ -46,11 +55,11 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 - (orig. Tightyl) Smoother transition between thumb and fingers (less facets)
 - (orig. Tightyl) Thicker walls in steep regions where walls were too thin
 
-![](compactyl-real-5x6-glamour.jpeg)
-![](compactyl.png)
-![](assembly.png)
-[![Kailh Box White Sound Test](compactyl-real-4x6.jpg)](https://www.youtube.com/watch?v=2oHvrcsFb9k)
-![](compactyl-real-5x6.jpeg)
+![](images/compactyl-real-5x6-glamour.jpeg)
+![](images/compactyl.png)
+![](images/assembly.png)
+[![Kailh Box White Sound Test](images/compactyl-real-4x6.jpg)](https://www.youtube.com/watch?v=2oHvrcsFb9k)
+![](images/compactyl-real-5x6.jpeg)
 
 ## Update USB holder
 - Created ("working" but unpolished) SCAD version of USB holder for modifications
@@ -59,24 +68,24 @@ This is a fork of [the okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Taper angle to reduce waste material
 - Make holder shape symetrical to case notches so it fits upside down or right side up
 - Add option for square reset button to be held as well
-![](elite-c_trrs_holder.png)
-![](elite-c_trrs_reset_holder.png)
-![](elite-c_trrs_reset_holder_real.jpeg)
+![](images/elite-c_trrs_holder.png)
+![](images/elite-c_trrs_reset_holder.png)
+![](images/elite-c_trrs_reset_holder_real.jpeg)
 
 ## Wiring
 - Uses typical COL2ROW diode direction and pins for dactyl manuform
 - Should be backwards compatible with dactyl-manuform 5x6 firmware from confrom
 	- https://config.qmk.fm/#/handwired/dactyl_manuform/5x6/LAYOUT_5x6
 	- https://ohkeycaps.com/pages/via-support
-![](compactyl_dactyl_manuform_wiring_left.jpeg)
-![](compactyl_dactyl_manuform_wiring_right.jpeg)
-![](compactyl-real-4x6-wiring.jpeg)
+![](images/compactyl_dactyl_manuform_wiring_left.jpeg)
+![](images/compactyl_dactyl_manuform_wiring_right.jpeg)
+![](images/compactyl-real-4x6-wiring.jpeg)
 
 ## Comparison with previous model
 - Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
 - New Compactyl (blue) uses a flatter row curvature, but increases tent to result in similar keyboard angle
 - New Compactyl (blue) is approximately 4mm taller (plus additional heigh for bottom plate if used) because of space requried by hot swap holders below pinky columns.
-![](compare.png)
+![](images/compare.png)
 
 
 ## Generate OpenSCAD and STL models
