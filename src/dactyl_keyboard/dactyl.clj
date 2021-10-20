@@ -1829,7 +1829,7 @@ need to adjust for difference for thumb-z only"
                                    )
                                    (project
                                        (if recess-bottom-plate
-                                           (hull usb-holder-cutout-stl)
+                                           (hull (usb-holder-place usb-holder-cutout-stl))
                                        )
                                    )
                                )
@@ -2014,7 +2014,7 @@ need to adjust for difference for thumb-z only"
             ; (debug thumb-space-below)
             ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
 
-            (debug usb-holder)
+            (color WHI usb-holder)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
