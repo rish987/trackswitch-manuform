@@ -7,6 +7,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Increased tent angle to 40 deg
 - Adjusted case to remove jank around top index corner
 - Change to use vertical MCU holder
+- Changed top plate attachment screws from M2 to M3
 - Updated case walls connecting to thumb
 - Update rendered thumb caps to rotated SA R1
 ![Compactyl V3.1 top](images/compactyl-v3.1.png)
