@@ -6,11 +6,12 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Added support for tilting outer index and pinky columns only
 - Increased tent angle to 40 deg
 - Adjusted case to remove jank around top index corner
-- Change to use vertical MCU holder
-- Changed top plate attachment screws from M2 to M3
-- Updated case walls connecting to thumb
-- Update rendered thumb caps to rotated SA R1
+- Changed to use vertical MCU holder
+- Upsized top plate attachment screws from M2 to M3
+- Modified case walls connecting to thumb
+- Updated rendered thumb caps to rotated SA R1, I use
 ![Compactyl V3.1 top](images/compactyl-v3.1.png)
+![Compactyl V3.1 top](images/compactyl-v3.1-back.png)
 
 ## V3 Features
 - Added option for two part design per keyboard half
