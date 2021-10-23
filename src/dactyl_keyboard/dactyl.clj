@@ -67,7 +67,7 @@
 
 (def north_facing true)
 (def extra-curve-bottom-row true) ; enable magic number curve of bottom two keys
-(def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees
+(def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees, adjust spacing where this is used if increased
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
 
@@ -92,7 +92,7 @@
               :else 0 ))
 
 (def tenting-angle (deg2rad 40)) ; controls left-right tilt / tenting (higher number is more tenting) 
-(def centercol 3)                ; or, change this for more destructive tenting control
+(def centercol 3)                ; Zero indexed, TODO: this should be 2.5 for a 6 column board, but it will break all the things now
 
 (defn column-offset [column] (cond
                   (= column 0)  [0  -5  1  ] ;;index outer
@@ -456,7 +456,7 @@
   )
 )
 
-(def amoeba-x 1) ; mm width
+(def amoeba-x 1) ; mm width TODO wtf?
 (def amoeba-y 16) ; mm high
 (def keyswitch-below-clearance (/ keyswitch-below-plate -2))
 
@@ -1753,30 +1753,6 @@ need to adjust for difference for thumb-z only"
 ; end heavily modified crystalhand wrist rest code
 
 
-; (spit "things/wrist-rest-right-base.scad"
-;       (write-scad wrist-rest-right-base))
-
-(spit "things/wrist-rest-right.scad"
-      (write-scad 
-          (union wrist-rest-right
-                 ; (debug other thingy)
-          )
-      ))
-
-(def wrist-rest-right-holes
-    (if adjustable-wrist-rest-holder-plate
-        (difference wrist-rest-right
-                    (translate [-10 -5 0] 
-                               (screw-insert-wrist-rest-four screw-insert-radius
-                                                             screw-insert-radius
-                                                             999))
-                    (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
-                    (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
-        )
-        wrist-rest-right
-    )
-)
-
 (def case-walls-bottom (cut 
                            (translate [0 0 10] 
                                       case-walls
@@ -1797,6 +1773,10 @@ need to adjust for difference for thumb-z only"
                                     ) 
                                   ))
 
+;;;;;;;;;;;;
+;; Models ;;
+;;;;;;;;;;;;
+
 (defn model-switch-plate-cutouts [mirror-internals]
   (difference
     (union
@@ -1810,7 +1790,21 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def bottom-plate
+(def model-wrist-rest-right-holes
+    (if adjustable-wrist-rest-holder-plate
+        (difference wrist-rest-right
+                    (translate [-10 -5 0] 
+                               (screw-insert-wrist-rest-four screw-insert-radius
+                                                             screw-insert-radius
+                                                             999))
+                    (translate [-11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+                    (translate [ 11 39 (- (/ bottom-plate-thickness 2) 0.1)] wrist-shape)
+        )
+        wrist-rest-right
+    )
+)
+
+(def model-bottom-plate
   (let [screw-cutouts         (translate [0 0 (/ bottom-plate-thickness -1.99)] 
                                          screw-insert-holes-bottom-plate)
         screw-cutouts-fillets (translate [0 0 (/ bottom-plate-thickness -1.99)] 
@@ -1852,7 +1846,7 @@ need to adjust for difference for thumb-z only"
     (difference (union 
                     bottom-plate-blank
                     ; (translate [8 -100 0] 
-                    ;     (debug wrist-rest-right-holes)
+                    ;     (debug model-wrist-rest-right-holes)
                     ; )
                 )
                 screw-cutouts
@@ -1870,13 +1864,6 @@ need to adjust for difference for thumb-z only"
     )
   )
 )
-
-;;;;;;;;;;;;;
-;; Outputs ;;
-;;;;;;;;;;;;;
-
-(spit "things/single-plate.scad"
-      (write-scad (single-plate false)))
 
 (defn model-switch-plates-right [mirror-internals]
 (union
@@ -1902,13 +1889,6 @@ need to adjust for difference for thumb-z only"
   ; (debug top-screw)
 ))
 
-(spit "things/switch-plates-right.scad"
-      (write-scad (model-switch-plates-right false)))
-(spit "things/switch-plates-left.scad"
-      (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
-; (spit "things/switch-plate-cutouts.scad"
-;       (write-scad (model-switch-plate-cutouts false)))
-
 (defn model-case-walls-right [mirror-internals]
   ; (union
   (difference
@@ -1930,7 +1910,7 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
                        (cube 350 350 40))
             (translate [0 0 (- (/ bottom-plate-thickness 2))] 
-                       (scale [1.005 1.005 1.15] bottom-plate))
+                       (scale [1.005 1.005 1.15] model-bottom-plate))
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
@@ -1945,10 +1925,6 @@ need to adjust for difference for thumb-z only"
   )
   ; (debug top-screw))
 )
-(spit "things/case-walls-right.scad"
-      (write-scad (model-case-walls-right false)))
-(spit "things/case-walls-left.scad"
-      (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
 
 (defn model-right [mirror-internals]
   (difference
@@ -1971,7 +1947,7 @@ need to adjust for difference for thumb-z only"
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
                        (cube 350 350 40))
             (translate [0 0 (- (/ bottom-plate-thickness 2))] 
-                       (scale [1.005 1.005 1.15] bottom-plate))
+                       (scale [1.005 1.005 1.15] model-bottom-plate))
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
@@ -1985,23 +1961,46 @@ need to adjust for difference for thumb-z only"
     (if use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
     (if use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
   ))
+
+;;;;;;;;;;;;;
+;; Outputs ;;
+;;;;;;;;;;;;;
+
+(spit "things/single-plate.scad"
+      (write-scad (single-plate false)))
+
+(spit "things/switch-plates-right.scad"
+      (write-scad (model-switch-plates-right false)))
+(spit "things/switch-plates-left.scad"
+      (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
+; (spit "things/switch-plate-cutouts.scad"
+;       (write-scad (model-switch-plate-cutouts false)))
+
+(spit "things/case-walls-right.scad"
+      (write-scad (model-case-walls-right false)))
+(spit "things/case-walls-left.scad"
+      (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
+
 (spit "things/right.scad"
       (write-scad (model-right false)))
-
-(def model-left
-  (mirror [-1 0 0] (model-right true))
-)
 (spit "things/left.scad"
-      (write-scad model-left))
+      (write-scad (mirror [-1 0 0] (model-right true))))
 
 (spit "things/bottom-plate-right.scad"
-      (write-scad bottom-plate))
+      (write-scad model-bottom-plate))
 
-(spit "things/wrist-rest-right-holes.scad"
-      (write-scad wrist-rest-right-holes))
+; (spit "things/wrist-rest-right-base.scad"
+;       (write-scad wrist-rest-right-base))
+(spit "things/wrist-rest-right.scad"
+  (if adjustable-wrist-rest-holder-plate
+    (write-scad model-wrist-rest-right-holes)
+    (write-scad wrist-rest-right)
+  )
+)
 
 (spit "things/test.scad"
       (write-scad
+            ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             (color PUR (model-case-walls-right false))
 
             ; (color WHI (model-right false))
@@ -2020,9 +2019,9 @@ need to adjust for difference for thumb-z only"
 
             (color WHI usb-holder)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
-                (debug bottom-plate)
+                (debug model-bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (color PUR wrist-rest-right-holes)
+                    (color PUR model-wrist-rest-right-holes)
                 )
             )
       ))

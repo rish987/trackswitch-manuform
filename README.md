@@ -9,7 +9,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Changed to use vertical MCU holder
 - Upsized top plate attachment screws from M2 to M3
 - Modified case walls connecting to thumb
-- Updated rendered thumb caps to rotated SA R1, I use
+- Updated rendered thumb caps to rotated SA R1, which I use.
 ![Compactyl V3.1 top](images/compactyl-v3.1.png)
 ![Compactyl V3.1 top](images/compactyl-v3.1-back.png)
 
