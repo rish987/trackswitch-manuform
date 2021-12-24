@@ -71,6 +71,10 @@
 (def recess-bottom-plate true)
 (def adjustable-wrist-rest-holder-plate true)
 
+; ** for two part designs only **
+(def top-screw-insert-top-plate-bumps true) ; add additional threaded insert holder to top plate
+(def hide-top-screws -1.5) ; 0 or 0.25 for resin prints, -1.5 for non-resin prints to not have holes cut through top plate
+
 (def rendered-caps true) ; slows down model viewing but much nicer looking for more accurate clearances
 
 (defn column-curvature [column] 
@@ -119,8 +123,8 @@
 (def wall-xy-offset 1)
 (def wall-thickness 1)  ; wall thickness parameter
 
-(def thumb-pos [5.5 1 9] )
-(def thumb-rot [0 10 0] )
+(def thumb-pos [-2 1 9] )
+(def thumb-rot [0 20 0] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; General variables ;;
@@ -500,6 +504,7 @@
    )))
 
 (defn single-plate [mirror-internals]
+ ; (render ;tell scad to try and cache this repetitive code, kinda screws up previews
   (let [top-wall (->> (cube mount-height 1.5 plate-thickness)
                       (translate [0
                                   (+ (/ 1.5 2) (/ keyswitch-height 2))
@@ -525,6 +530,7 @@
          )
     )
   )
+ ; )
 )
 
 (def single-plate-blank
@@ -562,7 +568,7 @@
 (def sa-cap-bottom-height-pressed (+ 3 plate-thickness))
 
 (def sa-double-length 37.5)
-(defn sa-cap [keysize]
+(defn sa-cap [keysize row]
     (let [ bl2 (case keysize 1   (/ sa-length 2)
                              1.5 (/ sa-length 2)
                              2      sa-length   )
@@ -584,8 +590,13 @@
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
                                      (translate [0 0 sa-height])))
            key-cap-display (if rendered-caps
-                               (translate [0 0 0] 
-                                   (import "../things/SA-R3.stl"))
+                                   (case row 0 (translate [0 0 0] (import "../things/MX_DES_MT4_R1.stl"))
+                                             1 (translate [0 0 0] (import "../things/MX_DES_MT4_R2.stl"))
+                                             2 (translate [0 0 0] (import "../things/MX_DES_MT4_R3D.stl"))
+                                             3 (translate [0 0 0] (import "../things/MX_DES_MT4_R4.stl"))
+                                             4 (translate [0 0 0] (import "../things/MX_DES_MT4_R5.stl"))
+                                             5 (translate [0 0 0] (import "../things/MX_DES_MT4_R5.stl"))
+                                   )
                                key-cap)
          ]
          (union
@@ -720,6 +731,14 @@
 (defn key-position [column row position]
   (apply-key-geometry (partial map +) rotate-around-x rotate-around-y column row position))
 
+(def caps
+    (apply union
+         (for [column columns
+               row rows
+               :when (or (.contains [2 3] column)
+                         (not= row lastrow))]
+             (->> (sa-cap 1 row)
+                (key-place column row)))))
 (defn key-places [shape]
   (apply union
          (for [column columns
@@ -728,10 +747,9 @@
                          (not= row lastrow))]
              (->> shape
                 (key-place column row)))))
+
 (def key-space-below
   (key-places switch-bottom))
-(def caps
-  (key-places (sa-cap 1)))
 (def caps-cutout
   (key-places (sa-cap-cutout 1)))
 
@@ -980,13 +998,7 @@ need to adjust for difference for thumb-z only"
     (thumb-m-place shape)
     (thumb-l-place shape)))
 
-(def thumbcaps (thumb-layout (if rendered-caps
-                                    (->> (import "../things/SA-R1.stl")
-                                         (translate [0 0 sa-cap-bottom-height])
-                                         (rotate-shape-on-z 90)
-                                         (color KEYCAP)
-                                    )
-                                    (sa-cap 1))))
+(def thumbcaps (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap 1 5))))
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
 (def thumb-space-below (thumb-layout switch-bottom))
 (defn thumb-key-cutouts [mirror-internals] 
@@ -1428,13 +1440,13 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
-    (->> (screw-insert 2             0 bottom-radius top-radius height       [  1    3.5   screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert 0             1 bottom-radius top-radius height       [ -5.5  -9   screw-insert-bottom-offset]) (color PIN)) ; left
+    (->> (screw-insert 2             0 bottom-radius top-radius height       [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert 0             1 bottom-radius top-radius height       [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
     (if recess-bottom-plate
-        (->> (screw-insert 0         3 bottom-radius top-radius height       [ -2  -12   screw-insert-bottom-offset]) (color NBL))) ; left-thumb
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-26  -14.75   screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius (/ height 3) [ 18.5    1.5 screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height       [ 11.5  7.5 screw-insert-bottom-offset]) (color BLA)) ; bottom middle
+        (->> (screw-insert 0         3 bottom-radius top-radius height       [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
+    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius (/ height 3) [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height       [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
 (def screw-insert-height 16.5) ; Hole Depth Y: 4.4
@@ -1455,14 +1467,14 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
-    (->> (screw-insert 3             0 bottom-radius top-radius height [ -4    5    27.5]) (color RED)) ; top middle
-    (->> (screw-insert 0             1 bottom-radius top-radius height [ -0.5 10.75 64.5]) (color PIN)) ; leff
-    (->> (screw-insert 0             3 bottom-radius top-radius height [ -6   11    59.0]) (color NBL)) ; left-thumb
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height [-14.5  0    44]) (color BRO)) ; thumb
-    (->> (screw-insert lastcol       0 bottom-radius top-radius height [ 0.5  -11.5   0.3]) (color PUR)) ; top right
-    ; (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -2  -54.5   0]) (color GRE)) ; bottom right
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 9   -2.5  48]) (color CYA)) ; bottom thumb
-    (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -12.5  -4.75 49]) (color BLA)) ; bottom middle
+    (->> (screw-insert 3             0 bottom-radius top-radius height [ -5    5    (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; leff-thumb
+    (->> (screw-insert 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert lastcol       0 bottom-radius top-radius (* height 0.75) [ -1.5  -11.5  (+ 0.5 hide-top-screws)]) (color PUR)) ; top right
+    ; (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -2  -54.5  (+ 0 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
+    (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
 )) 
 
 (def top-screw-length 16)               ; M2/M3 screw thread length
@@ -1479,6 +1491,7 @@ need to adjust for difference for thumb-z only"
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
 (def top-screw-block-wall-thickness 4)
+(def top-screw-insert-wall-thickness 1)
 
 (def top-screw ( top-screw-insert-all-shapes 
                       top-screw-radius
@@ -1509,8 +1522,22 @@ need to adjust for difference for thumb-z only"
             ))
     ))
 
+(def top-screw-insert-outers 
+    (difference
+        (translate [0 0 top-screw-clear-length]
+            (top-screw-insert-all-shapes 
+                (+ top-screw-insert-radius top-screw-insert-wall-thickness)
+                (+ top-screw-insert-radius top-screw-insert-wall-thickness)
+                top-screw-insert-height
+            )
+        )
+        top-screw
+    )
+)
+
 (def top-screw-block-outers 
-    (difference 
+    (difference
+        ; screw head stop
         (top-screw-insert-all-shapes 
             (+ top-screw-insert-radius top-screw-block-wall-thickness) 
             (+ top-screw-insert-radius top-screw-block-wall-thickness) 
@@ -1865,33 +1892,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(defn model-switch-plates-right [mirror-internals]
-(union
-  (difference
-    (union
-      (key-places (single-plate mirror-internals))
-      case-top-border
-      (if use_flex_pcb_holder flex-pcb-holders)
-      connectors
-      (thumb-layout (single-plate mirror-internals))
-      thumb-connectors
-    )
-    top-screw-insert-holes
-    caps-cutout
-    thumbcaps-cutout
-    (thumb-key-cutouts mirror-internals)
-    (if (not (or use_hotswap_holder use_solderless)) 
-        (union key-space-below
-              thumb-space-below))
-    (if use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
-    (if use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
-  )
-  ; (debug top-screw)
-))
-
-(defn model-case-walls-right [mirror-internals]
-  ; (union
-  (difference
+(defn model-case-walls-right-base [mirror-internals]
     (union
       (if use_flex_pcb_holder flex-pcb-holders)
       (difference (union case-walls
@@ -1904,7 +1905,12 @@ need to adjust for difference for thumb-z only"
                   top-screw-insert-holes
       )
     )
-    
+)
+
+(defn model-case-walls-right [mirror-internals]
+  ; (union
+  (difference
+    (model-case-walls-right-base mirror-internals)
     (if recess-bottom-plate
         (union
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
@@ -1926,6 +1932,38 @@ need to adjust for difference for thumb-z only"
   ; (debug top-screw))
 )
 
+(defn switch-plates-right [mirror-internals]
+  (difference
+    (union
+      (key-places (single-plate mirror-internals))
+      case-top-border
+      (if use_flex_pcb_holder flex-pcb-holders)
+      connectors
+      (thumb-layout (single-plate mirror-internals))
+      thumb-connectors
+      (if top-screw-insert-top-plate-bumps top-screw-insert-outers)
+    )
+    (if top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
+    caps-cutout
+    thumbcaps-cutout
+    (thumb-key-cutouts mirror-internals)
+    (if (not (or use_hotswap_holder use_solderless)) 
+        (union key-space-below
+              thumb-space-below))
+    (if use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
+    (if use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
+  )
+)
+
+(defn model-switch-plates-right [mirror-internals]
+  (difference
+    ; (union 
+      (switch-plates-right mirror-internals)
+    ; )
+    top-screw-insert-holes
+  )
+  ; (debug top-screw))
+)
 (defn model-right [mirror-internals]
   (difference
     (union
@@ -2007,9 +2045,9 @@ need to adjust for difference for thumb-z only"
             (color WHI (model-switch-plates-right false))
 
             ; (debug top-screw)
-            caps
+            ; caps
             ; (debug caps-cutout)
-            thumbcaps
+            ; thumbcaps
             ; (debug (import "../things/test_keycap_placement.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
@@ -2017,7 +2055,7 @@ need to adjust for difference for thumb-z only"
             ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
             ; (debug top-screw-block-outers)
 
-            (color WHI usb-holder)
+            (debug usb-holder)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug model-bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
