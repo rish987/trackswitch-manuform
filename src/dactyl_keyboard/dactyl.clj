@@ -1,6 +1,7 @@
 (ns dactyl-keyboard.dactyl
   (:refer-clojure :exclude [use import])
   (:require [clojure.core.matrix :refer [array matrix mmul]]
+            [clojure.string :as str]
             [scad-clj.scad :refer :all]
             [scad-clj.model :refer :all]))
 
@@ -568,7 +569,7 @@
 (def sa-cap-bottom-height-pressed (+ 3 plate-thickness))
 
 (def sa-double-length 37.5)
-(defn sa-cap [keysize row]
+(defn sa-cap [keysize col row]
     (let [ bl2 (case keysize 1   (/ sa-length 2)
                              1.5 (/ sa-length 2)
                              2      sa-length   )
@@ -589,14 +590,16 @@
                                 (->> keycap-top
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
                                      (translate [0 0 sa-height])))
-           key-cap-display (if rendered-caps
-                                   (case row 0 (translate [0 0 0] (import "../things/MX_DES_MT4_R1.stl"))
-                                             1 (translate [0 0 0] (import "../things/MX_DES_MT4_R2.stl"))
-                                             2 (translate [0 0 0] (import "../things/MX_DES_MT4_R3D.stl"))
-                                             3 (translate [0 0 0] (import "../things/MX_DES_MT4_R4.stl"))
-                                             4 (translate [0 0 0] (import "../things/MX_DES_MT4_R5.stl"))
-                                             5 (translate [0 0 0] (import "../things/MX_DES_MT4_R5.stl"))
-                                   )
+           rendered-cap-filename (case row 0 "../things/MX_DES_MT4_R1.stl"
+                                           1 "../things/MX_DES_MT4_R2.stl"
+                                           2 "../things/MX_DES_MT4_R3D.stl"
+                                           3 "../things/MX_DES_MT4_R4.stl"
+                                           4 "../things/MX_DES_MT4_R5.stl"
+                                           5 "../things/MX_DES_MT4_R5.stl")
+           rendered-cap-filename-full (cond (= col 0)       (str/replace (str/replace rendered-cap-filename #"D.stl" ".stl") #".stl" "L.stl")
+                                            (= col lastcol) (str/replace (str/replace rendered-cap-filename #"D.stl" ".stl") #".stl" "R.stl")
+                                            :default         rendered-cap-filename)
+           key-cap-display (if rendered-caps (import rendered-cap-filename-full)
                                key-cap)
          ]
          (union
@@ -737,7 +740,7 @@
                row rows
                :when (or (.contains [2 3] column)
                          (not= row lastrow))]
-             (->> (sa-cap 1 row)
+             (->> (sa-cap 1 column row)
                 (key-place column row)))))
 (defn key-places [shape]
   (apply union
@@ -998,7 +1001,7 @@ need to adjust for difference for thumb-z only"
     (thumb-m-place shape)
     (thumb-l-place shape)))
 
-(def thumbcaps (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap 1 5))))
+(def thumbcaps (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap 1 2 5))))
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
 (def thumb-space-below (thumb-layout switch-bottom))
 (defn thumb-key-cutouts [mirror-internals] 
@@ -2045,9 +2048,9 @@ need to adjust for difference for thumb-z only"
             (color WHI (model-switch-plates-right false))
 
             ; (debug top-screw)
-            ; caps
+            caps
             ; (debug caps-cutout)
-            ; thumbcaps
+            thumbcaps
             ; (debug (import "../things/test_keycap_placement.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
