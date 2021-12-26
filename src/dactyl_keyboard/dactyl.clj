@@ -1597,6 +1597,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder (usb-holder-place usb-holder-stl))
 (def usb-holder-cutout (usb-holder-place usb-holder-cutout-stl))
 (def usb-holder-space
+  (color RED
     (translate [0 0 (/ usb-holder-bottom-offset 2)]
         (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
             (offset usb-holder-clearance
@@ -1606,6 +1607,7 @@ need to adjust for difference for thumb-z only"
             )
         )
     )
+  )
 )
 
 ;;;;;;;;;;;;;;;;;;
@@ -1921,8 +1923,8 @@ need to adjust for difference for thumb-z only"
         (union
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
                        (cube 350 350 40))
-            (translate [0 0 (- (/ bottom-plate-thickness 2))] 
-                       (scale [1.005 1.005 1.15] model-bottom-plate))
+            (color ORA (translate [0 0 (- (/ bottom-plate-thickness 2))] 
+                           (scale [1.01 1.01 1.15] model-bottom-plate)))
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
