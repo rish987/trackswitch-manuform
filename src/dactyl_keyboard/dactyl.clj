@@ -1580,8 +1580,8 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def usb-holder-clearance 0.2)
-(def usb-holder-bottom-offset 0.15)
+(def usb-holder-clearance 0.3)
+(def usb-holder-bottom-offset 0.2)
 
 (def usb-holder-z-rotate 4)
 (def usb-holder-offset-coordinates
