@@ -1001,7 +1001,14 @@ need to adjust for difference for thumb-z only"
     (thumb-m-place shape)
     (thumb-l-place shape)))
 
-(def thumbcaps (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap 1 2 5))))
+(def thumbcaps (thumb-layout 
+                   (rotate (deg2rad -90) [0 0 1]
+                       (if rendered-caps
+                                    (->> (import "../things/SA-R1.stl")
+                                         (translate [0 0 sa-cap-bottom-height])
+                                         (color KEYCAP)
+                                    )
+                                    (sa-cap 1 2 5)))))
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
 (def thumb-space-below (thumb-layout switch-bottom))
 (defn thumb-key-cutouts [mirror-internals] 
@@ -1588,21 +1595,17 @@ need to adjust for difference for thumb-z only"
   ))
     
 (def usb-holder (usb-holder-place usb-holder-stl))
+(def usb-holder-cutout (usb-holder-place usb-holder-cutout-stl))
 (def usb-holder-space
-    (let [usb-holder-cutout (usb-holder-place
-                                usb-holder-cutout-stl
-                            )
-          cutout (translate [0 0 (/ usb-holder-bottom-offset 2)]
-                     (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
-                                     (offset usb-holder-clearance
-                                             (projection {:cut false}
-                                                 (scale [1.001 1 1] usb-holder-cutout)
-                                             )
-                                     )
-                     )
-                 )
-         ]
-     cutout)
+    (translate [0 0 (/ usb-holder-bottom-offset 2)]
+        (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
+            (offset usb-holder-clearance
+                    (projection {:cut false}
+                        (scale [1.001 1 1] usb-holder-cutout)
+                    )
+            )
+        )
+    )
 )
 
 ;;;;;;;;;;;;;;;;;;
@@ -1613,7 +1616,7 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-fillets-z 2)
 
 (def screw-insert-bottom-plate-bottom-radius (+ screw-insert-radius 0.9))
-(def screw-insert-bottom-plate-top-radius    (- screw-insert-radius    0.3))
+(def screw-insert-bottom-plate-top-radius    (- screw-insert-radius 0.3))
 (def screw-insert-holes-bottom-plate ( screw-insert-all-shapes 
                                        screw-insert-bottom-plate-top-radius 
                                        screw-insert-bottom-plate-top-radius 
@@ -1867,7 +1870,7 @@ need to adjust for difference for thumb-z only"
                                    )
                                    (project
                                        (if recess-bottom-plate
-                                           (hull (usb-holder-place usb-holder-cutout-stl))
+                                           (hull usb-holder-cutout)
                                        )
                                    )
                                )
@@ -2065,4 +2068,5 @@ need to adjust for difference for thumb-z only"
                     (color PUR model-wrist-rest-right-holes)
                 )
             )
+            ; (debug usb-holder-cutout)
       ))
