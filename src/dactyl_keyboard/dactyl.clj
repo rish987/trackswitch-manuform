@@ -1455,11 +1455,11 @@ need to adjust for difference for thumb-z only"
     (if recess-bottom-plate
         (->> (screw-insert 0         3 bottom-radius top-radius height       [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
     (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius (/ height 3) [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
     (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height       [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
-(def screw-insert-height 16.5) ; Hole Depth Y: 4.4
+(def screw-insert-height 6.5) ; Hole Depth Y: 4.4
 (def screw-insert-radius (/ 4.4 2)) ; Hole Diameter C: 4.1-4.4
 
 (def screw-insert-holes ( screw-insert-all-shapes 
