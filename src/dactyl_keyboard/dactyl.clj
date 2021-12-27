@@ -1478,13 +1478,13 @@ need to adjust for difference for thumb-z only"
 (defn top-screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
     (->> (screw-insert 3             0 bottom-radius top-radius height [ -5    5    (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
-    (->> (screw-insert 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; leff-thumb
+    (->> (screw-insert 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
     (->> (screw-insert 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     (->> (screw-insert 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert lastcol       0 bottom-radius top-radius (* height 0.75) [ -1.5  -11.5  (+ 0.5 hide-top-screws)]) (color PUR)) ; top right
-    ; (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -2  -54.5  (+ 0 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -8  6.5  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert lastcol       3 bottom-radius top-radius (* height 0.9) [ -8.15  -1.95 (+ 4.25 hide-top-screws)]) (color GRE)) ; bottom right
     (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
-    (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
+    ; (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
 )) 
 
 (def top-screw-length 16)               ; M2/M3 screw thread length
