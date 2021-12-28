@@ -53,6 +53,10 @@
 ; (def KEYCAP [220/255 163/255 163/255 1])
 (def KEYCAP [239/255 222/255 205/255 0.95])
 
+(def TRIANGLE-RES 3)
+(def SQUARE-RES 4)
+(def ROUND-RES 30)
+
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape parameters ;;
 ;;;;;;;;;;;;;;;;;;;;;;
@@ -273,15 +277,15 @@
                                    hotswap-cutout-4)
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
-                                 (with-fn 30))
+                                 (with-fn ROUND-RES))
         plus-hole           (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 30)
+                                 (with-fn ROUND-RES)
                                  (translate [-3.81 2.54 0]))
         minus-hole          (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn 30)
+                                 (with-fn ROUND-RES)
                                  (translate [2.54 5.08 0]))
         friction-hole       (->> (cylinder (/ 1.95 2) 10)
-                                 (with-fn 30))
+                                 (with-fn ROUND-RES))
         friction-hole-right (translate [5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
         hotswap-shape
@@ -327,23 +331,23 @@
                                        square-led-size 
                                        solderless-cutout-z))
         main-axis-hole      (->> (cylinder (/ 4.1 2) solderless-cutout-z)
-                                 (with-fn 30))
+                                 (with-fn ROUND-RES))
         plus-hole           (->> (cylinder (/ 1.55 2) solderless-cutout-z)
-                                 (with-fn 30)
+                                 (with-fn ROUND-RES)
                                  (scale [1 0.85 1])
                                  (translate [-3.81 2.54 0]))
         minus-hole          (->> (cylinder (/ 1.55 2) solderless-cutout-z)
-                                 (with-fn 30)
+                                 (with-fn ROUND-RES)
                                  (scale [1 0.85 1])
                                  (translate [2.54 5.08 0]))
         friction-hole       (->> (cylinder (/ 1.95 2) solderless-cutout-z)
-                                 (with-fn 30))
+                                 (with-fn ROUND-RES))
         friction-hole-right (translate [ 5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
 
         diode-wire-dia 0.75
         diode-row-hole   (->> (cylinder (/ diode-wire-dia 2) solderless-cutout-z)
-                              (with-fn 30)
+                              (with-fn ROUND-RES)
                               (translate [3.65 3.0 0]))
         diode-pin  (translate [-3.15 3.0 (/ solderless-z 2)]
                        (cube 2 diode-wire-dia 2))
@@ -1437,10 +1441,22 @@ need to adjust for difference for thumb-z only"
 
 ; Screw insert definition & position
 (defn screw-insert-shape [res rot bottom-radius top-radius height]
-  (->> (binding [*fn* res]
-         (cylinder [bottom-radius top-radius] height))
-       (rotate (deg2rad rot) [0 0 1]))
-  )
+  (let [ shape       (->> (binding [*fn* res]
+                       (cylinder [bottom-radius top-radius] height))
+                     )
+         x          (* 2 top-radius)
+         y          (* 0.75 bottom-radius)
+         z          (+ 0.01 height)
+         cut-shape   (if (= TRIANGLE-RES res)
+                         (rotate (deg2rad 30) [0 0 1]
+                             (difference (rotate (deg2rad -30) [0 0 1] shape)
+                                         (translate [0 y 0] (cube x y z))))
+                         shape
+                     )
+         final-shape (rotate (deg2rad rot) [0 0 1] cut-shape)
+  ]
+  final-shape)
+)
 
 (defn screw-insert [res rot column row bottom-radius top-radius height offset]
   (let [position (key-position column row [0 0 0])]
@@ -1451,13 +1467,13 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
-    (->> (screw-insert 30 0 2             0 bottom-radius top-radius height [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert 30 0 0             1 bottom-radius top-radius height [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
+    (->> (screw-insert ROUND-RES 0 2             0 bottom-radius top-radius height [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
     (if recess-bottom-plate
-        (->> (screw-insert 30 0 0         3 bottom-radius top-radius height [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
-    (->> (screw-insert 30 0 0       lastrow bottom-radius top-radius height [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert 30 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert 30 0 2 (+ lastrow 1) bottom-radius top-radius height [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
+        (->> (screw-insert ROUND-RES 0 0         3 bottom-radius top-radius height [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
+    (->> (screw-insert ROUND-RES 0 0       lastrow bottom-radius top-radius height [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
+    (->> (screw-insert ROUND-RES 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert ROUND-RES 0 2 (+ lastrow 1) bottom-radius top-radius height [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
 (def screw-insert-height 6.5) ; Hole Depth Y: 4.4
@@ -1478,19 +1494,26 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    (->> (screw-insert res 20 3             0 bottom-radius top-radius height [ -5.5  5.5  (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
-    (->> (screw-insert res -20 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
-    (->> (screw-insert res 6 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
-    (->> (screw-insert res -19 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert res 25 lastcol       0 bottom-radius top-radius height [ -8  6.25  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert res -38 lastcol       3 bottom-radius top-radius (* height 0.9) [ -8.15  -1.95 (+ 4.25 hide-top-screws)]) (color GRE)) ; bottom right
-    (->> (screw-insert res -15 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
+    (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5  5.5  (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert res -140 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
+    (->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
+    (->> (screw-insert (if (= res TRIANGLE-RES) SQUARE-RES res) 20 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8  6.25  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
+    (->> (screw-insert res -38 lastcol       3 
+                       (if (= res TRIANGLE-RES) (+ 7 bottom-radius) bottom-radius)
+                       (if (= res TRIANGLE-RES) (+ 7 top-radius) top-radius)
+                       (* height 0.65) 
+                       [-9.15
+                         (if (= res TRIANGLE-RES) -1.95 1.5)
+                         (+ 5.25 hide-top-screws)])
+         (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]
     (top-screw-insert-all-shapes
-      30
+      ROUND-RES
       bottom-radius
       top-radius
       height
@@ -1498,7 +1521,7 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-triangle-shapes [bottom-radius top-radius height]
   (top-screw-insert-all-shapes
-      3
+      TRIANGLE-RES
       bottom-radius
       top-radius
       height
@@ -1518,7 +1541,7 @@ need to adjust for difference for thumb-z only"
 
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
-(def top-screw-block-wall-thickness 10)
+(def top-screw-block-wall-thickness 7)
 (def top-screw-insert-wall-thickness 1)
 
 (def top-screw (top-screw-insert-round-shapes
@@ -1655,7 +1678,7 @@ need to adjust for difference for thumb-z only"
           y (range 0 9)]
         (translate [(* x 5) (* y 5) 0]
           (screw-insert-shape
-            30
+            ROUND-RES
             0
             bottom-radius
             top-radius
@@ -1669,7 +1692,7 @@ need to adjust for difference for thumb-z only"
           y (range 0 2)]
         (translate [(* x 20) (* y 20) 0]
           (screw-insert-shape
-            30
+            ROUND-RES
             0
             bottom-radius
             top-radius
