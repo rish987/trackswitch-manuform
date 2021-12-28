@@ -2,6 +2,12 @@
 
 This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
+## V4.0 Features
+- Cleaned up threaded insert holes for two-part case
+- Raised thumb cluster and adjusted thumb cluster angle
+- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) with per-row rendered keycaps preview
+- Adjust usb-holder tolerances to not be too tight
+- TODO lengthen USB holder to pro-micro-usb-c controllers
 ## V3.1 Features
 - Added support for tilting outer index and pinky columns only
 - Increased tent angle to 40 deg

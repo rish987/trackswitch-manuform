@@ -2057,8 +2057,8 @@ need to adjust for difference for thumb-z only"
 ;; Outputs ;;
 ;;;;;;;;;;;;;
 
-(spit "things/single-plate.scad"
-      (write-scad (single-plate false)))
+; (spit "things/single-plate.scad"
+;       (write-scad (single-plate false)))
 
 (spit "things/switch-plates-right.scad"
       (write-scad (model-switch-plates-right false)))
@@ -2072,17 +2072,17 @@ need to adjust for difference for thumb-z only"
 (spit "things/case-walls-left.scad"
       (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
 
-(spit "things/right.scad"
-      (write-scad (model-right false)))
-(spit "things/left.scad"
-      (write-scad (mirror [-1 0 0] (model-right true))))
+; (spit "things/right.scad"
+;       (write-scad (model-right false)))
+; (spit "things/left.scad"
+;       (write-scad (mirror [-1 0 0] (model-right true))))
 
 (spit "things/bottom-plate-right.scad"
       (write-scad model-bottom-plate))
 
 ; (spit "things/wrist-rest-right-base.scad"
 ;       (write-scad wrist-rest-right-base))
-(spit "things/wrist-rest-right.scad"
+(spit "things/wrist-rest-right-holes.scad"
   (if adjustable-wrist-rest-holder-plate
     (write-scad model-wrist-rest-right-holes)
     (write-scad wrist-rest-right)
@@ -2092,10 +2092,14 @@ need to adjust for difference for thumb-z only"
 (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            (color PUR (model-case-walls-right false))
+            (color CYA 
+                (model-case-walls-right false)
+            )
 
-            ; (color WHI (model-right false))
-            (color WHI (model-switch-plates-right false))
+            ; (color CYA (model-right false))
+            (color YEL 
+                (model-switch-plates-right false)
+            )
 
             ; (debug top-screw)
             caps
@@ -2109,11 +2113,11 @@ need to adjust for difference for thumb-z only"
             ; (debug top-screw-block-outers)
 
             (debug usb-holder)
+            ; (debug usb-holder-cutout)
             (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 (debug model-bottom-plate)
                 (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (color PUR model-wrist-rest-right-holes)
+                    (color CYA model-wrist-rest-right-holes)
                 )
             )
-            ; (debug usb-holder-cutout)
       ))
