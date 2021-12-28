@@ -8,6 +8,8 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) with per-row rendered keycaps preview
 - Adjust usb-holder tolerances to not be too tight
 - TODO lengthen USB holder to pro-micro-usb-c controllers
+![Compactyl V4.0 glamour](images/compactyl-v4.0-glamour.png)
+
 ## V3.1 Features
 - Added support for tilting outer index and pinky columns only
 - Increased tent angle to 40 deg

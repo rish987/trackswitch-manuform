@@ -1006,13 +1006,16 @@ need to adjust for difference for thumb-z only"
     (thumb-l-place shape)))
 
 (def thumbcaps (thumb-layout 
-                   (rotate (deg2rad -90) [0 0 1]
-                       (if rendered-caps
-                                    (->> (import "../things/SA-R1.stl")
-                                         (translate [0 0 sa-cap-bottom-height])
-                                         (color KEYCAP)
-                                    )
-                                    (sa-cap 1 2 5)))))
+                   (if rendered-caps
+                       (->> (import "../things/SA-R1.stl")
+                            (rotate (deg2rad 90) [0 0 1])
+                            (translate [0 0 sa-cap-bottom-height])
+                            (color KEYCAP)
+                       )
+                       (sa-cap 1 2 5)
+                   )
+               )
+)
 (def thumbcaps-cutout (thumb-layout (rotate (deg2rad -90) [0 0 1] (sa-cap-cutout 1))))
 (def thumb-space-below (thumb-layout switch-bottom))
 (defn thumb-key-cutouts [mirror-internals] 
