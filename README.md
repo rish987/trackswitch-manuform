@@ -7,6 +7,10 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Raised thumb cluster and adjusted thumb cluster angle
 - Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) with per-row rendered keycaps preview
 - Adjust usb-holder tolerances to not be too tight
+- NOTE: you will probably have to increase OpenSCAD params:
+	- Turn off rendering at ~10,000,000 
+	- CGAL cache size ~8000mb
+	- PolySet cache size ~8000mb
 - TODO lengthen USB holder to pro-micro-usb-c controllers
 ![Compactyl V4.0 glamour](images/compactyl-v4.0-glamour.png)
 
@@ -18,7 +22,6 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Upsized top plate attachment screws from M2 to M3
 - Modified case walls connecting to thumb
 - Updated rendered thumb caps to rotated SA R1, which I use.
-![Compactyl V3.1 top](images/compactyl-v3.1.png)
 ![Compactyl V3.1 top](images/compactyl-v3.1-back.png)
 
 ## V3 Features
@@ -39,7 +42,6 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- Turn off rendering at ~2,000,000 
 	- CGAL cache size ~4000mb
 	- PolySet cache size ~4000mb
-![Compactyl V2](images/compactyl-V2.1.png)
 ![Compactyl V2 back](images/compactyl-V2.1-back.png)
 
 ## V2 Features
@@ -65,9 +67,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - (orig. Tightyl) Smoother transition between thumb and fingers (less facets)
 - (orig. Tightyl) Thicker walls in steep regions where walls were too thin
 
-![](images/compactyl-real-5x6-glamour.jpeg)
-![](images/compactyl.png)
-![](images/assembly.png)
+![Compactyl v1.0 assembly](images/assembly.png)
 [![Kailh Box White Sound Test](images/compactyl-real-4x6.jpg)](https://www.youtube.com/watch?v=2oHvrcsFb9k)
 ![](images/compactyl-real-5x6.jpeg)
 
@@ -84,16 +84,16 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Wiring
 - Uses typical COL2ROW diode direction and pins for dactyl manuform
-- Should be backwards compatible with dactyl-manuform 5x6 firmware from confrom
+- Should be backwards compatible with dactyl-manuform 5x6 firmware from
 	- https://config.qmk.fm/#/handwired/dactyl_manuform/5x6/LAYOUT_5x6
-	- https://ohkeycaps.com/pages/via-support
+	- https://github.com/Oh-Keycaps/firmwares#how-to-just-download-our-firmware
 ![](images/compactyl_dactyl_manuform_wiring_left.jpeg)
 ![](images/compactyl_dactyl_manuform_wiring_right.jpeg)
 ![](images/compactyl-real-4x6-wiring.jpeg)
 
 ## Tools & Supplies
 - Soldering iron & stand, at least 50 watt recommended
-- no clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful] (https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
+- no clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful](https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
 - Silicone covered 26awg (0.405mm) wire
 - long tip gluegun, at least 60 watt
 ![Full amazon wish list of equipment](https://www.amazon.ca/hz/wishlist/ls/18NL4T59KM4AE?ref_=wl_share)
@@ -102,7 +102,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
 - New Compactyl (blue) uses a flatter row curvature, but increases tent to result in similar keyboard angle
 - New Compactyl (blue) is approximately 4mm taller (plus additional heigh for bottom plate if used) because of space requried by hot swap holders below pinky columns.
-![](images/compare.png)
+![Tightyl vs. Compactyl v1.0](images/compare.png)
 
 
 ## Generate OpenSCAD and STL models
@@ -141,7 +141,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## License
 
-Copyright © 2015-2020 Matthew Adereth, Tom Short, Leo Lou, Okke Formsma, Derek Nheiley
+Copyright © 2015-2022 Matthew Adereth, Tom Short, Leo Lou, Okke Formsma, Derek Nheiley
 
 The source code for generating the models is distributed under the [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE).
 
