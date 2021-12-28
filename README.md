@@ -96,7 +96,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - no clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful](https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
 - Silicone covered 26awg (0.405mm) wire
 - long tip gluegun, at least 60 watt
-![Full amazon wish list of equipment](https://www.amazon.ca/hz/wishlist/ls/18NL4T59KM4AE?ref_=wl_share)
+[Full amazon wish list of equipment](https://www.amazon.ca/hz/wishlist/ls/18NL4T59KM4AE?ref_=wl_share)
 
 ## Comparison with original Tightyl
 - Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
