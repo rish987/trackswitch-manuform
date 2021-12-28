@@ -1436,27 +1436,28 @@ need to adjust for difference for thumb-z only"
 ;;;;;;;;;;;;;;;;;;;
 
 ; Screw insert definition & position
-(defn screw-insert-shape [bottom-radius top-radius height]
-  (->> (binding [*fn* 30]
-         (cylinder [bottom-radius top-radius] height)))
+(defn screw-insert-shape [res rot bottom-radius top-radius height]
+  (->> (binding [*fn* res]
+         (cylinder [bottom-radius top-radius] height))
+       (rotate (deg2rad rot) [0 0 1]))
   )
 
-(defn screw-insert [column row bottom-radius top-radius height offset]
+(defn screw-insert [res rot column row bottom-radius top-radius height offset]
   (let [position (key-position column row [0 0 0])]
-    (->> (screw-insert-shape bottom-radius top-radius height)
+    (->> (screw-insert-shape res rot bottom-radius top-radius height)
          (translate (map + offset [(first position) (second position) (/ height 2)])))))
 
 
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
-    (->> (screw-insert 2             0 bottom-radius top-radius height       [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert 0             1 bottom-radius top-radius height       [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
+    (->> (screw-insert 30 0 2             0 bottom-radius top-radius height [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert 30 0 0             1 bottom-radius top-radius height [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
     (if recess-bottom-plate
-        (->> (screw-insert 0         3 bottom-radius top-radius height       [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height       [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert 2 (+ lastrow 1) bottom-radius top-radius height       [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
+        (->> (screw-insert 30 0 0         3 bottom-radius top-radius height [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
+    (->> (screw-insert 30 0 0       lastrow bottom-radius top-radius height [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
+    (->> (screw-insert 30 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert 30 0 2 (+ lastrow 1) bottom-radius top-radius height [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
 (def screw-insert-height 6.5) ; Hole Depth Y: 4.4
@@ -1475,17 +1476,34 @@ need to adjust for difference for thumb-z only"
                            screw-insert-height
                          ))
 
-(defn top-screw-insert-all-shapes [bottom-radius top-radius height]
+(defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    (->> (screw-insert 3             0 bottom-radius top-radius height [ -5    5    (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
-    (->> (screw-insert 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
-    (->> (screw-insert 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert lastcol       0 bottom-radius top-radius height [ -8  6.5  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert lastcol       3 bottom-radius top-radius (* height 0.9) [ -8.15  -1.95 (+ 4.25 hide-top-screws)]) (color GRE)) ; bottom right
-    (->> (screw-insert 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
-    ; (->> (screw-insert 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-)) 
+    (->> (screw-insert res 20 3             0 bottom-radius top-radius height [ -5.5  5.5  (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert res -20 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
+    (->> (screw-insert res 6 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
+    (->> (screw-insert res -19 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert res 25 lastcol       0 bottom-radius top-radius height [ -8  6.25  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert res -38 lastcol       3 bottom-radius top-radius (* height 0.9) [ -8.15  -1.95 (+ 4.25 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert res -15 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
+    ; (->> (screw-insert res -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
+))
+
+(defn top-screw-insert-round-shapes [bottom-radius top-radius height]
+    (top-screw-insert-all-shapes
+      30
+      bottom-radius
+      top-radius
+      height
+))
+
+(defn top-screw-insert-triangle-shapes [bottom-radius top-radius height]
+  (top-screw-insert-all-shapes
+      3
+      bottom-radius
+      top-radius
+      height
+  )
+)
 
 (def top-screw-length 16)               ; M2/M3 screw thread length
 (def top-screw-insert-height 10)        ; M2/M3 screw insert length 3.5, use higher value to cut through angled things
@@ -1500,10 +1518,10 @@ need to adjust for difference for thumb-z only"
 
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
-(def top-screw-block-wall-thickness 4)
+(def top-screw-block-wall-thickness 10)
 (def top-screw-insert-wall-thickness 1)
 
-(def top-screw ( top-screw-insert-all-shapes 
+(def top-screw (top-screw-insert-round-shapes
                       top-screw-radius
                       top-screw-radius
                       top-screw-length
@@ -1513,9 +1531,9 @@ need to adjust for difference for thumb-z only"
     (union
         ; actual threaded insert hole
         (translate [0 0 top-screw-clear-length]
-            (top-screw-insert-all-shapes 
-                top-screw-insert-radius 
-                top-screw-insert-radius 
+            (top-screw-insert-round-shapes
+                top-screw-insert-radius
+                top-screw-insert-radius
                 top-screw-insert-height
             ))
 
@@ -1525,7 +1543,7 @@ need to adjust for difference for thumb-z only"
 
         ; screw head clearance
         (translate [0 0 (- (* 1.5 top-screw-length))]
-            (top-screw-insert-all-shapes 
+            (top-screw-insert-round-shapes 
                       top-screw-head-radius
                       top-screw-head-radius
                       (* 1.5 top-screw-length)
@@ -1535,7 +1553,7 @@ need to adjust for difference for thumb-z only"
 (def top-screw-insert-outers 
     (difference
         (translate [0 0 top-screw-clear-length]
-            (top-screw-insert-all-shapes 
+            (top-screw-insert-round-shapes 
                 (+ top-screw-insert-radius top-screw-insert-wall-thickness)
                 (+ top-screw-insert-radius top-screw-insert-wall-thickness)
                 top-screw-insert-height
@@ -1548,7 +1566,7 @@ need to adjust for difference for thumb-z only"
 (def top-screw-block-outers 
     (difference
         ; screw head stop
-        (top-screw-insert-all-shapes 
+        (top-screw-insert-triangle-shapes 
             (+ top-screw-insert-radius top-screw-block-wall-thickness) 
             (+ top-screw-insert-radius top-screw-block-wall-thickness) 
             top-screw-block-height
@@ -1636,9 +1654,11 @@ need to adjust for difference for thumb-z only"
     (for [x (range 0 9)
           y (range 0 9)]
         (translate [(* x 5) (* y 5) 0]
-          (screw-insert-shape 
-            bottom-radius 
-            top-radius 
+          (screw-insert-shape
+            30
+            0
+            bottom-radius
+            top-radius
             height)
         )
     )
@@ -1648,9 +1668,11 @@ need to adjust for difference for thumb-z only"
     (for [x (range 0 2)
           y (range 0 2)]
         (translate [(* x 20) (* y 20) 0]
-          (screw-insert-shape 
-            bottom-radius 
-            top-radius 
+          (screw-insert-shape
+            30
+            0
+            bottom-radius
+            top-radius
             height)
         )
     )
