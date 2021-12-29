@@ -15,6 +15,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- CGAL cache size ~8000mb
 	- PolySet cache size ~8000mb
 ![Compactyl V4.0 glamour](images/compactyl-v4.0-glamour.png)
+![Compactyl V4.0 top screw](images/compactyl-v4.0-top-screw.png)
 
 ## V3.1 Features
 - Added support for tilting outer index and pinky columns only
