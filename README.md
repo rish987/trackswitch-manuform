@@ -5,13 +5,15 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 ## V4.0 Features
 - Cleaned up threaded insert holes for two-part case
 - Raised thumb cluster and adjusted thumb cluster angle
-- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) with per-row rendered keycaps preview
+- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) rendered keycap preview with pre-row profile and custom outer column keycaps
 - Adjust usb-holder tolerances to not be too tight
+- Lengthen USB holder for 35mm pro-micro-usb-c controllers
+- Add more room for TRRS jack in USB holder
+- Make vertical USB-holder easier to print with thicker "bottom"
 - NOTE: you will probably have to increase OpenSCAD params:
 	- Turn off rendering at ~10,000,000 
 	- CGAL cache size ~8000mb
 	- PolySet cache size ~8000mb
-- TODO lengthen USB holder to pro-micro-usb-c controllers
 ![Compactyl V4.0 glamour](images/compactyl-v4.0-glamour.png)
 
 ## V3.1 Features
@@ -24,7 +26,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Updated rendered thumb caps to rotated SA R1, which I use.
 ![Compactyl V3.1 top](images/compactyl-v3.1-back.png)
 
-## V3 Features
+## V3.0 Features
 - Added option for two part design per keyboard half
 ![Compactyl V3 back](images/compactyl-V3-exploded.png)
 
@@ -44,7 +46,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- PolySet cache size ~4000mb
 ![Compactyl V2 back](images/compactyl-V2.1-back.png)
 
-## V2 Features
+## V2.0 Features
 - Returned back to one solid piece top case deisgn for easier printing
 - Subtraced space around keycaps to improve clearances
 	- better clearance on top row for middle and ring finger keys
@@ -56,7 +58,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 	- slanted, removed case connector tubes, added threaded insert holes
 ![Compactyl V2](images/compactyl-V2.png)
 
-## V1 Features
+## V1.0 Features
 - Hotswap north facing switch plates
 - Increase pinky stagger
 - Adjusted column spacing for better clearance
@@ -92,10 +94,10 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 ![](images/compactyl-real-4x6-wiring.jpeg)
 
 ## Tools & Supplies [Full amazon wish list of equipment](https://www.amazon.ca/hz/wishlist/ls/18NL4T59KM4AE?ref_=wl_share)
-- Soldering iron & stand, at least 50 watt recommended
-- no clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful](https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
+- Soldering iron & stand, at least 50 watt
+- No clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful](https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
 - Silicone covered 26awg (0.405mm) wire
-- long tip gluegun, at least 60 watt
+- Long tip gluegun, at least 60 watt
 
 ## Comparison with original Tightyl
 - Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
@@ -134,6 +136,8 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 	* def wrist-rest-z-height-adj
 	* defn usb-holder-offset-coordinates
 	* defn screw-insert-all-shapes
+	* defn top-screw-insert-all-shapes
+	* other magic numbers, collect them all :D
 * When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you aren't changing / don't use.
 * If you're not sure what things are generted by a piece of code, color them in using something like
 `(->> SOMETHING_HERE (color RED))` (see examples in dactyl.clj).
