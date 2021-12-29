@@ -2092,6 +2092,8 @@ need to adjust for difference for thumb-z only"
 
 (spit "things/bottom-plate-right.scad"
       (write-scad model-bottom-plate))
+(spit "things/bottom-plate-left.scad"
+      (write-scad (mirror [-1 0 0] model-bottom-plate)))
 
 ; (spit "things/wrist-rest-right-base.scad"
 ;       (write-scad wrist-rest-right-base))
