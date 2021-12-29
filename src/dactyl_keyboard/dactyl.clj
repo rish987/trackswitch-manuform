@@ -1568,12 +1568,12 @@ need to adjust for difference for thumb-z only"
             top-screw)
 
         ; screw head clearance
-        (translate [0 0 (- (* 1.5 top-screw-length))]
-            (top-screw-insert-round-shapes 
-                      top-screw-head-radius
-                      top-screw-head-radius
-                      (* 1.5 top-screw-length)
-            ))
+        ; (translate [0 0 (- (* 1.5 top-screw-length))]
+        ;     (top-screw-insert-round-shapes 
+        ;               top-screw-head-radius
+        ;               top-screw-head-radius
+        ;               (* 1.5 top-screw-length)
+        ;     ))
     ))
 
 (def top-screw-insert-outers 
@@ -1617,21 +1617,22 @@ need to adjust for difference for thumb-z only"
     (import "../things/usb_holder_w_reset_cutout.stl")
   )
 )
+
+(def usb-holder-clearance 0.3)
 (def usb-holder-cutout-height 
   (if usb-holder-vertical 
-    (* 30.6 2)
-    30.3
+    (+ 30.6 usb-holder-clearance)
+    30.3 ;TODO this probably need to get cut in half for the horizontal holder
   )
 )
 
-(def usb-holder-clearance 0.3)
-(def usb-holder-bottom-offset 0.2)
+(def usb-holder-bottom-offset (/ usb-holder-cutout-height 2))
 
 (def usb-holder-z-rotate 4)
 (def usb-holder-offset-coordinates
   (if use_hotswap_holder
-    [-23.7 52.9 usb-holder-bottom-offset]
-    [-22.5 50.9 usb-holder-bottom-offset]))
+    [-16 52.9 usb-holder-bottom-offset]
+    [-15.5 50.9 usb-holder-bottom-offset]))
 (defn usb-holder-place [shape]
   (->> shape
        (translate usb-holder-offset-coordinates)
@@ -1642,7 +1643,7 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-cutout (usb-holder-place usb-holder-cutout-stl))
 (def usb-holder-space
   (color RED
-    (translate [0 0 (/ usb-holder-bottom-offset 2)]
+    (translate [0 0 usb-holder-bottom-offset]
         (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
             (offset usb-holder-clearance
                     (projection {:cut false}

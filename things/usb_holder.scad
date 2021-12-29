@@ -255,6 +255,11 @@ module vertical_usb_holder() {
             
             translate ([-15.75, -0.75, 0]) { notch(); }
             translate ([-15.75, -3.75, 0]) { notch(); }
+            if (cutout_blank) {
+                for ( i = [1.5:1.5:37]) {
+                    translate ([-15.75, -(3.75 + i), 0]) { notch(); }
+                }
+            }
         }
         translate ([0.75, -usb_holder_notch_xy*1.5, 0]) { notch(); }
     }
