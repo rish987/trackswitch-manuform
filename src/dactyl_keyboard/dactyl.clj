@@ -22,17 +22,6 @@
      [(- (Math/sin angle)) 0 (Math/cos angle)]]
     position))
 
-
-(defn rotate-around-z [angle position]
-  (mmul
-    [[(Math/cos angle) (- (Math/sin angle)) 0]
-     [(Math/sin angle) (Math/cos angle) 0]
-     [0 0 1]]
-    position))
-
-(defn rotate-shape-on-z [angle shape] 
-  (rotate (deg2rad angle) [0 0 1] shape))
-
 (defn debug [shape]
   (color [0.5 0.5 0.5 0.5] shape))
 
@@ -1536,11 +1525,11 @@ need to adjust for difference for thumb-z only"
 
 ; (def top-screw-insert-radius (/ 3.0 2)) ; M2 screw insert diameter
 ; (def top-screw-radius (/ 2.1 2))        ; M2 screw diameter
-; (def top-screw-head-radius (/ 3.55 2))  ; M2 screw head diameter (3.4 plus some clearance)
+; (def top-screw-head-radius (/ 3.6 2))  ; M2 screw head diameter (3.4 plus some clearance)
 
 (def top-screw-insert-radius (/ 3.3 2)); M3 screw insert diameter
 (def top-screw-radius (/ 2.6 2))       ; M3 screw diameter
-(def top-screw-head-radius (/ 4.55 2)) ; M3 screw head diameter (4.4 plus some clearance)
+(def top-screw-head-radius (/ 4.6 2)) ; M3 screw head diameter (4.4 plus some clearance)
 
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
@@ -1568,12 +1557,12 @@ need to adjust for difference for thumb-z only"
             top-screw)
 
         ; screw head clearance
-        ; (translate [0 0 (- (* 1.5 top-screw-length))]
-        ;     (top-screw-insert-round-shapes 
-        ;               top-screw-head-radius
-        ;               top-screw-head-radius
-        ;               (* 1.5 top-screw-length)
-        ;     ))
+        (translate [0 0 (- (* 0.5 top-screw-length))]
+            (top-screw-insert-round-shapes 
+                      top-screw-head-radius
+                      top-screw-head-radius
+                      (* 0.5 top-screw-length)
+            ))
     ))
 
 (def top-screw-insert-outers 
@@ -1622,11 +1611,20 @@ need to adjust for difference for thumb-z only"
 (def usb-holder-cutout-height 
   (if usb-holder-vertical 
     (+ 30.6 usb-holder-clearance)
-    30.3 ;TODO this probably need to get cut in half for the horizontal holder
+    (+ 15 usb-holder-clearance)
   )
 )
 
-(def usb-holder-bottom-offset (/ usb-holder-cutout-height 2))
+(def usb-holder-cutout-bottom-offset (/ usb-holder-cutout-height 2))
+
+;TODO horizontal and vertical usb holders have different origin points
+; because, i can't pic a standard origin for different versions
+(def usb-holder-bottom-offset 
+  (if usb-holder-vertical 
+    (/ usb-holder-cutout-height 2)
+    (/ usb-holder-clearance 2)
+  )
+)
 
 (def usb-holder-z-rotate 4)
 (def usb-holder-offset-coordinates
@@ -1636,14 +1634,14 @@ need to adjust for difference for thumb-z only"
 (defn usb-holder-place [shape]
   (->> shape
        (translate usb-holder-offset-coordinates)
-       (rotate-shape-on-z usb-holder-z-rotate)
+       (rotate (deg2rad usb-holder-z-rotate) [0 0 1])
   ))
     
 (def usb-holder (usb-holder-place usb-holder-stl))
 (def usb-holder-cutout (usb-holder-place usb-holder-cutout-stl))
 (def usb-holder-space
   (color RED
-    (translate [0 0 usb-holder-bottom-offset]
+    (translate [0 0 usb-holder-cutout-bottom-offset]
         (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
             (offset usb-holder-clearance
                     (projection {:cut false}
@@ -1926,12 +1924,23 @@ need to adjust for difference for thumb-z only"
                                    )
                                )
                            )
+        ;stupid magic box to remove artifact around thumb
+        magic-box (cube 30 10 (* 2 bottom-plate-thickness))
        ]
-    (difference (union 
+    (difference ;(union 
                     bottom-plate-blank
                     ; (translate [8 -100 0] 
                     ;     (debug model-wrist-rest-right-holes)
                     ; )
+                    ; (->> magic-box
+                    ;     (debug)
+                    ;     (rotate (deg2rad 25) [0 0 1])
+                    ;     (translate [-66 -48 0])
+                    ; )
+                ;)
+                (->> magic-box
+                    (rotate (deg2rad 25) [0 0 1])
+                    (translate [-66 -48 0])
                 )
                 screw-cutouts
                 screw-cutouts-fillets
