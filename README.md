@@ -5,8 +5,8 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 ## V4.0 Features
 - Cleaned up threaded insert holes for two-part case
 - Raised thumb cluster and adjusted thumb cluster angle
-- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) rendered keycap preview with pre-row profile and custom outer column keycaps
-- Adjust usb-holder tolerances to not be too tight
+- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) rendered keycap preview with per-row profile and custom outer column keycaps
+- Adjust tolerances around usb-holder to slide in more easily
 - Lengthen USB holder for 35mm pro-micro-usb-c controllers
 - Add more room for TRRS jack in USB holder
 - Make vertical USB-holder easier to print with thicker "bottom"
