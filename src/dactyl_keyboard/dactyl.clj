@@ -583,14 +583,14 @@
                                 (->> keycap-top
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
                                      (translate [0 0 sa-height])))
-           rendered-cap-filename (case row 0 "../things/MX_DES_MT4_R1.stl"
-                                           1 "../things/MX_DES_MT4_R2.stl"
-                                           2 "../things/MX_DES_MT4_R3D.stl"
-                                           3 "../things/MX_DES_MT4_R4.stl"
-                                           4 "../things/MX_DES_MT4_R5.stl"
-                                           5 "../things/MX_DES_MT4_R5.stl")
-           rendered-cap-filename-full (cond (= col 0)       (str/replace (str/replace rendered-cap-filename #"D.stl" ".stl") #".stl" "L.stl")
-                                            (= col lastcol) (str/replace (str/replace rendered-cap-filename #"D.stl" ".stl") #".stl" "R.stl")
+           rendered-cap-filename (case row 0 "../things/caps/MX_DES_Plus_MT4.4_R1.stl"
+                                           1 "../things/caps/MX_DES_Plus_MT4.4_R2.stl"
+                                           2 "../things/caps/MX_DES_Plus_MT4.4_R3DD.stl"
+                                           3 "../things/caps/MX_DES_Plus_MT4.4_R4.stl"
+                                           4 "../things/caps/MX_DES_Plus_MT4.4_R5.stl"
+                                           5 "../things/caps/MX_DES_Plus_MT4.4_R5.stl")
+           rendered-cap-filename-full (cond (= col 0)       (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "L.stl")
+                                            (= col lastcol) (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "R.stl")
                                             :default         rendered-cap-filename)
            key-cap-display (if rendered-caps (import rendered-cap-filename-full)
                                key-cap)
@@ -996,7 +996,7 @@ need to adjust for difference for thumb-z only"
 
 (def thumbcaps (thumb-layout 
                    (if rendered-caps
-                       (->> (import "../things/SA-R1.stl")
+                       (->> (import "../things/caps/MT3_1u_space_130.stl")
                             (rotate (deg2rad 90) [0 0 1])
                             (translate [0 0 sa-cap-bottom-height])
                             (color KEYCAP)
