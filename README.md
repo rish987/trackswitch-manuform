@@ -7,9 +7,9 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - TODO adjust column heights, ring finger lower on Z, middle and index columns higher on Z
 - TODO increase curvature of pinky column to bring bottom alpha and num row closer to finger
 - TODO move numrow on pinky column slightly closer along Y axis
-- TODO add fourth [and possibly fifth] thumb keys
 - TODO rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
 - TODO add latest revision of custom DES Plus MT4 keycap profile
+- TODO add fourth [and possibly fifth] thumb keys
 ![Compactyl V5.0 concept](images/deractyl.png)
 
 ## V4.0 Features
