@@ -2,14 +2,16 @@
 
 This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
-## V5.0 Features
+## Planned V5.0 Features
 - TODO Update USB holder for blackpill usb-c controllers
 - TODO adjust column heights, ring finger lower on Z, middle and index columns higher on Z
 - TODO increase curvature of pinky column to bring bottom alpha and num row closer to finger
 - TODO move numrow on pinky column slightly closer along Y axis
 - TODO rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
+- TODO add ready to print risers with slots to increase palm rest height
 - TODO add latest revision of custom DES Plus MT4 keycap profile
-- TODO add fourth [and possibly fifth] thumb keys
+- TODO add fourth [and possibly fifth] thumb keys (sorry for horrible photoshop skills)
+![Compactyl V5.0 concept 2 ](images/deractyl-2.png)
 ![Compactyl V5.0 concept](images/deractyl.png)
 
 ## V4.0 Features
