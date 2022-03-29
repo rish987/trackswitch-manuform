@@ -155,10 +155,11 @@
         ; on the top and bottom, this gives those teeth somewhere to press into
         teeth-x        4.5
         teeth-y        0.75
-        teeth-z        1.75
+        teeth-z-down   1.65
+        teeth-z        (- plate-thickness teeth-z-down)
         teeth-x-offset 0
         teeth-y-offset (+ (/ keyswitch-height 2) (/ teeth-y 2.01))
-        teeth-z-offset (- plate-thickness 1.95)
+        teeth-z-offset (- plate-thickness (/ teeth-z 1.99) teeth-z-down)
        ]
       (->> (cube teeth-x teeth-y teeth-z)
            (translate [teeth-x-offset teeth-y-offset teeth-z-offset])
@@ -221,7 +222,7 @@
         
         swap-offset-x       0
         swap-offset-y       (/ (- holder-y swap-y) 2)
-        swap-offset-z       (- (/ swap-z 2)) ; the bottom of the hole. 
+        swap-offset-z       (- (/ swap-z 2)) ; the bottom of the hole.
         swap-holder         (->> (cube swap-x swap-y swap-z)
                                  (translate [swap-offset-x 
                                              swap-offset-y
@@ -264,6 +265,39 @@
                                    hotswap-cutout-2
                                    hotswap-cutout-3
                                    hotswap-cutout-4)
+
+        diode-wire-dia 0.75
+        diode-wire-channel-depth (* 1.5 diode-wire-dia)
+        diode-body-size 1.95
+        diode-corner-hole (->> (cylinder diode-wire-dia (* 2 hotswap-z))
+                              (with-fn ROUND-RES)
+                              (translate [-6.55 -6.75 0]))
+        diode-end-hole    (->> (cylinder (/ diode-body-size 2) (* 2 hotswap-z))
+                              (with-fn ROUND-RES)
+                              (translate [-6.25 -3.75 0]))
+        diode-socket-hole-left (->> (cylinder diode-wire-dia hotswap-z)
+                                    (with-fn ROUND-RES)
+                                    (translate [-6.85 1.5 0]))
+        diode-channel-pin-left (->> (cube diode-wire-dia 2.5 diode-wire-channel-depth)
+                                    (rotate (deg2rad 10) [0 0 1])
+                                    (translate [-6.55  0 (* -0.49 diode-wire-channel-depth)])
+                               )
+        diode-socket-hole-right (->> (cylinder diode-wire-dia hotswap-z)
+                                    (with-fn ROUND-RES)
+                                    (translate [6.85 3.5 0]))
+        diode-channel-pin-right (->> (cube diode-wire-dia 6.5 diode-wire-channel-depth)
+                                    (rotate (deg2rad -5) [0 0 1])
+                                    (translate [6.55  0 (* -0.49 diode-wire-channel-depth)])
+                               )
+        diode-channel-wire (translate [-6.25 -5.75 (* -0.49 diode-wire-channel-depth)]
+                               (cube diode-wire-dia 2 diode-wire-channel-depth))
+        diode-body (translate [-6.25 -3.0 (* -0.49 diode-body-size)]
+                       (cube diode-body-size 4 diode-body-size))
+        diode-cutout (union diode-corner-hole
+                            diode-end-hole
+                            diode-channel-wire
+                            diode-body)
+
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
                                  (with-fn ROUND-RES))
@@ -278,14 +312,21 @@
         friction-hole-right (translate [5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
         hotswap-shape
-            (difference (union swap-holder
-                               ; (debug hotswap-cutout-3)
-                        )
+            (difference 
+                       ; (union 
+                               swap-holder
+                               ; (debug diode-channel-wire))
                         main-axis-hole
                         plus-hole
                         minus-hole
                         friction-hole-left
                         friction-hole-right
+                        diode-cutout
+                        diode-socket-hole-left
+                        diode-channel-pin-left
+                        (mirror [1 0 0] diode-cutout)
+                        diode-socket-hole-right
+                        diode-channel-pin-right
                         hotswap-cutout
                         hotswap-led-cutout)
        ]
@@ -2070,8 +2111,8 @@ need to adjust for difference for thumb-z only"
 ;; Outputs ;;
 ;;;;;;;;;;;;;
 
-; (spit "things/single-plate.scad"
-;       (write-scad (single-plate false)))
+(spit "things/single-plate.scad"
+      (write-scad (single-plate false)))
 
 (spit "things/switch-plates-right.scad"
       (write-scad (model-switch-plates-right false)))

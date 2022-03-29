@@ -14,6 +14,10 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 ![Compactyl V5.0 concept 2 ](images/deractyl-2.png)
 ![Compactyl V5.0 concept](images/deractyl.png)
 
+## V4.1 Features
+- Added diode holder under switch for kailh hotswap socket. Holds the diode in an secure way so you can bend the wires around for easier soldering. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
+![Compactyl V4.1 diode holder](images/kailh-hotswap-diode-holder.jpeg)
+
 ## V4.0 Features
 - Cleaned up threaded insert holes for two-part case
 - Raised thumb cluster and adjusted thumb cluster angle
@@ -52,7 +56,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Added option to increase angle of lower two lower keys (inspired by rmtz Naive design)
 - Added rendered option for keycap preview
 - (Experimental) Added optional retention clip to assist with one-piece flexible PCB
-- (Experimental) Added optional solderless socket option
+- (Experimental) Added optional solderless socket option. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
 - NOTE: you will probably have to increase OpenSCAD params:
 	- Turn off rendering at ~2,000,000 
 	- CGAL cache size ~4000mb
