@@ -268,13 +268,13 @@
 
         diode-wire-dia 0.75
         diode-wire-channel-depth (* 1.5 diode-wire-dia)
-        diode-body-size 1.95
+        diode-body-width 1.95
+        diode-body-length 4
         diode-corner-hole (->> (cylinder diode-wire-dia (* 2 hotswap-z))
                               (with-fn ROUND-RES)
                               (translate [-6.55 -6.75 0]))
-        diode-end-hole    (->> (cylinder (/ diode-body-size 2) (* 2 hotswap-z))
-                              (with-fn ROUND-RES)
-                              (translate [-6.25 -3.75 0]))
+        diode-view-hole   (->> (cube (/ diode-body-width 2) (/ diode-body-length 1.25) (* 2 hotswap-z))
+                              (translate [-6.25 -3 0]))
         diode-socket-hole-left (->> (cylinder diode-wire-dia hotswap-z)
                                     (with-fn ROUND-RES)
                                     (translate [-6.85 1.5 0]))
@@ -291,25 +291,23 @@
                                )
         diode-channel-wire (translate [-6.25 -5.75 (* -0.49 diode-wire-channel-depth)]
                                (cube diode-wire-dia 2 diode-wire-channel-depth))
-        diode-body (translate [-6.25 -3.0 (* -0.49 diode-body-size)]
-                       (cube diode-body-size 4 diode-body-size))
+        diode-body (translate [-6.25 -3.0 (* -0.49 diode-body-width)]
+                       (cube diode-body-width diode-body-length diode-body-width))
         diode-cutout (union diode-corner-hole
-                            diode-end-hole
+                            diode-view-hole
                             diode-channel-wire
                             diode-body)
 
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
                                  (with-fn ROUND-RES))
-        plus-hole           (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn ROUND-RES)
-                                 (translate [-3.81 2.54 0]))
-        minus-hole          (->> (cylinder (/ 3.3 2) 10)
-                                 (with-fn ROUND-RES)
-                                 (translate [2.54 5.08 0]))
+        pin-hole            (->> (cylinder (/ 3.3 2) 10)
+                                 (with-fn ROUND-RES))
+        plus-hole           (translate [-3.81 2.54 0] pin-hole)
+        minus-hole          (translate [ 2.54 5.08 0] pin-hole)
         friction-hole       (->> (cylinder (/ 1.95 2) 10)
                                  (with-fn ROUND-RES))
-        friction-hole-right (translate [5 0 0] friction-hole)
+        friction-hole-right (translate [ 5 0 0] friction-hole)
         friction-hole-left  (translate [-5 0 0] friction-hole)
         hotswap-shape
             (difference 
