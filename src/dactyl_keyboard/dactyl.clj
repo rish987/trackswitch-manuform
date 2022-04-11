@@ -2242,14 +2242,14 @@ need to adjust for difference for thumb-z only"
 (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            ; (color BRO 
-            ;     (model-case-walls-right false)
-            ; )
+            (color BRO 
+                (model-case-walls-right false)
+            )
 
             ; (color CYA (model-right false))
-            ; (color BRO 
+            (color BRO 
                 (model-switch-plates-right false)
-            ; )
+            )
             ; (color ORA (model-exo-plates-right false))
 
             ; (debug top-screw)
@@ -2265,10 +2265,10 @@ need to adjust for difference for thumb-z only"
 
             ; (debug usb-holder)
             ; ; (debug usb-holder-cutout)
-            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
-            ;     (debug model-bottom-plate)
-            ;     (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-            ;         (color BRO model-wrist-rest-right-holes)
-            ;     )
-            ; )
+            (translate [0 0 (- (/ bottom-plate-thickness 2))]
+                (debug model-bottom-plate)
+                (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
+                    (color BRO model-wrist-rest-right-holes)
+                )
+            )
       ))

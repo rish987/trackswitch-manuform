@@ -10,9 +10,10 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - TODO rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
 - TODO add ready to print risers with slots to increase palm rest height
 - TODO add latest revision of custom DES Plus MT4 keycap profile
-- TODO add fourth [and possibly fifth] thumb keys (sorry for horrible photoshop skills)
-![Compactyl V5.0 concept 2 ](images/deractyl-2.png)
-![Compactyl V5.0 concept](images/deractyl.png)
+- add fourth [and possibly fifth] thumb keys (sorry for horrible photoshop skills)
+![Compactyl V5.0 preview](images/compactyl-v5.png)
+<!-- ![Compactyl V5.0 concept 2 ](images/deractyl-2.png) -->
+<!-- ![Compactyl V5.0 concept](images/deractyl.png) -->
 
 ## V4.1 Features
 - Added diode holder under switch for kailh hotswap socket. Holds the diode in an secure way so you can bend the wires around for easier soldering. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
