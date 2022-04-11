@@ -7,7 +7,7 @@ OPEN_SCAD='/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD'
 # OPEN_SCAD='openscad.com'
 
 INPUTDIR='things'
-OUTPUTDIR='things/compactyl-v4.0-5x6-hotswap'
+OUTPUTDIR='things/compactyl-v5.0-5x6-hotswap'
 
 echo 'Generating things/*.scad files using '$(lein -v)' to '$OUTPUTDIR
 echo '(load-file "src/dactyl_keyboard/dactyl.clj")' | lein repl > /dev/null 2>&1
@@ -22,11 +22,11 @@ $OPEN_SCAD -o $OUTPUTDIR/wrist-rest-right-holes.stl $INPUTDIR/wrist-rest-right-h
 # $OPEN_SCAD -o $OUTPUTDIR/left.stl                   $INPUTDIR/left.scad >/dev/null 2>&1 &
 
 $OPEN_SCAD -o $OUTPUTDIR/case-walls-right.stl    $INPUTDIR/case-walls-right.scad >/dev/null 2>&1 &
-# $OPEN_SCAD -o $OUTPUTDIR/case-walls-left.stl     $INPUTDIR/case-walls-left.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o $OUTPUTDIR/case-walls-left.stl     $INPUTDIR/case-walls-left.scad >/dev/null 2>&1 &
 $OPEN_SCAD -o $OUTPUTDIR/switch-plates-right.stl $INPUTDIR/switch-plates-right.scad >/dev/null 2>&1 &
-# $OPEN_SCAD -o $OUTPUTDIR/switch-plates-left.stl  $INPUTDIR/switch-plates-left.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o $OUTPUTDIR/switch-plates-left.stl  $INPUTDIR/switch-plates-left.scad >/dev/null 2>&1 &
 $OPEN_SCAD -o $OUTPUTDIR/bottom-plate-right.stl  $INPUTDIR/bottom-plate-right.scad >/dev/null 2>&1 &
-# $OPEN_SCAD -o $OUTPUTDIR/bottom-plate-left.stl  $INPUTDIR/bottom-plate-left.scad >/dev/null 2>&1 &
+$OPEN_SCAD -o $OUTPUTDIR/bottom-plate-left.stl   $INPUTDIR/bottom-plate-left.scad >/dev/null 2>&1 &
 
 echo 'Please wait for STL files to appear in '$OUTPUTDIR'/ directory!'
 
