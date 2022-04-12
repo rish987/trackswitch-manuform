@@ -1473,11 +1473,11 @@ need to adjust for difference for thumb-z only"
          (color GRE))
     ; (key-wall-brace  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
 
-    (for [y (range 0 lastrow)] (key-wall-brace 0      y  -1 0 web-post-tl 0 y -1 0 web-post-bl border))
-    (for [y (range 1 lastrow)] (key-wall-brace 0 (dec y) -1 0 web-post-bl 0 y -1 0 web-post-tl border))
+    (for [y (range 0 (- lastrow 1))] (key-wall-brace 0      y  -1 0 web-post-tl 0 y -1 0 web-post-bl border))
+    (for [y (range 1 lastrow)      ] (key-wall-brace 0 (dec y) -1 0 web-post-bl 0 y -1 0 web-post-tl border))
 
     ; thumb connector
-    (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-l-place 0 1 fat-web-post-tr border) (color WHI))
+    ; (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-l-place 0 1 fat-web-post-tr border) (color WHI))
   )
 )
 
@@ -1500,27 +1500,28 @@ need to adjust for difference for thumb-z only"
     (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-br thumb-r-place  0 -1 fat-web-post-bl border) (color ORA))
     (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl border) (color YEL))
     (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-br thumb-m-place  0 -1 fat-web-post-bl border) (color YEL))
-    (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color GRE))
-    (->> (wall-brace        thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color GRE))
-    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLU))
-    (->> (wall-brace-deeper thumb-u-place  0  1 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tr border) (color BRO))
+    ; (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color DGR))
+    (->> (wall-brace-left   thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color DGR))
+    (->> (wall-brace        thumb-l-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color GRE))
+
+    ; (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLU))
+    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLA))
+    ; (->> (wall-brace-deeper thumb-u-place  0  1 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tr border) (color BRO))
     (->> (wall-brace        thumb-u-place  0  1 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tr border) (color BRO))
 
     ; thumb corners
-    (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl border) (color NBL))
-    (->> (wall-brace-deeper thumb-u-place -1  0 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tl border) (color PUR))
+    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl border) (color NBL))
+    (->> (wall-brace        thumb-u-place -1  0 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tl border) (color PUR))
     ; thumb tweeners
     (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
     (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
     (->> (wall-brace-deeper thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color MAG))
     (->> (wall-brace        thumb-m-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color MAG))
-    (->> (wall-brace-deeper thumb-u-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-tl border) (color CYA))
+    ; (->> (wall-brace-deeper thumb-u-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-tl border) (color CYA))
     (->> (wall-brace        thumb-u-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-tl border) (color CYA))
 
-    (->> (wall-brace-deeper thumb-u-place  0  1 fat-web-post-tr bottom-corner-alpha  0  1 fat-web-post-tl border) (color PIN))
+    ; (->> (wall-brace-deeper thumb-u-place  0  1 fat-web-post-tr bottom-corner-alpha  0  1 fat-web-post-tl border) (color PIN))
     (->> (wall-brace        thumb-u-place  0  1 fat-web-post-tr bottom-corner-alpha  0  1 fat-web-post-tl border) (color PIN))
-
-    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place -1  0 fat-web-post-tl border) (color BLA))
   )
 )
 
@@ -1577,9 +1578,8 @@ need to adjust for difference for thumb-z only"
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
     (->> (screw-insert ROUND-RES 0 2             0 bottom-radius top-radius height [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [ -5.5 -9    screw-insert-bottom-offset]) (color PIN)) ; left
-    (if recess-bottom-plate
-        (->> (screw-insert ROUND-RES 0 0         3 bottom-radius top-radius height [ -2  -12    screw-insert-bottom-offset]) (color NBL))) ; left-thumb
+    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-5.5  -9    screw-insert-bottom-offset]) (color PIN)) ; left
+    (->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-20.5 -6    screw-insert-bottom-offset]) (color NBL)) ; left-thumb
     (->> (screw-insert ROUND-RES 0 0       lastrow bottom-radius top-radius height [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
     (->> (screw-insert ROUND-RES 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
     (->> (screw-insert ROUND-RES 0 2 (+ lastrow 1) bottom-radius top-radius height [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
@@ -1606,10 +1606,10 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5  5.5  (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
     (->> (screw-insert res -140 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
     (->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
-    (->> (screw-insert (if (= res TRIANGLE-RES) SQUARE-RES res) 20 0       lastrow bottom-radius top-radius height [-13  0    (+ 51.25 hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8  6.25  (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5  -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
-    ; (->> (screw-insert res -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
+    (->> (screw-insert res -115 0       lastrow bottom-radius top-radius height [-28   -1.5  (+ 54.75 hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8    6.25 (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
+    ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
     (->> (screw-insert res -38 lastcol       3 
                        (if (= res TRIANGLE-RES) (+ 7 bottom-radius) bottom-radius)
                        (if (= res TRIANGLE-RES) (+ 7 top-radius) top-radius)
@@ -2190,6 +2190,9 @@ need to adjust for difference for thumb-z only"
 (spit "things/single-plate.scad"
       (write-scad (single-plate false)))
 
+; (spit "things/left-wall.scad"
+;       (write-scad (left-wall false)))
+
 ; (spit "things/thumb-connectors.scad"
 ;     (write-scad 
 ;         (difference 
@@ -2242,20 +2245,20 @@ need to adjust for difference for thumb-z only"
 (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            (color BRO 
-                (model-case-walls-right false)
-            )
+            ; (color BRO 
+                ; (model-case-walls-right false)
+            ; )
 
             ; (color CYA (model-right false))
-            (color BRO 
-                (model-switch-plates-right false)
-            )
+            ; (color BRO 
+                ; (model-switch-plates-right false)
+            ; )
             ; (color ORA (model-exo-plates-right false))
 
             ; (debug top-screw)
-            caps
+            ; caps
             ; (debug caps-cutout)
-            thumbcaps
+            ; thumbcaps
             ; (debug (import "../things/test_keycap_placement.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
@@ -2265,10 +2268,10 @@ need to adjust for difference for thumb-z only"
 
             ; (debug usb-holder)
             ; ; (debug usb-holder-cutout)
-            (translate [0 0 (- (/ bottom-plate-thickness 2))]
-                (debug model-bottom-plate)
-                (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    (color BRO model-wrist-rest-right-holes)
-                )
-            )
+            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
+                ; (debug model-bottom-plate)
+                ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
+                    ; (color BRO model-wrist-rest-right-holes)
+                ; )
+            ; )
       ))
