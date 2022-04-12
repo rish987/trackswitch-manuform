@@ -2041,24 +2041,13 @@ need to adjust for difference for thumb-z only"
                                    )
                                )
                            )
-        ;stupid magic box to remove artifact around thumb
-        magic-box (cube 30 10 (* 2 bottom-plate-thickness))
        ]
     (difference ;(union 
                     bottom-plate-blank
                     ; (translate [8 -100 0] 
                     ;     (debug model-wrist-rest-right-holes)
                     ; )
-                    ; (->> magic-box
-                    ;     (debug)
-                    ;     (rotate (deg2rad 25) [0 0 1])
-                    ;     (translate [-66 -48 0])
-                    ; )
                 ;)
-                (->> magic-box
-                    (rotate (deg2rad 25) [0 0 1])
-                    (translate [-66 -48 0])
-                )
                 screw-cutouts
                 screw-cutouts-fillets
                 (translate [0 0 (/ bottom-plate-thickness 2.01)] 
