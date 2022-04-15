@@ -39,6 +39,8 @@
 (def MAG [255/255 0/255 127/255 1])
 (def BRO [102/255 51/255 0/255 1])
 (def BLA [0/255 0/255 0/255 1])
+(def GRY [128/255 128/255 128/255 1])
+(def SLT [112/255 128/255 144/255 1])
 
 ; (def KEYCAP [220/255 163/255 163/255 1])
 (def KEYCAP [239/255 222/255 205/255 0.95])
@@ -1110,9 +1112,9 @@ need to adjust for difference for thumb-z only"
          ) (color YEL))
 
     (->> (triangle-hulls
-             (thumb-u-place web-post-tr)
-             (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) web-post-tl))
-             (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) web-post-bl))
+             (thumb-u-place fat-web-post-tr)
+             (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-tl))
+             (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-bl))
          ) (color NBL))
 
 
@@ -1504,14 +1506,17 @@ need to adjust for difference for thumb-z only"
     (->> (wall-brace-left   thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color DGR))
     (->> (wall-brace        thumb-l-place  0 -1 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-br border) (color GRE))
 
-    ; (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLU))
-    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color BLA))
+    (->> (wall-brace        thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color GRY))
+    ; (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-tl thumb-l-place -1  0 fat-web-post-bl border) (color GRY))
     ; (->> (wall-brace-deeper thumb-u-place  0  1 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tr border) (color BRO))
     (->> (wall-brace        thumb-u-place  0  1 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tr border) (color BRO))
 
     ; thumb corners
     (->> (wall-brace        thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl border) (color NBL))
+    ; (->> (wall-brace-deeper thumb-l-place -1  0 fat-web-post-bl thumb-l-place  0 -1 fat-web-post-bl border) (color NBL))
+    ; (->> (wall-brace-deeper thumb-u-place -1  0 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tl border) (color PUR))
     (->> (wall-brace        thumb-u-place -1  0 fat-web-post-tl thumb-u-place  0  1 fat-web-post-tl border) (color PUR))
+
     ; thumb tweeners
     (->> (wall-brace-deeper thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
     (->> (wall-brace        thumb-r-place  0 -1 fat-web-post-bl thumb-m-place  0 -1 fat-web-post-br border) (color PIN))
