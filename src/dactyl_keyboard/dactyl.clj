@@ -1026,7 +1026,7 @@ need to adjust for difference for thumb-z only"
      (rotate (deg2rad (nth thumb-rot 2)) [0 0 1])))
 
 ; convexer
-(defn thumb-u-place [shape] (thumb-place [22 -13.5 23] [-57 -1.5 -9] shape)) ; upper
+(defn thumb-u-place [shape] (thumb-place [22 -6.5 23] [-58 -2.5 -9] shape)) ; upper
 (defn thumb-r-place [shape] (thumb-place [14 -35   10] [-14.5 -10 5] shape)) ; right
 (defn thumb-m-place [shape] (thumb-place [ 8 -21.5 20] [-33 -15.2 -6] shape)) ; middle
 (defn thumb-l-place [shape] (thumb-place [ 6  -5   25] [-53 -23.5 -11.5] shape)) ; left
