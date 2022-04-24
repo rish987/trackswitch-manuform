@@ -62,6 +62,7 @@
 (def use_solderless false)      ; solderless switch plate, RESIN PRINTER RECOMMENDED!
 (def wire-diameter 1.75)        ; outer diameter of silicone covered 22awg ~1.75mm 26awg ~1.47mm)
 
+(def controller-holder 2) ; 1=printed usb-holder; 2=pcb-holder
 (def north_facing true)
 (def extra-curve-bottom-row true) ; enable magic number curve of bottom two keys
 (def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees, adjust spacing where this is used if increased
@@ -1775,6 +1776,113 @@ need to adjust for difference for thumb-z only"
   )
 )
 
+;;;;;;;;;;;;;;;;
+;; PCB Holder ;;
+;;;;;;;;;;;;;;;;
+(def pcb-holder-vertical true)
+(def pcb-holder-x 42.2)
+(def pcb-holder-y 36.8)
+(def pcb-holder-z 8)
+(def pcb-holder-z-rotate 0)
+(def trrs_r 2.55)
+(def usb_c_x 9.3)
+(def usb_c_z 4.5)
+
+(def pcb-holder-bottom-offset 
+  (if pcb-holder-vertical 
+    (/ pcb-holder-x 2)
+    (/ pcb-holder-z -4) ; TODO solve magic number puzzle here
+  )
+)
+
+(def pcb-holder-offset-coordinates
+  ; (if use_hotswap_holder
+    [-36 49.7 (+ pcb-holder-bottom-offset 2)]
+    ; [-15.5 50.9 pcb-holder-bottom-offset]
+  ; )
+)
+(defn pcb-holder-place [shape]
+  (if pcb-holder-vertical
+    (->> shape
+         (rotate (deg2rad 90) [0 1 0])
+         (translate pcb-holder-offset-coordinates)
+         (rotate (deg2rad pcb-holder-z-rotate) [0 0 1])
+    )
+    (->> shape
+         (translate pcb-holder-offset-coordinates)
+         (rotate (deg2rad pcb-holder-z-rotate) [0 0 1])
+    )
+  )
+)
+
+(def pcb-holder
+  (pcb-holder-place
+    (color SLT
+      (translate [(/ pcb-holder-x -2) (- pcb-holder-y) 0]
+      ; (if pcb-holder-vertical
+        (import "../things/printable_shield_left.stl")
+        ; (import "../things/usb_holder_w_reset_cutout.stl")
+      ; )
+      )
+    )
+  )
+)
+
+(def pcb-holder-screw-post-z 15)
+(def pcb-holder-screw-post
+  (pcb-holder-place
+    (color SLT
+      (union
+        (translate [(- (/ pcb-holder-x  2) 3.5) (+ (- pcb-holder-y) 3) (/ pcb-holder-screw-post-z -2)]
+          (cube (* screw-insert-radius 4) (* screw-insert-radius 4) pcb-holder-screw-post-z)
+        )
+        ; (translate [(+ (/ pcb-holder-x -2) 3.5) (- screw-insert-radius) 0] (with-fn 150 (cylinder screw-insert-radius 6)))
+      )
+    )
+  )
+)
+
+(def pcb-holder-cut-vertical
+  (pcb-holder-place
+    (translate [0 (/ 10 -2) (/ pcb-holder-z 2)]
+      (union
+        ; PCB board cutout
+        (translate [-2 -1 -3.65] (cube 38 10 1.65))
+
+        ; more general PCB components cutout
+        (translate [ 1 0 0] (cube (* pcb-holder-x 0.75) 10 (- pcb-holder-z 2)))
+
+        ; usb-c
+        (translate [-3.5 0 -1.5] (union
+          (translate [-2.5 0 0] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder (/ usb_c_z 2) 30))))
+          (translate [ 0 0 0] (cube (- usb_c_x usb_c_z) 30 usb_c_z))
+          (translate [ 2.5 0 0] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder (/ usb_c_z 2) 30))))
+        ))
+
+        ; trrs
+        (translate [13.5 0 -1] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder trrs_r 30))))
+
+        ; screw holes
+        (translate [0 (- (/ pcb-holder-y -2) 1.5) 0]
+          (translate [(+ (/ pcb-holder-x -2) 3.5) (- (/ pcb-holder-y  2) 0  ) -5] (with-fn 150 (cylinder screw-insert-radius 9))) ;top
+          (translate [(- (/ pcb-holder-x  2) 3.5) (+ (/ pcb-holder-y -2) 9.5) -5] (with-fn 150 (cylinder screw-insert-radius 15))) ;bottom
+        )
+      )
+    )
+  )
+)
+
+(def pcb-holder-space
+  (color RED
+    ; (translate [-25 -15 0]
+      ; (if pcb-holder-vertical
+        pcb-holder-cut-vertical
+      ;   null
+      ; )
+    ; )
+  )
+)
+
 ;;;;;;;;;;;;;;;;;;
 ;; Bottom Plate ;;
 ;;;;;;;;;;;;;;;;;;
@@ -2040,7 +2148,7 @@ need to adjust for difference for thumb-z only"
                                                   (translate [8 -55 0] wrist-shape))
                                    )
                                    (project
-                                       (if recess-bottom-plate
+                                       (if (and recess-bottom-plate (= controller-holder 1))
                                            (hull usb-holder-cutout)
                                        )
                                    )
@@ -2075,9 +2183,12 @@ need to adjust for difference for thumb-z only"
       (difference (union case-walls
                          screw-insert-outers
                          top-screw-block-outers
-                         )
+                         (if (= controller-holder 2) pcb-holder-screw-post)
+                  )
                   (model-switch-plate-cutouts mirror-internals)
-                  usb-holder-space
+                  (case controller-holder 1 usb-holder-space
+                                          2 pcb-holder-space
+                  )
                   screw-insert-holes
                   top-screw-insert-holes
       )
@@ -2260,8 +2371,12 @@ need to adjust for difference for thumb-z only"
             ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
             ; (debug top-screw-block-outers)
 
+            ; (debug pcb-holder)
+            ; (debug pcb-holder-space)
+
             ; (debug usb-holder)
-            ; ; (debug usb-holder-cutout)
+            ; (debug usb-holder-cutout)
+
             ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
                 ; (debug model-bottom-plate)
                 ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
