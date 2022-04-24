@@ -1853,14 +1853,14 @@ need to adjust for difference for thumb-z only"
         (translate [ 1 0 0] (cube (* pcb-holder-x 0.75) 10 (- pcb-holder-z 2)))
 
         ; usb-c
-        (translate [-3.5 0 -1.5] (union
+        (translate [-3.5 0 -1.25] (union
           (translate [-2.5 0 0] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder (/ usb_c_z 2) 30))))
           (translate [ 0 0 0] (cube (- usb_c_x usb_c_z) 30 usb_c_z))
           (translate [ 2.5 0 0] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder (/ usb_c_z 2) 30))))
         ))
 
         ; trrs
-        (translate [13.5 0 -1] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder trrs_r 30))))
+        (translate [13.5 0 -0.25] (rotate (deg2rad 90) [1 0 0] (with-fn 150 (cylinder trrs_r 30))))
 
         ; screw holes
         (translate [0 (- (/ pcb-holder-y -2) 1.5) 0]
