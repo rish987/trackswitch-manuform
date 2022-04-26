@@ -1633,7 +1633,7 @@ need to adjust for difference for thumb-z only"
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
     (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5   5.75 (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
-    (->> (screw-insert res -145 0             1 bottom-radius top-radius height [  1.0 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
+    (->> (screw-insert res -155 0             1 bottom-radius top-radius height [  1.0 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
     (->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     (->> (screw-insert res -110 0       lastrow bottom-radius top-radius height [-29.5 -1.5  (+ 54.75 hide-top-screws)]) (color BRO)) ; thumb
     (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8    6.25 (+ 12.0  hide-top-screws)]) (color PUR)) ; top right
@@ -1806,21 +1806,21 @@ need to adjust for difference for thumb-z only"
 (def pcb-holder-x 42.2)
 (def pcb-holder-y 36.8)
 (def pcb-holder-z 8)
-(def pcb-holder-z-rotate 0)
+(def pcb-holder-z-rotate 5)
 (def trrs_r 2.55)
 (def usb_c_x 9.3)
 (def usb_c_z 4.5)
 
 (def pcb-holder-bottom-offset 
   (if pcb-holder-vertical 
-    (/ pcb-holder-x 2)
+    (- (/ pcb-holder-x 2) 0.75)
     (/ pcb-holder-z -4) ; TODO solve magic number puzzle here
   )
 )
 
 (def pcb-holder-offset-coordinates
   ; (if use_hotswap_holder
-    [-36 49.7 (+ pcb-holder-bottom-offset 2)]
+    [-29 50.75 (+ pcb-holder-bottom-offset 2)]
     ; [-15.5 50.9 pcb-holder-bottom-offset]
   ; )
 )
@@ -1851,7 +1851,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def pcb-holder-screw-post-z 15)
+(def pcb-holder-screw-post-z 20)
 (def pcb-holder-screw-post
   (pcb-holder-place
     (color SLT
@@ -1888,7 +1888,7 @@ need to adjust for difference for thumb-z only"
         ; screw holes
         (translate [0 (- (/ pcb-holder-y -2) 1.5) 0]
           (translate [(+ (/ pcb-holder-x -2) 3.5) (- (/ pcb-holder-y  2) 0  ) -5] (with-fn 150 (cylinder screw-insert-radius 9))) ;top
-          (translate [(- (/ pcb-holder-x  2) 3.5) (+ (/ pcb-holder-y -2) 9.5) -5] (with-fn 150 (cylinder screw-insert-radius 15))) ;bottom
+          (translate [(- (/ pcb-holder-x  2) 3.5) (+ (/ pcb-holder-y -2) 9.5) -5] (with-fn 150 (cylinder screw-insert-radius 20))) ;bottom
         )
       )
     )
