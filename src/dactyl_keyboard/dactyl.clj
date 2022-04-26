@@ -2373,7 +2373,7 @@ need to adjust for difference for thumb-z only"
 (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            ; (color BRO 
+            ; (color BRO
                 ; (model-case-walls-right false)
             ; )
 
@@ -2387,6 +2387,7 @@ need to adjust for difference for thumb-z only"
             ; caps
             ; (debug caps-cutout)
             ; thumbcaps
+            ; (debug (import "../things/v4caps.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
             ; (debug thumb-space-below)
