@@ -1632,7 +1632,7 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5   5.75 (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5  5.75 (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
     (->> (screw-insert res -155 0             1 bottom-radius top-radius height [  1.0 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
     (->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     (->> (screw-insert res -110 0       lastrow bottom-radius top-radius height [-29.5 -1.5  (+ 54.75 hide-top-screws)]) (color BRO)) ; thumb
@@ -1643,9 +1643,9 @@ need to adjust for difference for thumb-z only"
                        (if (= res TRIANGLE-RES) (+ 7 bottom-radius) bottom-radius)
                        (if (= res TRIANGLE-RES) (+ 7 top-radius) top-radius)
                        (* height 0.65) 
-                       [-9.15
+                       [-10.25
                          (if (= res TRIANGLE-RES) -1.95 1.5)
-                         (+ 5.25 hide-top-screws)])
+                         (+ 5.75 hide-top-screws)])
          (color GRE)) ; bottom right
 ))
 
