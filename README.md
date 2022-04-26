@@ -3,7 +3,7 @@
 This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
 ## Planned V5.0 Features
-- TODO Update USB holder for blackpill usb-c controllers
+- Update USB holder for bastardkb pcb mcu holder v1.4 (TODO may fit blackpill version as well)
 - TODO adjust column heights, ring finger lower on Z, middle and index columns higher on Z
 - TODO increase curvature of pinky column to bring bottom alpha and num row closer to finger
 - TODO move numrow on pinky column slightly closer along Y axis
