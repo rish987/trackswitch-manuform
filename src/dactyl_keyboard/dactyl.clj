@@ -1606,12 +1606,12 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
-    (->> (screw-insert ROUND-RES 0 2             0 bottom-radius top-radius height [  1    3.5  screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-5.5  -9    screw-insert-bottom-offset]) (color PIN)) ; left
-    (->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-20.5 -6    screw-insert-bottom-offset]) (color NBL)) ; left-thumb
-    (->> (screw-insert ROUND-RES 0 0       lastrow bottom-radius top-radius height [-23  -14.75 screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert ROUND-RES 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.5  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert ROUND-RES 0 2 (+ lastrow 1) bottom-radius top-radius height [ 11.5  7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
+    (->> (screw-insert ROUND-RES 0 2             0 bottom-radius top-radius height [ 0.75   3.75 screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-5.25  -9    screw-insert-bottom-offset]) (color PIN)) ; left
+    (->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-21.75 -7    screw-insert-bottom-offset]) (color NBL)) ; left-thumb
+    (->> (screw-insert ROUND-RES 0 0       lastrow bottom-radius top-radius height [-23.5 -14.5  screw-insert-bottom-offset]) (color BRO)) ; thumb
+    (->> (screw-insert ROUND-RES 0 (- lastcol 1) 0 bottom-radius top-radius height [ 18.75  1.5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert ROUND-RES 0 2 (+ lastrow 1) bottom-radius top-radius height [ 12     7.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
 )) 
 
 (def screw-insert-height 6.5) ; Hole Depth Y: 4.4
@@ -1632,12 +1632,12 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5  5.5  (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
-    (->> (screw-insert res -140 0             1 bottom-radius top-radius height [ -0.5 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
+    (->> (screw-insert res  140 3             0 bottom-radius top-radius height [ -5.5   5.75 (+ 27.5 hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert res -145 0             1 bottom-radius top-radius height [  1.0 11.25 (+ 64.5 hide-top-screws)]) (color PIN)) ; left-thumb
     (->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
-    (->> (screw-insert res -115 0       lastrow bottom-radius top-radius height [-28   -1.5  (+ 54.75 hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8    6.25 (+ 10.5 hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.75 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
+    (->> (screw-insert res -110 0       lastrow bottom-radius top-radius height [-29.5 -1.5  (+ 54.75 hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert res  145 lastcol       0 bottom-radius top-radius height [ -8    6.25 (+ 12.0  hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
     (->> (screw-insert res -38 lastcol       3 
                        (if (= res TRIANGLE-RES) (+ 7 bottom-radius) bottom-radius)
