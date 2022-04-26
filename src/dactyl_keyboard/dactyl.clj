@@ -1772,11 +1772,11 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def usb-holder-z-rotate 4)
+(def usb-holder-z-rotate 1.5)
 (def usb-holder-offset-coordinates
   (if use_hotswap_holder
-    [-16 52.9 usb-holder-bottom-offset]
-    [-15.5 50.9 usb-holder-bottom-offset]))
+    [-16 49.75 usb-holder-bottom-offset]
+    [-15.5 47.95 usb-holder-bottom-offset]))
 (defn usb-holder-place [shape]
   (->> shape
        (translate usb-holder-offset-coordinates)
