@@ -74,7 +74,7 @@
 (def top-screw-insert-top-plate-bumps true) ; add additional threaded insert holder to top plate
 (def hide-top-screws -1.5) ; 0 or 0.25 for resin prints, -1.5 for non-resin prints to not have holes cut through top plate
 
-(def rendered-caps false) ; slows down model viewing but much nicer looking for more accurate clearances
+(def rendered-caps true) ; slows down model viewing but much nicer looking for more accurate clearances
 
 (defn column-curvature [column] 
               (cond  (= column 0)  (deg2rad 22) ;;index outer
@@ -627,15 +627,17 @@
                                 (->> keycap-top
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
                                      (translate [0 0 sa-height])))
-           rendered-cap-filename (case row 0 "../things/caps/MX_DES_Plus_MT4.4_R1.stl"
-                                           1 "../things/caps/MX_DES_Plus_MT4.4_R2.stl"
-                                           2 "../things/caps/MX_DES_Plus_MT4.4_R3DD.stl"
-                                           3 "../things/caps/MX_DES_Plus_MT4.4_R4.stl"
-                                           4 "../things/caps/MX_DES_Plus_MT4.4_R5.stl"
-                                           5 "../things/caps/MX_DES_Plus_MT4.4_R5.stl")
-           rendered-cap-filename-full (cond (= col 0)       (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "L.stl")
-                                            (= col lastcol) (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "R.stl")
-                                            :default         rendered-cap-filename)
+           rendered-cap-filename (case row 0 "../things/caps/matty3-deep-R1.stl"
+                                           1 "../things/caps/matty3-deep-R2.stl"
+                                           2 "../things/caps/matty3-deep-R3.stl"
+                                           3 "../things/caps/matty3-deep-R4.stl"
+                                           4 "../things/caps/matty3-deep-R5.stl"
+                                           5 "../things/caps/matty3-deep-R5.stl")
+           rendered-cap-filename-full ; (cond (= col 0)       (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "L.stl")
+                                            ; (= col lastcol) (str/replace (str/replace rendered-cap-filename #"DD.stl" ".stl") #".stl" "R.stl")
+                                            ; :default         
+                                            rendered-cap-filename
+                                      ; )
            key-cap-display (if rendered-caps (import rendered-cap-filename-full)
                                key-cap)
          ]
@@ -2378,15 +2380,15 @@ need to adjust for difference for thumb-z only"
             ; )
 
             ; (color CYA (model-right false))
-            ; (color BRO 
-                ; (model-switch-plates-right false)
-            ; )
+            (color BRO 
+                (model-switch-plates-right false)
+            )
             ; (color ORA (model-exo-plates-right false))
 
             ; (debug top-screw)
-            ; caps
+            caps
             ; (debug caps-cutout)
-            ; thumbcaps
+            thumbcaps
             ; (debug (import "../things/v4caps.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
