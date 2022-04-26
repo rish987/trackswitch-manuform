@@ -9,7 +9,7 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 - Move numrow on pinky column slightly closer along Y axis
 - Rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
 - TODO add ready to print risers with slots to increase palm rest height
-- TODO add latest revision of custom DES Plus MT4 keycap profile
+- ~~TODO add latest revision of custom DES Plus MT4 keycap profile~~
 - Add fourth [and possibly fifth] thumb keys (sorry for horrible photoshop skills)
 ![Compactyl V5.0 preview](images/compactyl-v5.png)
 
