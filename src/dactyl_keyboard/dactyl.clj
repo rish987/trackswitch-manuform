@@ -64,6 +64,7 @@
 
 (def controller-holder 2) ; 1=printed usb-holder; 2=pcb-holder
 (def north_facing true)
+(def extra-height-top-row true) ; enable magic number curve of bottom two keys
 (def extra-curve-bottom-row true) ; enable magic number curve of bottom two keys
 (def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees, adjust spacing where this is used if increased
 (def recess-bottom-plate true)
@@ -73,15 +74,15 @@
 (def top-screw-insert-top-plate-bumps true) ; add additional threaded insert holder to top plate
 (def hide-top-screws -1.5) ; 0 or 0.25 for resin prints, -1.5 for non-resin prints to not have holes cut through top plate
 
-(def rendered-caps true) ; slows down model viewing but much nicer looking for more accurate clearances
+(def rendered-caps false) ; slows down model viewing but much nicer looking for more accurate clearances
 
 (defn column-curvature [column] 
-              (cond  (= column 0)  (deg2rad 20) ;;index outer
+              (cond  (= column 0)  (deg2rad 22) ;;index outer
                      (= column 1)  (deg2rad 20) ;;index
                      (= column 2)  (deg2rad 17) ;;middle
                      (= column 3)  (deg2rad 17) ;;ring
-                     (= column 4)  (deg2rad 22) ;;pinky
-                     (>= column 5) (deg2rad 22) ;;pinky outer
+                     (= column 4)  (deg2rad 24) ;;pinky
+                     (>= column 5) (deg2rad 26) ;;pinky outer
                      :else 0 ))
 (def row-curvature (deg2rad 1))  ; curvature of the rows
 (defn centerrow [column] 
@@ -97,19 +98,19 @@
 (def centercol 3)                ; Zero indexed, TODO: this should be 2.5 for a 6 column board, but it will break all the things now
 
 (defn column-offset [column] (cond
-                  (= column 0)  [0  -5  1  ] ;;index outer
-                  (= column 1)  [0  -5  1  ] ;;index
-                  (= column 2)  [0   3 -5.5] ;;middle
-                  (= column 3)  [0   0  0  ] ;;ring
+                  (= column 0)  [0  -5  2  ] ;;index outer
+                  (= column 1)  [0  -5  2  ] ;;index
+                  (= column 2)  [0   3 -5  ] ;;middle
+                  (= column 3)  [0   0 -0.5] ;;ring
                   (= column 4)  [0 -12  6  ] ;;pinky
                   (>= column 5) [0 -14  6  ] ;;pinky outer
                   :else [0 0 0]))
 
 (def keyboard-z-offset 25.5)  ; controls overall height
 
-(def  extra-width 2)          ; extra horizontal space between the base of keys
-(defn extra-height [column]   ; extra vertical space between the base of keys
-          (cond  (= column 0)  1.9 ;;index outer
+(def  extra-x 2)         ; extra horizontal space between the base of keys
+(defn extra-y [column]   ; extra vertical space between the base of keys
+          (cond  (= column 0)  2.1 ;;index outer
                  (= column 1)  1.9 ;;index
                  (= column 2)  1.7 ;;middle
                  (= column 3)  1.7 ;;ring
@@ -690,7 +691,7 @@
                                 )
                                 0
                             )
-        extra-width-for-tilt (if (> tilt-outer-columns 0)
+        extra-x-for-tilt (if (> tilt-outer-columns 0)
                                  (case column
                                      0 0.55
                                      5 0.8
@@ -698,7 +699,7 @@
                                  )
                                  0
                              )
-        extra-height-for-tilt (if (> tilt-outer-columns 0)
+        extra-y-for-tilt (if (> tilt-outer-columns 0)
                                  (case column
                                      0 0.5
                                      5 0.5
@@ -714,31 +715,52 @@
                       )
                       0
                   )
-        extra-width (+ extra-width extra-width-for-tilt)
+        extra-width (+ extra-x extra-x-for-tilt)
         ; end wonky code to handle tilted outer columns
+
+        extra-y-for-toprow (if (and extra-height-top-row (= row 0))
+                               -0.5
+                               0
+                           )
+        extra-z-for-toprow (if (and extra-height-top-row (= row 0))
+                               1.5
+                               0
+                           )
 
         ; being wonky bottom row extra rotation code
         extra-rotation (if (and extra-curve-bottom-row
                                (.contains [2 3] column)
                                (= row lastrow))
-                           -0.33
-                           0)
+                           -0.4
+                           (if (and extra-height-top-row (= row 0))
+                               -0.1
+                               0
+                           )
+                       )
         extra-rotation-offset (if (and extra-curve-bottom-row
-                                       (.contains [2 3] column)
                                        (= row lastrow))
-                           0.07
-                           0)
+                                  (case column
+                                      3 0.095
+                                      2 0.09
+                                      0
+                                  )
+                                  0
+                              )
         extra-rotation-zheight (if (and extra-curve-bottom-row 
-                                        (.contains [2 3] column)
                                         (= row lastrow))
-                   5.5
-                   0)
+                                   (case column
+                                       3 7.5
+                                       2 6.75
+                                       0
+                                   )
+                                   0
+                               )
         ; end wonky bottom row extra rotation code
 
         column-radius (+ (/ (/ (+ mount-width extra-width) 2)
                             (Math/sin (/ row-curvature 2)))
                          sa-cap-bottom-height)
-        height-space (+ (extra-height column) extra-height-for-tilt)
+        height-space (+ (extra-y column) extra-y-for-tilt extra-y-for-toprow)
         row-radius (+ (/ (/ (+ mount-height height-space) 2)
                          (Math/sin (/ (column-curvature column) 2)))
                       sa-cap-bottom-height)
@@ -747,6 +769,7 @@
                           (translate-fn [0 0 extra-z-for-tilt])
                           (rotate-y-fn (deg2rad extra-row-tilt))
                           (rotate-x-fn extra-rotation)
+                          (translate-fn [0 0 extra-z-for-toprow])
                           (translate-fn [0 0 extra-rotation-zheight])
                           (translate-fn [0 0 (- row-radius)])
                           (rotate-x-fn (* (+ extra-rotation-offset (column-curvature column)) 
@@ -2364,7 +2387,6 @@ need to adjust for difference for thumb-z only"
             ; caps
             ; (debug caps-cutout)
             ; thumbcaps
-            ; (debug (import "../things/test_keycap_placement.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
             ; (debug thumb-space-below)

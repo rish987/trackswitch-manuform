@@ -4,10 +4,10 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## Planned V5.0 Features
 - Update USB holder for bastardkb pcb mcu holder v1.4 (TODO may fit blackpill version as well)
-- TODO adjust column heights, ring finger lower on Z, middle and index columns higher on Z
-- TODO increase curvature of pinky column to bring bottom alpha and num row closer to finger
-- TODO move numrow on pinky column slightly closer along Y axis
-- TODO rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
+- Adjust column heights, ring finger lower on Z, middle and index columns higher on Z
+- Increase curvature of pinky column to bring bottom alpha and num row closer to finger
+- Move numrow on pinky column slightly closer along Y axis
+- Rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
 - TODO add ready to print risers with slots to increase palm rest height
 - TODO add latest revision of custom DES Plus MT4 keycap profile
 - Add fourth [and possibly fifth] thumb keys (sorry for horrible photoshop skills)
