@@ -64,7 +64,8 @@
 
 (def controller-holder 2) ; 1=printed usb-holder; 2=pcb-holder
 (def north_facing true)
-(def extra-height-top-row true) ; enable magic number curve of bottom two keys
+(def extra-height-top-row true) ; raise numrow for mt3 and oem keycap profiles to match SA R1 num key height
+(def extra-zheight-top-row 1.5)
 (def extra-curve-bottom-row true) ; enable magic number curve of bottom two keys
 (def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees, adjust spacing where this is used if increased
 (def recess-bottom-plate true)
@@ -725,7 +726,7 @@
                                0
                            )
         extra-z-for-toprow (if (and extra-height-top-row (= row 0))
-                               1.5
+                               extra-zheight-top-row
                                0
                            )
 

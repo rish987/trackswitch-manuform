@@ -44,7 +44,9 @@ This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manufor
 
 ## V3.0 Features
 - Added option for two part design per keyboard half
-![Compactyl V3 back](images/compactyl-V3-exploded.png)
+- Made a [watermelon keyboard](https://imgur.com/gallery/GW7DmTZ)
+[![Compactyl V3 Watermelon](compactyl-v3.0-watermelon.webp)](https://www.youtube.com/watch?v=ICaaL3d7pfs)
+<!-- ![Compactyl V3 back](images/compactyl-V3-exploded.png) -->
 
 ## V2.1 Features
 - Increased tent angle
