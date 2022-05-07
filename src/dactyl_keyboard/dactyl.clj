@@ -57,6 +57,7 @@
 (def ncols 6)
 
 ;select only one of the following
+(def plate-holes false)         ; for SU120 square PCB with screw holes in corners
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
 (def use_hotswap_holder true)   ; kailh hotswap holder
 (def use_solderless false)      ; solderless switch plate, RESIN PRINTER RECOMMENDED!
@@ -484,7 +485,7 @@
   )
 )
 
-(def switch-dogbone-cutout
+(def switch-corner-cutout
   (let [ cutout-radius 0.75
          cutout (->> (cylinder cutout-radius 99)
                      (with-fn 15))
@@ -502,6 +503,27 @@
 (def amoeba-x 1) ; mm width TODO wtf?
 (def amoeba-y 16) ; mm high
 (def keyswitch-below-clearance (/ keyswitch-below-plate -2))
+
+; https://github.com/e3w2q/su120-keyboard
+; https://github.com/joshreve/dactyl-keyboard/blob/dd706f14f9aacfc429160bf5b03b688fdb5ce2f4/src/generate_configuration.py#L434
+(def plate_holes_width 14.3)
+(def plate_holes_height 14.3)
+(def plate_holes_diameter 1.6)
+(def plate_holes_depth 20.0)
+(def switch-plate-holes-cutout
+  (let [ cutout-radius (/ plate_holes_diameter 2)
+         cutout (->> (cylinder cutout-radius 99)
+                     (with-fn 50))
+         cutout-x (/ plate_holes_width  2)
+         cutout-y (/ plate_holes_height 2)
+       ]
+    (union
+      (translate [   cutout-x    cutout-y  0] cutout)
+      (translate [(- cutout-x)   cutout-y  0] cutout)
+      (translate [   cutout-x (- cutout-y) 0] cutout)
+    )
+  )
+)
 
 (def switch-bottom
   (translate [0 0 keyswitch-below-clearance] 
@@ -552,9 +574,11 @@
                        (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
                                    0
                                    (/ plate-thickness 2)]))
-        plate-half (difference (union top-wall left-wall) 
+        plate-half (difference (union top-wall left-wall)
                                switch-teeth-cutout
-                               switch-dogbone-cutout)
+                               (if plate-holes switch-plate-holes-cutout
+                                               switch-corner-cutout)
+                   )
         plate (union plate-half
                   (->> plate-half
                        (mirror [1 0 0])
