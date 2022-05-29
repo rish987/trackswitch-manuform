@@ -63,6 +63,11 @@
 (def use_solderless false)      ; solderless switch plate, RESIN PRINTER RECOMMENDED!
 (def wire-diameter 1.75)        ; outer diameter of silicone covered 22awg ~1.75mm 26awg ~1.47mm)
 
+(keyword "kailh-hotswap")
+(keyword "gateron-hotswap")
+(keyword "outemu-hotswap")
+(def hotswap-type "kailh-hotswap")
+
 (def controller-holder 2) ; 1=printed usb-holder; 2=pcb-holder
 (def north_facing true)
 (def extra-height-top-row true) ; raise numrow for mt3 and oem keycap profiles to match SA R1 num key height
@@ -175,44 +180,15 @@
 )
 
 (def hotswap-x2          (* (/ holder-x 3) 1.85))
-(def hotswap-y1          4.3) ;first y-size of kailh hotswap holder
-(def hotswap-y2          6.2) ;second y-size of kailh hotswap holder
-(def hotswap-z           (+ swap-z 0.5));thickness of kailn hotswap holder + some margin of printing error (0.5mm)
+(def hotswap-z           (+ swap-z 0.5));thickness of kailh hotswap holder + some margin of printing error (0.5mm)
 (def hotswap-cutout-z-offset -2.6)
 (def hotswap-cutout-2-x-offset (- (- (/ holder-x 4) 0.70)))
-(def hotswap-cutout-1-y-offset 4.95)
-(def hotswap-cutout-2-y-offset 4)
 (def hotswap-case-cutout-x-extra 2.75)
-(defn hotswap-case-cutout [mirror-internals]
-  (let [shape (union
-                (translate [0 
-                            hotswap-cutout-1-y-offset 
-                            hotswap-cutout-z-offset] 
-                           (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
-                                 hotswap-y1 
-                                 hotswap-z))
-                (translate [hotswap-cutout-2-x-offset 
-                            hotswap-cutout-2-y-offset 
-                            hotswap-cutout-z-offset]
-                           (cube hotswap-x2 hotswap-y2 hotswap-z))
-              )
-        rotated
-             (if north_facing
-                 (->> shape
-                      (mirror [1 0 0])
-                      (mirror [0 1 0])
-                 )
-                 shape
-             )
-        mirrored 
-          (->> (if mirror-internals
-                   (->> rotated (mirror [1 0 0]))
-                   rotated))
-        ]
-    mirrored
-  )
-)
-(def hotswap-holder
+
+(defn make-hotswap-holder [hotswap-y1
+                           hotswap-cutout-1-y-offset
+                           hotswap-y2
+                           hotswap-cutout-2-y-offset]
   ;irregularly shaped hot swap holder
   ;    ____________
   ;  |  _|_______|    |  hotswap offset from out edge of holder with room to solder
@@ -238,7 +214,7 @@
         hotswap-x3          (/ holder-x 4)
         hotswap-y3          (/ hotswap-y1 2)
 
-        hotswap-cutout-1-x-offset 0.01
+        hotswap-cutout-1-x-offset (/ holder-x 3.99)
         hotswap-cutout-2-x-offset (- (/ holder-x 4.5))
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
         hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
@@ -247,15 +223,29 @@
 
         hotswap-cutout-led-x-offset 0
         hotswap-cutout-led-y-offset -6
-        
-        hotswap-cutout-1    (->> (cube hotswap-x hotswap-y1 hotswap-z)
+
+        hotswap-cutout-1    (->> (hull (->> (square (/ hotswap-x 2) (- hotswap-y1 0.4))
+                                            (extrude-linear {:height 0.001 :twist 0 :convexity 0}))
+                                       (->> (square (/ hotswap-x 2) (+ hotswap-y1 0.1))
+                                            (extrude-linear {:height 0.001 :twist 0 :convexity 0})
+                                            (translate [0 0 hotswap-z])
+                                       )
+                                 )
                                  (translate [hotswap-cutout-1-x-offset 
                                              hotswap-cutout-1-y-offset 
-                                             hotswap-cutout-z-offset]))
-        hotswap-cutout-2    (->> (cube hotswap-x2 hotswap-y2 hotswap-z)
+                                             (+ hotswap-cutout-z-offset (/ hotswap-z -2))])
+                            )
+        hotswap-cutout-2    (->> (hull (->> (square hotswap-x2 (- hotswap-y2 0.4))
+                                            (extrude-linear {:height 0.001 :twist 0 :convexity 0}))
+                                       (->> (square hotswap-x2 (+ hotswap-y2 0.1))
+                                            (extrude-linear {:height 0.001 :twist 0 :convexity 0})
+                                            (translate [0 0 hotswap-z])
+                                       )
+                                 )
                                  (translate [hotswap-cutout-2-x-offset 
                                              hotswap-cutout-2-y-offset 
-                                             hotswap-cutout-z-offset]))
+                                             (+ hotswap-cutout-z-offset (/ hotswap-z -2))])
+                            )
         hotswap-cutout-3    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-3-x-offset
                                               hotswap-cutout-3-y-offset
@@ -263,15 +253,11 @@
         hotswap-cutout-4    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-4-x-offset
                                               hotswap-cutout-3-y-offset
-                                              hotswap-cutout-z-offset]))
+                                              hotswap-cutout-z-offset]) (color GRE))
         hotswap-led-cutout  (->> (cube square-led-size square-led-size 10)
                                  (translate [ hotswap-cutout-led-x-offset
                                               hotswap-cutout-led-y-offset
                                               hotswap-cutout-z-offset]))
-        hotswap-cutout      (union hotswap-cutout-1
-                                   hotswap-cutout-2
-                                   hotswap-cutout-3
-                                   hotswap-cutout-4)
 
         diode-wire-dia 0.75
         diode-wire-channel-depth (* 1.5 diode-wire-dia)
@@ -332,7 +318,12 @@
                         (mirror [1 0 0] diode-cutout)
                         diode-socket-hole-right
                         diode-channel-pin-right
-                        hotswap-cutout
+
+                        hotswap-cutout-1
+                        hotswap-cutout-2
+                        hotswap-cutout-3
+                        hotswap-cutout-4
+
                         hotswap-led-cutout)
        ]
        (if north_facing
@@ -342,6 +333,62 @@
            )
            hotswap-shape
        )
+  )
+)
+
+(defn hotswap-case-cutout [mirror-internals]
+  (let [shape (union
+                (translate [0 
+                            4.6 ; min of all the hotswap-cutout-1-y-offset values
+                            hotswap-cutout-z-offset] 
+                           (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
+                                 4.6 ; max of all the hotswap-y1 values
+                                 hotswap-z))
+                (translate [hotswap-cutout-2-x-offset 
+                            3.8 ; min of all the hotswap-cutout-2-y-offset values
+                            hotswap-cutout-z-offset]
+                           (cube hotswap-x2 
+                                 6.2 ; max of all the hotswap-y2 values
+                                 hotswap-z))
+              )
+        rotated
+             (if north_facing
+                 (->> shape
+                      (mirror [1 0 0])
+                      (mirror [0 1 0])
+                 )
+                 shape
+             )
+        mirrored 
+          (->> (if mirror-internals
+                   (->> rotated (mirror [1 0 0]))
+                   rotated))
+        ]
+    mirrored
+  )
+)
+
+(def gateron-hotswap-holder
+  (make-hotswap-holder 4.6  ;hotswap-y1
+                       4.6 ;hotswap-cutout-1-y-offset
+                       6.1  ;hotswap-y2
+                       3.85  ;hotswap-cutout-2-y-offset
+  )
+)
+
+(def outemu-hotswap-holder
+  (make-hotswap-holder 4.2  ;hotswap-y1
+                       4.8 ;hotswap-cutout-1-y-offset
+                       6.2  ;hotswap-y2
+                       3.8  ;hotswap-cutout-2-y-offset
+  )
+)
+
+(def hotswap-holder
+  (make-hotswap-holder 4.3  ;hotswap-y1
+                       4.75 ;hotswap-cutout-1-y-offset
+                       6.2  ;hotswap-y2
+                       3.8  ;hotswap-cutout-2-y-offset
   )
 )
 
@@ -564,7 +611,7 @@
         )
    )))
 
-(defn single-plate [mirror-internals]
+(defn make-single-plate [mirror-internals hotswap-type]
  ; (render ;tell scad to try and cache this repetitive code, kinda screws up previews
   (let [top-wall (->> (cube mount-height 1.5 plate-thickness)
                       (translate [0
@@ -583,7 +630,10 @@
                   (->> plate-half
                        (mirror [1 0 0])
                        (mirror [0 1 0]))
-                  (if use_hotswap_holder hotswap-holder)
+                  (if use_hotswap_holder
+                    (case hotswap-type "kailh-hotswap"   hotswap-holder
+                                       "gateron-hotswap" gateron-hotswap-holder
+                                       "outemu-hotswap"  outemu-hotswap-holder))
                   (if use_solderless solderless-plate)
               )
        ]
@@ -594,6 +644,10 @@
     )
   )
  ; )
+)
+
+(defn single-plate [mirror-internals]
+  (make-single-plate mirror-internals hotswap-type)
 )
 
 (def single-plate-blank
@@ -2345,6 +2399,37 @@ need to adjust for difference for thumb-z only"
 (spit "things/single-plate.scad"
       (write-scad (single-plate false)))
 
+(spit "things/test-print-hotswap-switch-openings.scad"
+      (write-scad
+      (difference
+        (union
+          (make-single-plate false "kailh-hotswap")
+          (->> (text "K")
+               (scale [0.5 0.5 1])
+               (rotate (deg2rad 90) [1 0 0])
+               (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
+          )
+          (translate [20 0 0]
+            (make-single-plate false "gateron-hotswap")
+            (->> (text "G")
+               (scale [0.5 0.5 1])
+               (rotate (deg2rad 90) [1 0 0])
+               (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
+            )
+          )
+          (translate [40 0 0]
+            (make-single-plate false "outemu-hotswap")
+            (->> (text "O")
+               (scale [0.5 0.5 1])
+               (rotate (deg2rad 90) [1 0 0])
+               (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
+            )
+          )
+        )
+        (translate [0 0 (if use_hotswap_holder (+ -25 (- swap-z)) -25)]
+          (cube 300 300 50))
+      )))
+
 ; (spit "things/left-wall.scad"
 ;       (write-scad (left-wall false)))
 
@@ -2401,19 +2486,19 @@ need to adjust for difference for thumb-z only"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ; (color BRO
-                ; (model-case-walls-right false)
+                (model-case-walls-right false)
             ; )
 
             ; (color CYA (model-right false))
-            (color BRO 
+            ; (color BRO
                 (model-switch-plates-right false)
-            )
+            ; )
             ; (color ORA (model-exo-plates-right false))
 
             ; (debug top-screw)
-            caps
+            ; caps
             ; (debug caps-cutout)
-            thumbcaps
+            ; thumbcaps
             ; (debug (import "../things/v4caps.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
@@ -2433,4 +2518,5 @@ need to adjust for difference for thumb-z only"
                     ; (color BRO model-wrist-rest-right-holes)
                 ; )
             ; )
-      ))
+      )
+)
