@@ -338,17 +338,17 @@
 
 (defn hotswap-case-cutout [mirror-internals]
   (let [shape (union
-                (translate [0 
+                (translate [0.15 
                             4.6 ; min of all the hotswap-cutout-1-y-offset values
                             hotswap-cutout-z-offset] 
                            (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
-                                 4.6 ; max of all the hotswap-y1 values
+                                 3 ; min of all the hotswap-y1 values - 0.4 overhangs
                                  hotswap-z))
                 (translate [hotswap-cutout-2-x-offset 
                             3.8 ; min of all the hotswap-cutout-2-y-offset values
                             hotswap-cutout-z-offset]
                            (cube hotswap-x2 
-                                 6.2 ; max of all the hotswap-y2 values
+                                 5 ; min of all the hotswap-y2 values - 0.4 overhangs
                                  hotswap-z))
               )
         rotated
@@ -2367,7 +2367,9 @@ need to adjust for difference for thumb-z only"
       (difference (union case-walls
                          screw-insert-outers
                          )
-                  usb-holder-space
+                  (case controller-holder 1 usb-holder-space
+                                          2 pcb-holder-space
+                  )
                   screw-insert-holes
       )
     )
@@ -2405,6 +2407,7 @@ need to adjust for difference for thumb-z only"
         (union
           (make-single-plate false "kailh-hotswap")
           (->> (text "K")
+               (extrude-linear {:height 1, :center true})
                (scale [0.5 0.5 1])
                (rotate (deg2rad 90) [1 0 0])
                (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
@@ -2412,20 +2415,25 @@ need to adjust for difference for thumb-z only"
           (translate [20 0 0]
             (make-single-plate false "gateron-hotswap")
             (->> (text "G")
-               (scale [0.5 0.5 1])
-               (rotate (deg2rad 90) [1 0 0])
-               (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
+                 (extrude-linear {:height 1, :center true})
+                 (scale [0.5 0.5 1])
+                 (rotate (deg2rad 90) [1 0 0])
+                 (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
             )
           )
           (translate [40 0 0]
             (make-single-plate false "outemu-hotswap")
             (->> (text "O")
-               (scale [0.5 0.5 1])
-               (rotate (deg2rad 90) [1 0 0])
-               (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
+                 (extrude-linear {:height 1, :center true})
+                 (scale [0.5 0.5 1])
+                 (rotate (deg2rad 90) [1 0 0])
+                 (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
             )
           )
         )
+        (hotswap-case-cutout false)
+        (translate [20 0 0] (hotswap-case-cutout false))
+        (translate [40 0 0] (hotswap-case-cutout false))
         (translate [0 0 (if use_hotswap_holder (+ -25 (- swap-z)) -25)]
           (cube 300 300 50))
       )))
