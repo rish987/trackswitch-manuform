@@ -253,7 +253,9 @@
         hotswap-cutout-4    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-4-x-offset
                                               hotswap-cutout-3-y-offset
-                                              hotswap-cutout-z-offset]) (color GRE))
+                                              hotswap-cutout-z-offset])
+                                 ; (color GRE)
+                            )
         hotswap-led-cutout  (->> (cube square-led-size square-led-size 10)
                                  (translate [ hotswap-cutout-led-x-offset
                                               hotswap-cutout-led-y-offset
@@ -733,7 +735,7 @@
 (defn sa-cap-cutout [keysize]
     (let [ cutout-x 0.40
            cutout-y 1.95
-           cutout-z-offset (- sa-cap-bottom-height-pressed 2.99)
+           cutout-z-offset (- sa-cap-bottom-height-pressed 3.01)
            bl2 (case keysize 
                      1   (+ (/ sa-length 2) cutout-y)
                      1.5 (+ (/ sa-length 2) cutout-y)
@@ -1043,7 +1045,8 @@
                     (key-place 3 lastrow   fat-web-post-tr)
                     (key-place 3 cornerrow fat-web-post-br)
                     (key-place 4 cornerrow fat-web-post-bl)))
-                (color BLA))
+                ; (color BLA)
+           )
 
            (->> (if use_hotswap_holder
                   (triangle-hulls
@@ -1064,7 +1067,8 @@
                     (key-place 2 lastrow   fat-web-post-tr)
                     (key-place 2 cornerrow fat-web-post-br)
                     (key-place 3 cornerrow fat-web-post-bl)))
-                (color GRE))
+                ; (color GRE)
+           )
 
            (->> (if use_hotswap_holder
                   (triangle-hulls
@@ -1077,7 +1081,8 @@
                     (key-place 3 lastrow   fat-web-post-br)
                     (key-place 3 lastrow   fat-web-post-tr)
                     (key-place 4 cornerrow fat-web-post-bl)))
-                (color CYA))
+                ; (color CYA)
+           )
 
            (->> (if use_hotswap_holder
                   (triangle-hulls
@@ -1089,7 +1094,8 @@
                     (key-place 1 cornerrow fat-web-post-br)
                     (key-place 2 lastrow   fat-web-post-tl)
                     (key-place 2 lastrow   fat-web-post-bl)))
-                (color MAG))
+                ; (color MAG)
+           )
   )
 )
 
@@ -1195,7 +1201,9 @@ need to adjust for difference for thumb-z only"
              (thumb-u-place plate-post-br)
              (thumb-u-place web-post-tr)
              (thumb-m-place plate-post-tl)
-         ) (color GRE))
+         ) 
+         ; (color GRE)
+    )
 
     ; partially fills  N and B keys sockets, do not use unless you cut those back out
     ; (->> (triangle-hulls
@@ -1214,20 +1222,26 @@ need to adjust for difference for thumb-z only"
              (thumb-u-place plate-post-br)
              (thumb-u-place web-post-tr)
              (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) web-post-bl))
-         ) (color YEL))
+         )
+         ; (color YEL)
+    )
 
     (->> (triangle-hulls
              (thumb-u-place fat-web-post-tr)
              (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-tl))
              (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-bl))
-         ) (color NBL))
+         )
+         ; (color NBL)
+    )
 
 
     (->> (triangle-hulls
              (thumb-m-place plate-post-tl)
              (thumb-l-place web-post-tr)
              (thumb-u-place web-post-br)
-         ) (color DGR))
+         )
+         ; (color DGR)
+    )
 
     (->> (triangle-hulls
              (thumb-u-place web-post-bl)
@@ -1235,13 +1249,15 @@ need to adjust for difference for thumb-z only"
              (thumb-l-place web-post-tl)
              (thumb-u-place web-post-bl)
          )
-         (color BLU))
+         ; (color BLU)
+   )
    (->> (triangle-hulls
             (thumb-u-place web-post-bl)
             (thumb-u-place web-post-br)
             (thumb-l-place web-post-tr)
         )
-         (color NBL))
+        ; (color NBL)
+    )
 
     (->> (if use_hotswap_holder 
            (triangle-hulls
@@ -1254,7 +1270,9 @@ need to adjust for difference for thumb-z only"
              (thumb-l-place web-post-tl)
              (thumb-u-place web-post-bl)
            )
-         ) (color RED))
+         )
+         ; (color RED)
+    )
 
     ; top two
     (->> (if use_hotswap_holder 
@@ -1268,7 +1286,9 @@ need to adjust for difference for thumb-z only"
                (thumb-m-place web-post-br)
                (thumb-r-place web-post-tl)
                (thumb-r-place web-post-bl))
-           ) (color RED))
+           )
+         ; (color RED)
+    )
 
     (->> (if use_hotswap_holder 
              (triangle-hulls
@@ -1283,47 +1303,59 @@ need to adjust for difference for thumb-z only"
                (thumb-m-place web-post-bl)
                (thumb-l-place web-post-br)
                (thumb-m-place web-post-bl))
-           ) (color ORA))
+           )
+         ; (color ORA)
+    )
 
     (hull  ; between thumb m and thumb keys
       (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) web-post-bl))
       (thumb-m-place web-post-tr)
       (thumb-m-place web-post-tl))
     (->> (piramid-hulls                                          ; top ridge thumb side
-      (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-bl))
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
-      (key-place 0 cornerrow web-post-bl)
-      ;(thumb-r-place web-post-tr)
-      (thumb-r-place web-post-tl)
-      (thumb-m-place fat-web-post-tr)
-      (thumb-m-place fat-web-post-tl)
-      (thumb-l-place fat-web-post-tr)
-      (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
-      ) (color BLA))
+           (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) fat-web-post-bl))
+           (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
+           (key-place 0 cornerrow web-post-bl)
+           ;(thumb-r-place web-post-tr)
+           (thumb-r-place web-post-tl)
+           (thumb-m-place fat-web-post-tr)
+           (thumb-m-place fat-web-post-tl)
+           (thumb-l-place fat-web-post-tr)
+           (key-place 0 cornerrow (translate (wall-locate2 -1 0 false) fat-web-post-bl))
+         )
+         ; (color BLA)
+    )
     (->> (triangle-hulls
-      (key-place 0 cornerrow fat-web-post-br)
-      (key-place 0 cornerrow fat-web-post-bl)
-      (thumb-r-place web-post-tl)
-      (key-place 1 cornerrow web-post-bl)
-      (key-place 1 cornerrow web-post-br)) (color BLU))
+           (key-place 0 cornerrow fat-web-post-br)
+           (key-place 0 cornerrow fat-web-post-bl)
+           (thumb-r-place web-post-tl)
+           (key-place 1 cornerrow web-post-bl)
+           (key-place 1 cornerrow web-post-br))
+         ; (color BLU)
+    )
     (->> (triangle-hulls
-      (thumb-r-place fat-web-post-tl)
-      (thumb-r-place fat-web-post-tr)
-      (key-place 1 cornerrow web-post-br)
-      ; (key-place 2 lastrow web-post-tl)
-      ) (color NBL))
+           (thumb-r-place fat-web-post-tl)
+           (thumb-r-place fat-web-post-tr)
+           (key-place 1 cornerrow web-post-br)
+           ; (key-place 2 lastrow web-post-tl)
+           )
+         ; (color NBL)
+    )
     (->> (triangle-hulls
-      (key-place 2 lastrow web-post-tl)
-      ; (thumb-r-place fat-web-post-tr)
-      ; (key-place 2 lastrow web-post-bl)
-      (thumb-r-place fat-web-post-br)) (color PUR))
+           (key-place 2 lastrow web-post-tl)
+           ; (thumb-r-place fat-web-post-tr)
+           ; (key-place 2 lastrow web-post-bl)
+           (thumb-r-place fat-web-post-br))
+         ; (color PUR)
+    )
     (->> (triangle-hulls
-      (thumb-r-place web-post-br)
-      (key-place 2 lastrow web-post-bl)
-      (if use_hotswap_holder (key-place 3 lastrow plate-post-bl)
-                      (key-place 3 lastrow web-post-bl))
-      (key-place 2 lastrow web-post-br)) (color PIN))
-    ))
+           (thumb-r-place web-post-br)
+           (key-place 2 lastrow web-post-bl)
+           (if use_hotswap_holder (key-place 3 lastrow plate-post-bl)
+                           (key-place 3 lastrow web-post-bl))
+           (key-place 2 lastrow web-post-br))
+         ; (color PIN)
+    )
+))
 
 ; dx1, dy1, dx2, dy2 = direction of the wall. '1' for front, '-1' for back, '0' for 'not in this direction'.
 ; place1, place2 = function that places an object at a location, typically refers to the center of a key position.
@@ -1366,24 +1398,26 @@ need to adjust for difference for thumb-z only"
                     f: the result of bottom-hull translation from wall-locate3"
   (union
     (->> (hull
-      (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-      (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-      )
-    (color YEL))
+           (place1 post1)
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+           (place2 post2)
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+           ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           )
+         ; (color YEL)
+    )
     (if (not border)
       (->> (bottom-hull
-        (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-        ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        )
-        (color ORA))
+             (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+             ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+             (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+             ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           )
+           ; (color ORA)
+      )
     )
   ))
 
@@ -1393,26 +1427,28 @@ need to adjust for difference for thumb-z only"
   "try to extend back wall further back for certain sections"
   (union
     (->> (hull
-      (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+           (place1 post1)
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate3 dx1 dy1 border) post1))
 
-      (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-      (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-      )
-    (color BLU))
+           (place2 post2)
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+           ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+           (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+         )
+         ; (color BLU)
+    )
     (if (not border)
       (->> (bottom-hull
-        (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-        ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+             (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+             ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
   
-          (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-          ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-          )
-        (color YEL))
+             (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+             ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+           )
+           ; (color YEL)
+      )
     )
   ))
 
@@ -1421,26 +1457,28 @@ need to adjust for difference for thumb-z only"
                        border]
   (union
     (->> (hull
-      (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-
-      (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-      )
-    (color PUR))
+           (place1 post1)
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           ; (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+    
+           (place2 post2)
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+           ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+           (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        )
+        ; (color PUR)
+    )
     (if (not border)
       (->> (bottom-hull
-          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+             (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+             (place1 (translate (wall-locate2 dx1 dy1 border) post1))
   
-        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-        )
-       (color MAG))
+             (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+             (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+           )
+           ; (color MAG)
+      )
     )
   )
 )
@@ -1450,26 +1488,28 @@ need to adjust for difference for thumb-z only"
                        border]
   (union
     (->> (hull
-      (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+           (place1 post1)
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate2 dx1 dy1 border) post1))
 
-      (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
-      (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-      )
-    (color CYA))
+           (place2 post2)
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+           ; (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+           (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+         )
+         ; (color CYA)
+    )
     (if (not border)
       (->> (bottom-hull
-          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-  
-        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        )
-       (color NBL))
+             (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+             (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+
+             (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+             (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           )
+           ; (color NBL)
+      )
     )
   )
 )
@@ -1479,24 +1519,26 @@ need to adjust for difference for thumb-z only"
                        border]
   (union
     (->> (hull
-      (place1 post1)
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-      (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-      (place2 post2)
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-      (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-      )
-    (color YEL))
+           (place1 post1)
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+           (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+           (place2 post2)
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+           ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+         )
+         ; (color YEL)
+    )
     (if (not border)
       (->> (bottom-hull
-        (place1 (translate (wall-locate1 dx1 dy1 border) post1))
-        ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-        (place2 (translate (wall-locate1 dx2 dy2 border) post2))
-        ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        )
-        (color ORA))
+             (place1 (translate (wall-locate1 dx1 dy1 border) post1))
+             ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+             (place2 (translate (wall-locate1 dx2 dy2 border) post2))
+             ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+           )
+           ; (color ORA)
+      )
     )
   ))
 
@@ -1577,7 +1619,8 @@ need to adjust for difference for thumb-z only"
   (union 
     ; left-back-corner
     (->> (key-wall-brace 0 0 0 1 web-post-tl 0 0 -1 0 web-post-tl border)
-         (color GRE))
+         ; (color GRE)
+    )
     ; (key-wall-brace  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
 
     (for [y (range 0 (- lastrow 1))] (key-wall-brace 0      y  -1 0 web-post-tl 0 y -1 0 web-post-bl border))
@@ -1595,7 +1638,8 @@ need to adjust for difference for thumb-z only"
     (for [x (range 4 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br border)) ; TODO fix extra wall
     (for [x (range 5 ncols)] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br border))
     (->> (wall-brace thumb-r-place 0 -1 fat-web-post-br (partial key-place 3 lastrow) 0 -1 web-post-bl border) 
-         (color RED))
+         ; (color RED)
+    )
   )
 )
 
@@ -2307,8 +2351,10 @@ need to adjust for difference for thumb-z only"
         (union
             (translate [0 0 (- (+ 20 bottom-plate-thickness))] 
                        (cube 350 350 40))
-            (color ORA (translate [0 0 (- (/ bottom-plate-thickness 2))] 
-                           (scale [1.01 1.01 1.15] model-bottom-plate)))
+            ; (color ORA
+              (translate [0 0 (- (/ bottom-plate-thickness 2))] 
+                (scale [1.01 1.01 1.15] model-bottom-plate))
+            ; )
         )
         (translate [0 0 -20] (cube 350 350 40))
     )
