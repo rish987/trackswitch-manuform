@@ -183,6 +183,7 @@
 (def hotswap-z           (+ swap-z 0.5));thickness of kailh hotswap holder + some margin of printing error (0.5mm)
 (def hotswap-cutout-z-offset -2.6)
 (def hotswap-cutout-2-x-offset (- (- (/ holder-x 4) 0.70)))
+(def hotswap-cutout-3-y-offset 7.4)
 (def hotswap-case-cutout-x-extra 2.75)
 
 (defn make-hotswap-holder [hotswap-y1
@@ -215,11 +216,8 @@
         hotswap-y3          (/ hotswap-y1 2)
 
         hotswap-cutout-1-x-offset (/ holder-x 3.99)
-        hotswap-cutout-2-x-offset (- (/ holder-x 4.5))
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
         hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
-
-        hotswap-cutout-3-y-offset 7.4 
 
         hotswap-cutout-led-x-offset 0
         hotswap-cutout-led-y-offset -6
@@ -339,19 +337,35 @@
 )
 
 (defn hotswap-case-cutout [mirror-internals]
-  (let [shape (union
-                (translate [0.15 
-                            4.6 ; min of all the hotswap-cutout-1-y-offset values
-                            hotswap-cutout-z-offset] 
-                           (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
-                                 3 ; min of all the hotswap-y1 values - 0.4 overhangs
-                                 hotswap-z))
-                (translate [hotswap-cutout-2-x-offset 
-                            3.8 ; min of all the hotswap-cutout-2-y-offset values
-                            hotswap-cutout-z-offset]
-                           (cube hotswap-x2 
-                                 5 ; min of all the hotswap-y2 values - 0.4 overhangs
-                                 hotswap-z))
+  (let [hotswap-x3          2
+        hotswap-cutout-1-x-offset (/ holder-x 3.99)
+        hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
+        hotswap-cutout-3-y-offset 5.25
+        hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
+        hotswap-cutout-4-y-offset 4.5
+        shape (union
+                ; (translate [0.15 
+                ;             4.6 ; min of all the hotswap-cutout-1-y-offset values
+                ;             hotswap-cutout-z-offset] 
+                ;            (cube (+ keyswitch-width hotswap-case-cutout-x-extra) 
+                ;                  3.8 ; min of all the hotswap-y1 values - 0.4 overhangs
+                ;                  hotswap-z))
+                ; (translate [hotswap-cutout-2-x-offset 
+                ;             3.8 ; min of all the hotswap-cutout-2-y-offset values
+                ;             hotswap-cutout-z-offset]
+                ;            (cube hotswap-x2 
+                ;                  5.7 ; min of all the hotswap-y2 values - 0.4 overhangs
+                ;                  hotswap-z))
+                (->> (cube hotswap-x3 5.75 hotswap-z)
+                                 (translate [ hotswap-cutout-3-x-offset
+                                              hotswap-cutout-3-y-offset
+                                              hotswap-cutout-z-offset]))
+                (->> (cube hotswap-x3 7.5 hotswap-z)
+                                 (translate [ hotswap-cutout-4-x-offset
+                                              hotswap-cutout-4-y-offset
+                                              hotswap-cutout-z-offset])
+                                 ; (color GRE)
+                            )
               )
         rotated
              (if north_facing
@@ -2476,6 +2490,8 @@ need to adjust for difference for thumb-z only"
                  (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
             )
           )
+          (translate [10 0 0]
+            (cube 5 20 5))
         )
         (hotswap-case-cutout false)
         (translate [20 0 0] (hotswap-case-cutout false))
