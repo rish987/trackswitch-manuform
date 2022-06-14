@@ -2,20 +2,23 @@
 
 This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
-## Planned V5.0 Features
+## Future TODOs
+- TODO add ready to print risers with slots to increase palm rest height
+- TODO confirm bastardkb mcu holder is compatible with blackpill version as well
+
+## V5.0 Features
 - Added fourth thumb key
-- Updated USB holder for bastardkb pcb mcu holder v1.4 (TODO may fit blackpill version as well)
+- Updated USB holder for bastardkb pcb mcu holder v1.4
 - Rotated and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
 - Adjusted key heights to return to some of the design ideas I was trying out with [the dactyl hobbitform](https://github.com/dereknheiley/ibnuda.dactyl-keyboard) for small hands
 	- Adjust column heights, ring finger lower on Z, middle and index columns higher on Z
 	- Increase curvature of pinky column to bring bottom alpha and num row closer to finger
-	- Raise numrow slightly along Z axis
-- Tweak hotswap socket holder and add option for gateron version (outemu version not yet tested)
-- TODO add ready to print risers with slots to increase palm rest height
+	- Add option to raise numrow slightly along Z axis
+- Add option to support kailh, gateron, and outemu hot swap socket shapes. Tweak kailh cutout, and change to gateron version.
 ![Compactyl V5.0 preview](images/compactyl-v5.png)
 
 ## V4.1 Features
-- Added diode holder under switch for kailh hotswap socket. Holds the diode in an secure way so you can bend the wires around for easier soldering. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
+- (Resin printing only recommended) Added optional for diode holder under switch for hotswap sockets. Holds the diode in an secure way so you can bend the wires around for easier soldering. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
 ![Compactyl V4.1 diode holder](images/kailh-hotswap-diode-holder.jpeg)
 
 ## V4.0 Features

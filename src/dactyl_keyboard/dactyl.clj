@@ -61,12 +61,14 @@
 (def use_flex_pcb_holder false) ; optional for flexible PCB, ameobas don't really benefit from this
 (def use_hotswap_holder true)   ; kailh hotswap holder
 (def use_solderless false)      ; solderless switch plate, RESIN PRINTER RECOMMENDED!
+
 (def wire-diameter 1.75)        ; outer diameter of silicone covered 22awg ~1.75mm 26awg ~1.47mm)
+(def hotswap-diode-cutout false)
 
 (keyword "kailh-hotswap")
 (keyword "gateron-hotswap")
 (keyword "outemu-hotswap")
-(def hotswap-type "kailh-hotswap")
+(def hotswap-type "gateron-hotswap")
 
 (def controller-holder 2) ; 1=printed usb-holder; 2=pcb-holder
 (def north_facing true)
@@ -213,11 +215,12 @@
                                              swap-offset-z]))
         hotswap-x           holder-x ;cutout full width of holder instead of only 14.5mm
         hotswap-x3          (/ holder-x 4)
+        hotswap-x4          (/ holder-x 5)
         hotswap-y3          (/ hotswap-y1 2)
 
         hotswap-cutout-1-x-offset (/ holder-x 3.99)
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
-        hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
+        hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.02) (/ holder-x 1.98))
 
         hotswap-cutout-led-x-offset 0
         hotswap-cutout-led-y-offset -6
@@ -232,6 +235,7 @@
                                  (translate [hotswap-cutout-1-x-offset 
                                              hotswap-cutout-1-y-offset 
                                              (+ hotswap-cutout-z-offset (/ hotswap-z -2))])
+                                 ; (color PIN)
                             )
         hotswap-cutout-2    (->> (hull (->> (square hotswap-x2 (- hotswap-y2 0.4))
                                             (extrude-linear {:height 0.001 :twist 0 :convexity 0}))
@@ -243,16 +247,19 @@
                                  (translate [hotswap-cutout-2-x-offset 
                                              hotswap-cutout-2-y-offset 
                                              (+ hotswap-cutout-z-offset (/ hotswap-z -2))])
+                                 ; (color RED)
                             )
         hotswap-cutout-3    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-3-x-offset
                                               hotswap-cutout-3-y-offset
-                                              hotswap-cutout-z-offset]))
-        hotswap-cutout-4    (->> (cube hotswap-x3 hotswap-y3 hotswap-z)
+                                              hotswap-cutout-z-offset])
+                                 ; (color ORA)
+                            )
+        hotswap-cutout-4    (->> (cube hotswap-x4 hotswap-y3 hotswap-z)
                                  (translate [ hotswap-cutout-4-x-offset
                                               hotswap-cutout-3-y-offset
                                               hotswap-cutout-z-offset])
-                                 ; (color GRE)
+                                 ; (color BLU)
                             )
         hotswap-led-cutout  (->> (cube square-led-size square-led-size 10)
                                  (translate [ hotswap-cutout-led-x-offset
@@ -312,12 +319,15 @@
                         minus-hole
                         friction-hole-left
                         friction-hole-right
-                        diode-cutout
-                        diode-socket-hole-left
-                        diode-channel-pin-left
-                        (mirror [1 0 0] diode-cutout)
-                        diode-socket-hole-right
-                        diode-channel-pin-right
+                        (if hotswap-diode-cutout
+                             (union diode-cutout
+                                    diode-socket-hole-left
+                                    diode-channel-pin-left
+                                    (mirror [1 0 0] diode-cutout)
+                                    diode-socket-hole-right
+                                    diode-channel-pin-right
+                             )
+                        )
 
                         hotswap-cutout-1
                         hotswap-cutout-2
@@ -340,9 +350,9 @@
   (let [hotswap-x3          2
         hotswap-cutout-1-x-offset (/ holder-x 3.99)
         hotswap-cutout-3-x-offset (- (/ holder-x 2) (/ hotswap-x3 2.01))
-        hotswap-cutout-3-y-offset 5.25
+        hotswap-cutout-3-y-offset 5.5
         hotswap-cutout-4-x-offset (- (/ hotswap-x3 2.01) (/ holder-x 2))
-        hotswap-cutout-4-y-offset 4.5
+        hotswap-cutout-4-y-offset 4.8
         shape (union
                 ; (translate [0.15 
                 ;             4.6 ; min of all the hotswap-cutout-1-y-offset values
@@ -356,10 +366,12 @@
                 ;            (cube hotswap-x2 
                 ;                  5.7 ; min of all the hotswap-y2 values - 0.4 overhangs
                 ;                  hotswap-z))
-                (->> (cube hotswap-x3 5.75 hotswap-z)
+                (->> (cube hotswap-x3 5.9 hotswap-z)
                                  (translate [ hotswap-cutout-3-x-offset
                                               hotswap-cutout-3-y-offset
-                                              hotswap-cutout-z-offset]))
+                                              hotswap-cutout-z-offset])
+                                 ; (color YEL)
+                )
                 (->> (cube hotswap-x3 7.5 hotswap-z)
                                  (translate [ hotswap-cutout-4-x-offset
                                               hotswap-cutout-4-y-offset
@@ -385,26 +397,26 @@
 )
 
 (def gateron-hotswap-holder
-  (make-hotswap-holder 4.6  ;hotswap-y1
-                       4.6 ;hotswap-cutout-1-y-offset
-                       6.1  ;hotswap-y2
-                       3.85  ;hotswap-cutout-2-y-offset
+  (make-hotswap-holder 4.5  ;hotswap-y1
+                       4.55 ;hotswap-cutout-1-y-offset
+                       6.0  ;hotswap-y2
+                       3.8  ;hotswap-cutout-2-y-offset
   )
 )
 
 (def outemu-hotswap-holder
-  (make-hotswap-holder 4.2  ;hotswap-y1
-                       4.8 ;hotswap-cutout-1-y-offset
-                       6.2  ;hotswap-y2
-                       3.8  ;hotswap-cutout-2-y-offset
+  (make-hotswap-holder 4.6  ;hotswap-y1
+                       4.35 ;hotswap-cutout-1-y-offset
+                       4.6  ;hotswap-y2
+                       3.0  ;hotswap-cutout-2-y-offset
   )
 )
 
 (def hotswap-holder
-  (make-hotswap-holder 4.3  ;hotswap-y1
-                       4.75 ;hotswap-cutout-1-y-offset
-                       6.2  ;hotswap-y2
-                       3.8  ;hotswap-cutout-2-y-offset
+  (make-hotswap-holder 4.1  ;hotswap-y1
+                       4.815 ;hotswap-cutout-1-y-offset
+                       6.1  ;hotswap-y2
+                       3.815  ;hotswap-cutout-2-y-offset
   )
 )
 
@@ -2472,6 +2484,8 @@ need to adjust for difference for thumb-z only"
                (rotate (deg2rad 90) [1 0 0])
                (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
           )
+          (translate [10 0 0]
+            (cube 5 mount-width 10))
           (translate [20 0 0]
             (make-single-plate false "gateron-hotswap")
             (->> (text "G")
@@ -2481,6 +2495,8 @@ need to adjust for difference for thumb-z only"
                  (translate [-2.5 (+ (/ mount-height -2) ) (if use_hotswap_holder (- swap-z) 0)])
             )
           )
+          (translate [30 0 0]
+            (cube 5 mount-width 10))
           (translate [40 0 0]
             (make-single-plate false "outemu-hotswap")
             (->> (text "O")
@@ -2491,7 +2507,7 @@ need to adjust for difference for thumb-z only"
             )
           )
           (translate [10 0 0]
-            (cube 5 20 5))
+            (cube 5 mount-width 10))
         )
         (hotswap-case-cutout false)
         (translate [20 0 0] (hotswap-case-cutout false))
@@ -2563,12 +2579,11 @@ need to adjust for difference for thumb-z only"
             ; (color BRO
                 (model-switch-plates-right false)
             ; )
-            ; (color ORA (model-exo-plates-right false))
 
             ; (debug top-screw)
-            ; caps
+            caps
             ; (debug caps-cutout)
-            ; thumbcaps
+            thumbcaps
             ; (debug (import "../things/v4caps.stl"))
             ; (debug thumbcaps-cutout)
             ; (debug key-space-below)
@@ -2576,17 +2591,17 @@ need to adjust for difference for thumb-z only"
             ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
             ; (debug top-screw-block-outers)
 
-            ; (debug pcb-holder)
+            (debug pcb-holder)
             ; (debug pcb-holder-space)
 
             ; (debug usb-holder)
             ; (debug usb-holder-cutout)
 
-            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
-                ; (debug model-bottom-plate)
-                ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    ; (color BRO model-wrist-rest-right-holes)
-                ; )
-            ; )
+            (translate [0 0 (- (/ bottom-plate-thickness 2))]
+                (debug model-bottom-plate)
+                (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
+                    (color BRO model-wrist-rest-right-holes)
+                )
+            )
       )
 )
