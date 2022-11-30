@@ -287,7 +287,7 @@
     mirrored
   )
 )
-(def hotswap-holder
+(defn hotswap-holder [trackswitch-mount]
   ;irregularly shaped hot swap holder
   ;    ____________
   ;  |  _|_______|    |  hotswap offset from out edge of holder with room to solder
@@ -383,7 +383,7 @@
         ; for the main axis
         main-axis-hole      (->> (cylinder (/ 4.1 2) 10)
                                  (with-fn ROUND-RES))
-        pin-hole            (->> (cylinder (/ 3.3 2) 10)
+        pin-hole            (->> (if trackswitch-mount (cube 3.0 3.0 10) (cylinder (/ 3.3 2) 10))
                                  (with-fn ROUND-RES))
         plus-hole           (translate [-3.81 2.54 0] pin-hole)
         minus-hole          (translate [ 2.54 5.08 0] pin-hole)
@@ -618,7 +618,7 @@
         )
    )))
 
-(defn single-plate [mirror-internals]
+(defn single-plate' [mirror-internals trackswitch-mount]
  ; (render ;tell scad to try and cache this repetitive code, kinda screws up previews
   (let [top-wall (->> (cube mount-height 1.5 plate-thickness)
                       (translate [0
@@ -635,8 +635,8 @@
                   (->> plate-half
                        (mirror [1 0 0])
                        (mirror [0 1 0]))
-                  (if use_hotswap_holder hotswap-holder)
-                  (if use_solderless solderless-plate)
+                  (when use_hotswap_holder (hotswap-holder trackswitch-mount))
+                  (when use_solderless solderless-plate)
               )
        ]
     (->> (if mirror-internals
@@ -647,6 +647,8 @@
   )
  ; )
 )
+
+(defn single-plate [mirror-internals] (single-plate' mirror-internals false))
 
 (def single-plate-blank
     (union 
@@ -1047,7 +1049,7 @@ need to adjust for difference for thumb-z only"
 (def trackball-x-rotate 60)
 (def trackball-y-rotate 0)
 (def trackball-z-rotate 30)
-(def trackball-thumb-offset [-45 5 12])
+(def trackball-thumb-offset [-40 10 12])
 
 (defn apply-trackball-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn shape]
   (->> shape
@@ -1939,14 +1941,14 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    (->> (screw-insert-relative-z res  115 3             1 bottom-radius top-radius height [ -9.5  5.75 (+ (- 0) hide-top-screws) ]) (color RED)) ; top middle
+    (->> (screw-insert-relative-z res  115 3             1 bottom-radius top-radius height [ -8.75  5.75 (+ (- 0) hide-top-screws) ]) (color RED)) ; top middle
     (->> (screw-insert-relative-z res -124 0             1 bottom-radius top-radius height [ -6.5 -12 (+ (- 0) hide-top-screws)]) (color PIN)) ; left-top
     ;(->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     (->> (screw-insert-relative-z-thumb res -7   bottom-radius top-radius height [-32.5 -22.50  (+ (- 3) hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert-relative-z res  145 (dec lastcol)       1 bottom-radius top-radius height [ -8.5    5.75 (+ 0.5  hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert-relative-z res  145 (dec lastcol)       1 bottom-radius top-radius height [ -9.25    5.75 (+ (- 0.5)  hide-top-screws)]) (color PUR)) ; top right
     ;(->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-    (->> (screw-insert-relative-z res -100 (dec lastcol)       3 bottom-radius top-radius (* height 1) [-8.5 10 (+ (- 1) hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert-relative-z res -100 (dec lastcol)       3 bottom-radius top-radius (* height 1) [-8.15 10 (+ (- 1) hide-top-screws)]) (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]
@@ -1974,13 +1976,13 @@ need to adjust for difference for thumb-z only"
 ; (def top-screw-head-radius (/ 3.6 2))  ; M2 screw head diameter (3.4 plus some clearance)
 
 (def top-screw-insert-radius (/ 4 2)); M3 screw insert diameter
-(def top-screw-radius (/ 2.6 2))       ; M3 screw diameter
+(def top-screw-radius (/ 2.95 2))       ; M3 screw diameter
 (def top-screw-head-radius (/ 4.6 2)) ; M3 screw head diameter (4.4 plus some clearance)
 
 (def top-screw-clear-length (- top-screw-length top-screw-insert-height))
 (def top-screw-block-height 4)
 (def top-screw-block-wall-thickness 7)
-(def top-screw-insert-wall-thickness 1.2)
+(def top-screw-insert-wall-thickness 1.3)
 
 (def top-screw (top-screw-insert-round-shapes
                       top-screw-radius
@@ -2497,21 +2499,77 @@ need to adjust for difference for thumb-z only"
                              ))
 
 (def trackswitch-offset-x-rot 23)
-(def trackswitch-connector (cube mount-height 3 (/ plate-thickness 2)))
+(def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
 
-(defn trackball-mount [mirror-internals]
+(def top-trackswitch-insert-height 4.6)
+(def washer-thickness 0.5)
+(def top-trackswitch-insert-screw-head-depth 2.35)
+(def top-trackswitch-insert-screw-head-washer-depth (+ washer-thickness top-trackswitch-insert-screw-head-depth))
+(def top-trackswitch-insert-washer-rad (/ 7.0 2))
+
+(def trackswitch-insert-inset 1.0)
+(def trackswitch-insert-z-adj 0.30)
+
+(def trackswitch-insert-extra-height 1.85)
+
+(def top-trackswitch-insert-extra-buffer 0.95)
+(def top-trackswitch-insert-buffer (+ top-trackswitch-insert-extra-buffer trackswitch-insert-inset))
+(def top-trackswitch-insert (translate [0 (/ (+ (* trackswitch-total-radius 2) 0.2 top-trackswitch-insert-buffer) 2) (+ (/ top-trackswitch-insert-height 2))] (cube (+ mount-height (* top-trackswitch-insert-extra-buffer 2)) (+ (* trackswitch-total-radius 2) 0.2 top-trackswitch-insert-buffer) top-trackswitch-insert-height)))
+
+(def trackswitch-insert-height 6.0)
+(defn trackswitch-insert [radius height]
+   (->> (screw-insert-shape ROUND-RES 0 radius radius height)
+        (translate [0 (- (- (/ mount-width 2)) trackswitch-total-radius trackswitch-insert-inset) (/ height 2)])))
+
+(def trackswitch-insert-buff 0.1)
+(def trackswitch-mount
+  (difference
+    (union
+      (translate [0 0 (- plate-thickness)] (single-plate' false true))
+      (translate [0 (- (+ (* trackswitch-total-radius 2) (/ mount-width 2) top-trackswitch-insert-buffer)) (- (- 3.0) plate-thickness)] top-trackswitch-insert)
+    )
+    (union
+      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
+      )
+   
+  ))
+)
+
+(def trackball-mount
   (union
    (difference
     (union
-     (trackswitch-place trackswitch-offset-x-rot (translate [0 0 (- plate-thickness)] (single-plate false)))
-     (hull
-       (trackswitch-place trackswitch-offset-x-rot (translate [0 (- (+ (/ mount-width 2) (/ 1.5 1))) (- (/ plate-thickness 4))] trackswitch-connector))
-       (trackswitch-place trackswitch-offset-x-rot (translate [0 (- (+ (/ mount-width 2) (/ 1.5 1))) (- (- 0.5) (/ (* plate-thickness 5) 4))] trackswitch-connector))
-       (trackswitch-place -4.5 (translate [0 0 (+ (- (/ plate-thickness 4)) 2) ] trackswitch-connector))
-       (trackswitch-place -6.5 (translate [0 0 (+ (- (/ plate-thickness 4)) 2) ] trackswitch-connector))
-     )
+     (trackswitch-place trackswitch-offset-x-rot (union
+       ;trackswitch-mount
+       (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
+       )
+       (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
+       )
+     ))
      (trackball-mount-rotate cup)
      (filler-rotate cup)
+    )
+    (union
+      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
+           (trackswitch-place trackswitch-offset-x-rot)
+      )
+      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
+           (trackswitch-place trackswitch-offset-x-rot)
+      )
     )
     ; subtract out room for the axels
     rotated-dowells
@@ -2525,10 +2583,10 @@ need to adjust for difference for thumb-z only"
 
 (defn trackball-rotate [shape]
   (->> shape
-    (rotate (deg2rad 60) [1 0 0])
-    (rotate (deg2rad 0) [0 1 0])
-    (rotate (deg2rad 30) [0 0 1])
-    (thumb-place [0 0 0] [-46 5 12]))
+    (rotate (deg2rad trackball-x-rotate) [1 0 0])
+    (rotate (deg2rad trackball-y-rotate) [0 1 0])
+    (rotate (deg2rad trackball-z-rotate) [0 0 1])
+    (thumb-place [0 0 0] trackball-thumb-offset))
 )
 
 ;;;;;;;;;;;;
@@ -2623,7 +2681,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def testing true)
+(def testing false)
 
 (defn model-case-walls-right-base [mirror-internals]
     (union
@@ -2685,7 +2743,7 @@ need to adjust for difference for thumb-z only"
           (color CYA connectors)
           (when (not testing) (thumb-layout (single-plate mirror-internals)))
           thumb-connectors
-          (trackball-rotate (trackball-mount mirror-internals))
+          (trackball-rotate trackball-mount)
         )
       )
       (when top-screw-insert-top-plate-bumps top-screw-insert-outers)
@@ -2813,46 +2871,51 @@ need to adjust for difference for thumb-z only"
 ;  )
 ;)
 
-(spit "things/test.scad"
+(spit "things/trackswitch-mount.scad"
       (write-scad
-            ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            ;(debug
-            ;;(color BLU
-              ;(model-case-walls-right false)
-              ;model-bottom-plate
-            ;)
+        trackswitch-mount))
 
-            ;(model-right false)
-			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			(translate [0 0 0] (model-switch-plates-right false))
-            ;(union
-            ;  top-screw-insert-holes
-            ;  (debug top-screw-insert-outers)
-            ;  (debug top-screw-block-outers)
-            ;)
-            ; (color ORA (model-exo-plates-right false))
-
-            ; (debug top-screw)
-            ;caps
-            ; (debug caps-cutout)
-            ;thumbcaps
-            ; (debug (import "../things/v4caps.stl"))
-            ; (debug thumbcaps-cutout)
-            ; (debug key-space-below)
-            ; (debug thumb-space-below)
-            ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
-            ; (debug top-screw-block-outers)
-
-            ;(debug pcb-holder)
-            ; (debug pcb-holder-space)
-
-            ;(debug usb-holder)
-            ; (debug usb-holder-cutout)
-
-            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
-                ; (debug model-bottom-plate)
-                ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    ; (color BRO model-wrist-rest-right-holes)
-                ; 
-            ; )
-      ))
+;(spit "things/test.scad"
+;      (write-scad
+;            ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
+;            ;(debug
+;            ;;(color BLU
+;              ;(model-case-walls-right false)
+;              ;model-bottom-plate
+;            ;)
+;
+;            ;(model-right false)
+;			;(translate [0 0 (- plate-thickness)] (single-plate false))
+;			(translate [0 0 0] (model-switch-plates-right false))
+;			;trackswitch-mount
+;            ;(union
+;            ;  top-screw-insert-holes
+;            ;  (debug top-screw-insert-outers)
+;            ;  (debug top-screw-block-outers)
+;            ;)
+;            ; (color ORA (model-exo-plates-right false))
+;
+;            ; (debug top-screw)
+;            ;caps
+;            ; (debug caps-cutout)
+;            ;thumbcaps
+;            ; (debug (import "../things/v4caps.stl"))
+;            ; (debug thumbcaps-cutout)
+;            ; (debug key-space-below)
+;            ; (debug thumb-space-below)
+;            ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
+;            ; (debug top-screw-block-outers)
+;
+;            ;(debug pcb-holder)
+;            ; (debug pcb-holder-space)
+;
+;            ;(debug usb-holder)
+;            ; (debug usb-holder-cutout)
+;
+;            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
+;                ; (debug model-bottom-plate)
+;                ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
+;                    ; (color BRO model-wrist-rest-right-holes)
+;                ; 
+;            ; )
+;      ))
