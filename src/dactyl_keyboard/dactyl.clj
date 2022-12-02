@@ -209,6 +209,7 @@
 (def sensor-width 21.5)
 (def sensor-holder-width (/ sensor-width 2))
 (def sensor-height 7.3)
+(def sensor-screw-length (- 12 7.3))
 
 ;;;;;;;;;;;;;;;;;
 ;; Switch Hole ;;
@@ -2439,50 +2440,66 @@ need to adjust for difference for thumb-z only"
                                      (rotate (deg2rad 0) [0 1 0]
                                      thing))))
 
-(def sensor-holder-insert-rad (/ 3.6 2))
+(def M2-insert-rad (/ 3.6 2))
 (def sensor-holder-outer-rad (/ 7 2))
-(def sensor-holder-height 10)
 (def sensor-holder-distance 23.5)
 
 (def sensor-cable-out-clearance 23.5)
 (def sensor-cable-below-clearance 1.25)
 
-(def top-trackswitch-insert-extra-buffer 0.95)
+(def buffer-dist 0.5)
 
 (def trackswitch-cover-clearance 2)
 (def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
 
-(defn sensor-holder-arm' [height inner-radius outer-radius] (translate [0 0 (- (/ height 2))] 
-                                  (difference 
-                                    (cylinder outer-radius height :fn 20)
-                                    (cylinder inner-radius height :fn 20)
-                                  )))
+(defn sensor-holder-arm-outer' [outer-height outer-radius] (translate [0 0 (- (/ outer-height 2))] (screw-insert-shape ROUND-RES 0 outer-radius outer-radius outer-height)))
 
-(defn sensor-holder-arm [height] (sensor-holder-arm' height sensor-holder-insert-rad sensor-holder-outer-rad ))
+(defn sensor-holder-arm-inner' [outer-height inner-height inner-radius] (translate [0 0 (- (/ inner-height 2) outer-height)] (screw-insert-shape ROUND-RES 0 inner-radius inner-radius inner-height)))
+
+(def sensor-holder-height 2.0)
+
 (def sensor-cover-insert-height (+ sensor-cable-out-clearance sensor-height))
+(def sensor-cover-insert-extra-height 13)
+(def sensor-cover-insert-top-offset [(+ (/ sensor-width 2) trackswitch-total-radius buffer-dist) (- trackswitch-total-radius (/ sensor-length 2)) 0])
+(def sensor-cover-insert-bot-offset [(- (- (/ sensor-width 2) trackswitch-total-radius)) (+ (/ sensor-length 2) trackswitch-total-radius buffer-dist) 0])
+(def sensor-cover-insert-screw-length 8)
+(def cover-insert-wall-thickness 1.2)
 
-(def sensor-holder
-  (translate (map + bottom-trim-origin [0 0 (+ (/ trim 2))])
-             (rotate (deg2rad 90) [0 0 1]
-               (union
-                 (translate [0 (- (/ sensor-holder-distance 2)) 0] (sensor-holder-arm sensor-height))
-                 (->>
-                  (sensor-holder-arm sensor-height)
-                  (mirror [0 1 0])
-                  (translate [0 (/ sensor-holder-distance 2) 0])
-                  )
+(def sensor-holder-arm-outer (sensor-holder-arm-outer' sensor-holder-height sensor-holder-outer-rad))
+(def sensor-holder-arm-inner (sensor-holder-arm-inner' sensor-holder-height sensor-screw-length M2-insert-rad))
+(def sensor-holder-cover-arm-outer (sensor-holder-arm-outer' (+ sensor-cover-insert-height sensor-cover-insert-extra-height) (+ M2-insert-rad cover-insert-wall-thickness)))
+(def sensor-holder-cover-arm-inner (sensor-holder-arm-inner' (+ sensor-cover-insert-height sensor-cover-insert-extra-height) sensor-cover-insert-screw-length  M2-insert-rad))
 
-                 ; cover inserts
-                 (translate [(+ (* 2 sensor-holder-outer-rad) top-trackswitch-insert-extra-buffer) (- (/ sensor-holder-distance 2)) 0] (sensor-holder-arm' sensor-cover-insert-height top-screw-insert-radius trackswitch-total-radius))
-                 (->>
-                  (sensor-holder-arm' sensor-cover-insert-height top-screw-insert-radius trackswitch-total-radius)
-                  (mirror [0 1 0])
-                  (translate [(- (* 2 sensor-holder-outer-rad)) (/ sensor-holder-distance 2) 0])
-                  )
+(defn sensor-holder-places [outer]
+  (let [
+         arm (if outer sensor-holder-arm-outer sensor-holder-arm-inner)
+         cover-arm (if outer sensor-holder-cover-arm-outer sensor-holder-cover-arm-inner)
+       ]
+    (translate (map + bottom-trim-origin [0 0 (+ (/ trim 2))])
+               (rotate (deg2rad 90) [0 0 1]
+                 (union
+                   (translate [0 (- (/ sensor-holder-distance 2)) 0] arm)
+                   (->>
+                    arm
+                    (mirror [0 1 0])
+                    (translate [0 (/ sensor-holder-distance 2) 0])
+                    )
+
+                   ; cover inserts
+                   (translate (map + sensor-cover-insert-top-offset [0 0 sensor-cover-insert-extra-height]) cover-arm)
+                   (->>
+                    cover-arm
+                    (mirror [0 1 0])
+                    (translate (map + sensor-cover-insert-bot-offset [0 0 sensor-cover-insert-extra-height]))
+                    )
+                 )
                )
-             )
+    )
   )
 )
+ 
+(def sensor-holder-outer (sensor-holder-places true))
+(def sensor-holder-inner (sensor-holder-places false))
 
 (defn sensor-hole-angle [shape] (
                                   ->> shape
@@ -2531,6 +2548,8 @@ need to adjust for difference for thumb-z only"
 (def top-trackswitch-insert-screw-head-washer-depth (+ washer-thickness top-trackswitch-insert-screw-head-depth))
 (def top-trackswitch-insert-washer-rad (/ 7.0 2))
 
+(def top-trackswitch-insert-extra-buffer 0.95)
+
 (def trackswitch-insert-inset 1.0)
 (def trackswitch-insert-z-adj 0.30)
 
@@ -2541,7 +2560,7 @@ need to adjust for difference for thumb-z only"
 
 (def trackswitch-insert-height 6.0)
 
-(def trackswitch-cover-insert-height 25.0)
+(def trackswitch-cover-insert-height 26.5)
 
 (defn trackswitch-insert [radius height]
    (->> (screw-insert-shape ROUND-RES 0 radius radius height)
@@ -2568,15 +2587,21 @@ need to adjust for difference for thumb-z only"
       (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
       )
+   
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
+      )
   ))
 )
 
 (def trackball-mount
-  (union
    (difference
     (union
-     (trackswitch-place trackswitch-offset-x-rot (union
-       trackswitch-mount
+     (difference (union (trackswitch-place trackswitch-offset-x-rot (union
+       ;trackswitch-mount
        (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
             (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
        )
@@ -2591,9 +2616,15 @@ need to adjust for difference for thumb-z only"
             (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
        )
      ))
-     (trackball-mount-rotate cup)
-     (filler-rotate cup)
+       (trackball-mount-rotate cup)
+       (filler-rotate cup)
+     )
+     ; Subtract out the bottom trim clearing a hole for the sensor
+     rotated-bottom-trim
+     )
+     sensor-holder-outer
     )
+
     (union
       (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
@@ -2615,13 +2646,10 @@ need to adjust for difference for thumb-z only"
     )
     ; subtract out room for the axels
     rotated-dowells
-    ; Subtract out the bottom trim clearing a hole for the sensor
-    rotated-bottom-trim
+    sensor-holder-inner
+    (sphere (/ trackball-width-plus-bearing 2))
    )
-   (sensor-hole-angle
-     sensor-holder)
   )
-)
 
 (defn trackball-rotate [shape]
   (->> shape
@@ -2723,7 +2751,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def testing false)
+(def testing true)
 
 (defn model-case-walls-right-base [mirror-internals]
     (union
