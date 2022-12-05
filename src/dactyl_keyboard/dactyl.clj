@@ -145,7 +145,7 @@
 (def wall-xy-offset 1)
 (def wall-thickness 1)  ; wall thickness parameter
 
-(def thumb-pos [-17 -2 -0.5] )
+(def thumb-pos [-17 -2 -13.5] )
 (def thumb-rot [0 10 0] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
@@ -164,7 +164,7 @@
 ;; Trackball variables ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def dowel-depth-in-shell 1)
+(def dowel-depth-in-shell 0.9)
 (def bearing-protrude (- 3 dowel-depth-in-shell)) ; Radius of the baring minus how deep it's going into the shell
 (def trackball-width 35)
 (def trackball-width-plus-bearing (+ bearing-protrude trackball-width 1)) ; Add one just to give some wiggle
@@ -193,17 +193,17 @@
 (def trim (- (+ holder-thickness' bearing-protrude) 0.5))
 (def bottom-trim-origin [0 0 (- (- (/ outer-width 2) (/ trim 2)))])
 
-(def mount-x-rotate -42)
-(def mount-y-rotate -30)
-(def mount-z-rotate 0)
+(def mount-x-rotate -56)
+(def mount-y-rotate -20)
+(def mount-z-rotate 10)
 
 (def sensor-x-rotate 0)
 (def sensor-y-rotate 0)
-(def sensor-z-rotate 0)
+(def sensor-z-rotate 10)
 
-(def mount-length 18)
-(def mount-width 12)
-(def mount-offset 3)
+(def tb-mount-length 18)
+(def tb-mount-width 23)
+(def tb-mount-offset 3)
 
 (def sensor-length 28)
 (def sensor-width 21.5)
@@ -619,14 +619,16 @@
         )
    )))
 
+(def single-plate-wall-thickness 1.5)
+
 (defn single-plate' [mirror-internals trackswitch-mount]
  ; (render ;tell scad to try and cache this repetitive code, kinda screws up previews
-  (let [top-wall (->> (cube mount-height 1.5 plate-thickness)
+  (let [top-wall (->> (cube mount-height single-plate-wall-thickness plate-thickness)
                       (translate [0
-                                  (+ (/ 1.5 2) (/ keyswitch-height 2))
+                                  (+ (/ single-plate-wall-thickness 2) (/ keyswitch-height 2))
                                   (/ plate-thickness 2)]))
-        left-wall (->> (cube 1.5 mount-width plate-thickness)
-                       (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
+        left-wall (->> (cube single-plate-wall-thickness mount-width plate-thickness)
+                       (translate [(+ (/ single-plate-wall-thickness 2) (/ keyswitch-width 2))
                                    0
                                    (/ plate-thickness 2)]))
         plate-half (difference (union top-wall left-wall) 
@@ -650,6 +652,8 @@
 )
 
 (defn single-plate [mirror-internals] (single-plate' mirror-internals false))
+
+(def single-plate-cutout (translate [0 0 (/ (* plate-thickness 5) 2)] (cube (+ keyswitch-width single-plate-wall-thickness)(+ keyswitch-height single-plate-wall-thickness) (* plate-thickness 5))))
 
 (def single-plate-blank
     (union 
@@ -986,10 +990,10 @@
                        (translate [0 0 (+ (/ web-thickness -2)
                                           plate-thickness)])))
 
-(def trackball-post-tr (translate [(- (/ mount-length  2) fat-post-adj) (- (/ mount-width  2) fat-post-adj) 0] trackball-post))
-(def trackball-post-br (translate [(- (/ mount-length  2) fat-post-adj) (+ (/ mount-width -2) fat-post-adj) 0] trackball-post))
-(def trackball-post-bl (translate [(+ (/ mount-length -2) fat-post-adj) (+ (/ mount-width -2) fat-post-adj) 0] trackball-post))
-(def trackball-post-tl (translate [(+ (/ mount-length -2) fat-post-adj) (- (/ mount-width  2) fat-post-adj) 0] trackball-post))
+(def trackball-post-tr (translate [(- (/ tb-mount-length  2) fat-post-adj) (- (/ tb-mount-width  2) fat-post-adj) 0] trackball-post))
+(def trackball-post-br (translate [(- (/ tb-mount-length  2) fat-post-adj) (+ (/ tb-mount-width -2) fat-post-adj) 0] trackball-post))
+(def trackball-post-bl (translate [(+ (/ tb-mount-length -2) fat-post-adj) (+ (/ tb-mount-width -2) fat-post-adj) 0] trackball-post))
+(def trackball-post-tl (translate [(+ (/ tb-mount-length -2) fat-post-adj) (- (/ tb-mount-width  2) fat-post-adj) 0] trackball-post))
 
 (defn triangle-hulls [& shapes]
   (apply union
@@ -1047,20 +1051,20 @@ need to adjust for difference for thumb-z only"
 
 (defn thumb-place-shifted [rot move shape] (shift-model (thumb-place rot move shape)))
 
-(def trackball-x-rotate 60)
-(def trackball-y-rotate 0)
+(def trackball-x-rotate 77)
+(def trackball-y-rotate -22)
 (def trackball-z-rotate 30)
-(def trackball-thumb-offset [-42.5 14.5 12])
+(def trackball-thumb-offset [-39.5 8.0 19])
 
 (defn apply-trackball-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn shape]
   (->> shape
     (translate-fn bottom-trim-origin)
-    (translate-fn [0 0 (- mount-offset)])
+    (translate-fn [0 0 (- tb-mount-offset)])
     (rotate-z-fn (deg2rad mount-z-rotate))
     (rotate-x-fn (deg2rad mount-x-rotate))
     (rotate-y-fn (deg2rad mount-y-rotate))
-    (rotate-x-fn (deg2rad trackball-x-rotate))
     (rotate-y-fn (deg2rad trackball-y-rotate))
+    (rotate-x-fn (deg2rad trackball-x-rotate))
     (rotate-z-fn (deg2rad trackball-z-rotate))
     (thumb-place [0 0 0] trackball-thumb-offset)
   )
@@ -1750,11 +1754,24 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(defn left-wall [border]
-  (let [
+(defn trackball-wall [border] (let [
         key-place (if border key-place key-place-shifted)
         trackball-place (if border trackball-place trackball-place-shifted)
-       ]
+       ] 
+  (union
+    (wall-brace (partial key-place firstcol (dec real-lastrow)) -1 0 web-post-bl trackball-place -1 0 trackball-post-tl border)
+    (wall-brace trackball-place -1 0 trackball-post-tl trackball-place -1 0 trackball-post-bl border)
+    (wall-brace trackball-place -1 0 trackball-post-bl (partial thumb-l-place' border) 0 1 fat-web-post-tr border)
+      ;(key-wall-brace firstcol (dec real-lastrow) 0 -1 fat-web-post-br (inc firstcol) (dec real-lastrow) 0 -1 fat-web-post-bl border)
+      ;(key-wall-brace (inc firstcol) real-lastrow -1 0 fat-web-post-bl (inc firstcol)      real-lastrow  0 -1 fat-web-post-tl border)
+      ;(key-wall-brace (inc firstcol)      real-lastrow  -1 0 fat-web-post-tl (inc firstcol) real-lastrow -1 0 fat-web-post-bl border)
+      ;(key-wall-brace (inc firstcol) (dec real-lastrow) -1 0 fat-web-post-bl (inc firstcol) real-lastrow -1 0 fat-web-post-tl border)
+      ;(wall-brace (partial key-place (inc firstcol) real-lastrow)  -1 0 fat-web-post-bl thumb-m-place 0 1 fat-web-post-tl border)
+      ;(wall-brace thumb-m-place 0 1 fat-web-post-tl thumb-l-place 0 1 fat-web-post-tr border)
+)))
+
+
+(defn left-wall [border]
   (union 
     ; left-back-corner
     (->> (key-wall-brace firstcol firstrow 0 1 web-post-tl firstcol firstrow -1 0 web-post-tl border)
@@ -1764,21 +1781,10 @@ need to adjust for difference for thumb-z only"
     (for [y (range firstrow (dec lastrow))] (key-wall-brace firstcol      y  -1 0 web-post-tl firstcol y -1 0 web-post-bl border))
     (for [y (range (inc firstrow) (if track-ball (dec lastrow) (lastrow)))] (key-wall-brace firstcol (dec y) -1 0 web-post-bl firstcol y -1 0 web-post-tl border))
 
-    (when track-ball (union
-      (wall-brace (partial key-place firstcol (dec real-lastrow)) -1 0 web-post-bl trackball-place -1 0 trackball-post-tl border)
-      (wall-brace trackball-place -1 0 trackball-post-tl trackball-place -1 0 trackball-post-bl border)
-      (wall-brace trackball-place -1 0 trackball-post-bl (partial thumb-l-place' border) 0 1 fat-web-post-tr border)
-      ;(key-wall-brace firstcol (dec real-lastrow) 0 -1 fat-web-post-br (inc firstcol) (dec real-lastrow) 0 -1 fat-web-post-bl border)
-      ;(key-wall-brace (inc firstcol) real-lastrow -1 0 fat-web-post-bl (inc firstcol)      real-lastrow  0 -1 fat-web-post-tl border)
-      ;(key-wall-brace (inc firstcol)      real-lastrow  -1 0 fat-web-post-tl (inc firstcol) real-lastrow -1 0 fat-web-post-bl border)
-      ;(key-wall-brace (inc firstcol) (dec real-lastrow) -1 0 fat-web-post-bl (inc firstcol) real-lastrow -1 0 fat-web-post-tl border)
-      ;(wall-brace (partial key-place (inc firstcol) real-lastrow)  -1 0 fat-web-post-bl thumb-m-place 0 1 fat-web-post-tl border)
-      ;(wall-brace thumb-m-place 0 1 fat-web-post-tl thumb-l-place 0 1 fat-web-post-tr border)
-    ));
-
+    (when track-ball (trackball-wall border))
     ; thumb connector
     ; (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-l-place 0 1 fat-web-post-tr border) (color WHI))
-  ))
+  )
 )
 
 (defn front-wall [border]
@@ -2440,19 +2446,20 @@ need to adjust for difference for thumb-z only"
                                      (rotate (deg2rad 0) [0 1 0]
                                      thing))))
 
-(def M2-insert-rad (/ 3.6 2))
+(def M2-insert-rad (/ 3.53 2))
+(def M2-insert-height 4)
 (def sensor-holder-outer-rad (/ 7 2))
 (def sensor-holder-distance 23.5)
 
 (def sensor-cable-out-clearance 23.5)
-(def sensor-cable-below-clearance 1.25)
+(def sensor-cable-below-clearance 2.00)
 
 (def buffer-dist 0.5)
 
 (def trackswitch-cover-clearance 2)
 (def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
-(def trackswitch-cover-mount-cut-gap 1.5)
-(def trackswitch-cover-mount-cut-screw-clearance 6)
+(def trackswitch-cover-mount-cut-gap 0.85)
+(def trackswitch-cover-mount-cut-screw-clearance 10)
 (def M2-head-rad (/ 4.00 2))
 (def M2-washer-rad (/ 5.45 2))
 (def M2-head-depth 1.5)
@@ -2474,8 +2481,8 @@ need to adjust for difference for thumb-z only"
 (def sensor-holder-height 2.0)
 
 (def sensor-cover-insert-height (+ sensor-cable-out-clearance sensor-height))
-(def sensor-cover-insert-top-extra-height 2.70)
-(def sensor-cover-insert-bot-extra-height 5.45)
+(def sensor-cover-insert-top-extra-height 2.90)
+(def sensor-cover-insert-bot-extra-height 6.15)
 (def sensor-cover-insert-top-offset [(+ (/ sensor-width 2) trackswitch-total-radius buffer-dist) (- trackswitch-total-radius (/ sensor-length 3)) 0])
 (def sensor-cover-insert-bot-offset [0 (+ (/ sensor-length 2) trackswitch-total-radius buffer-dist) 0])
 (def sensor-cover-insert-screw-length 8)
@@ -2537,8 +2544,8 @@ need to adjust for difference for thumb-z only"
 
 (def rotated-bottom-trim     (sensor-hole-angle
                                bottom-trim))
-(def sensor-shape     (translate (map + bottom-trim-origin [0 (- (/ sensor-cable-below-clearance 2)) (- (/ trim 2) sensor-height )])
-                               (cube sensor-length (+ sensor-width sensor-cable-below-clearance) (* sensor-height 2))))
+(def sensor-shape     (sensor-hole-angle (translate (map + bottom-trim-origin [0 (- (/ sensor-cable-below-clearance 2)) (- (/ trim 2) sensor-height )])
+                               (cube sensor-length (+ sensor-width sensor-cable-below-clearance) (* sensor-height 2)))))
 
 (defn filler-rotate [p] (
                          ->> p
@@ -2664,15 +2671,15 @@ need to adjust for difference for thumb-z only"
     )
     ; subtract out room for the axels
     rotated-dowells
-    sensor-holder-outer
+    (sensor-hole-angle sensor-holder-outer)
     (sphere (/ trackball-width-plus-bearing 2))
    )
   )
 
 (defn trackball-rotate [shape]
   (->> shape
-    (rotate (deg2rad trackball-x-rotate) [1 0 0])
     (rotate (deg2rad trackball-y-rotate) [0 1 0])
+    (rotate (deg2rad trackball-x-rotate) [1 0 0])
     (rotate (deg2rad trackball-z-rotate) [0 0 1])
     (thumb-place [0 0 0] trackball-thumb-offset))
 )
@@ -2824,17 +2831,20 @@ need to adjust for difference for thumb-z only"
   (difference
     (union 
       (shift-model 
-        (union (difference (union
-            (when (not testing) (key-places (single-plate mirror-internals)))
-            case-top-border
-            (when use_flex_pcb_holder flex-pcb-holders)
-            (color CYA connectors)
-            (when (not testing) (thumb-layout (single-plate mirror-internals)))
-            thumb-connectors
-            (trackball-rotate trackball-mount)
+        (union 
+          (difference 
+            (union
+              case-top-border
+              (color CYA connectors)
+              thumb-connectors
+            )
+            (key-places single-plate-cutout)
+            (thumb-layout single-plate-cutout)
+            (trackball-rotate sensor-shape)
           )
-          (trackball-rotate sensor-shape)
-          )
+          (when (not testing) (key-places (single-plate mirror-internals)))
+          (when use_flex_pcb_holder flex-pcb-holders)
+          (when (not testing) (thumb-layout (single-plate mirror-internals)))
           (trackball-rotate trackball-mount)
         )
       )
@@ -2851,6 +2861,37 @@ need to adjust for difference for thumb-z only"
                 thumb-space-below))
       (when use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
       (when use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
+    ))))
+  )
+)
+
+(defn thumb-test [mirror-internals]
+  (difference
+      (shift-model 
+        (union 
+          (difference 
+            (union
+              (trackball-wall true)
+              (thumb-wall true)
+              thumb-connectors
+              ;(color CYA connectors)
+            )
+            (thumb-layout single-plate-cutout)
+            (trackball-rotate sensor-shape)
+          )
+          (when (not testing) (thumb-layout (single-plate mirror-internals)))
+          (trackball-rotate trackball-mount)
+        )
+      )
+    (when (not testing) (union
+    (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
+    (shift-model (union 
+      caps-cutout
+      thumbcaps-cutout
+      (thumb-key-cutouts mirror-internals)
+      (when (not (or use_hotswap_holder use_solderless)) 
+          (union thumb-space-below))
+      (when use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
     ))))
   )
 )
@@ -2902,6 +2943,104 @@ need to adjust for difference for thumb-z only"
     ;(if use_hotswap_holder (thumb-layout (hotswap-case-cutout mirror-internals)))
     ;(if use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
   ))
+
+;;;;;;;;;;;;;;;;;
+;; Sensor Case ;;
+;;;;;;;;;;;;;;;;;
+
+(defn eps [x] (+ x 0.1))
+
+(def pcb-width-actual 1.6)
+(def pcb-length 28.5)
+(def pcb-height 21.5)
+
+(def lens-thickness 3.4)
+(def lens-clearance 14.5)
+(def pcb-thickness 4.1)
+
+(def pcb-lens-thickness (+ lens-thickness pcb-thickness))
+
+(def case-thickness 2.5)
+(def cable-offset 1.4)
+(def cables-width 20.8)
+(def cables-height 3)
+(def sensor-width (- pcb-length (* 2 2.7)))
+(def screw-width 2.3)
+(def screw-depth 1.9)
+(def screw-offset (/ 13.5 2))
+(def cable-holder-length sensor-width)
+(def cable-holder-depth 2.7)
+(def cable-holder-height 10)
+
+(def total-thickness (+ pcb-thickness (* 2 case-thickness)))
+(def total-height pcb-height)
+(def total-length (+ pcb-length (* 2 case-thickness)))
+
+(def total-cable-holder-length (+ cable-holder-length (* 2 case-thickness)))
+(def total-cable-holder-height (+ cable-holder-height (* 2 case-thickness)))
+(def total-cable-holder-width (+ cable-holder-depth (* 2 case-thickness)))
+
+(def base
+  (union
+    (difference
+      (cube total-length total-thickness total-height)
+
+      ; PCB cutout
+      (translate [0 0 0] (cube pcb-length pcb-thickness total-height))
+
+      ; space for lens dowels
+      (translate [screw-offset (+ (/ screw-depth 2) (/ pcb-thickness 2)) 0] (cube screw-width screw-depth total-height))
+      (translate [(- screw-offset) (+ (/ screw-depth 2) (/ pcb-thickness 2)) 0] (cube screw-width screw-depth total-height))
+
+      ; lens cutout
+      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2))) 0] (cube sensor-width case-thickness total-height))
+
+      ; cables cutout
+      (translate [0 (+ (/ case-thickness 2) (/ pcb-thickness 2)) (+ (- (/ cables-height 2)) (/ total-height 2))] (cube cables-width case-thickness cables-height))
+
+    )
+
+    ; lens adapter
+    (translate [(+ (/ screw-width 2) (/ sensor-width 2)) (- (+ (/ (+ lens-thickness case-thickness) 2) (/ pcb-thickness 2))) 0] (cube screw-width (+ lens-thickness case-thickness) total-height))
+    (translate [(- (+ (/ screw-width 2) (/ sensor-width 2))) (- (+ (/ (+ lens-thickness case-thickness) 2) (/ pcb-thickness 2))) 0] (cube screw-width (+ lens-thickness case-thickness) total-height))
+    (difference
+      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube sensor-width case-thickness total-height))
+      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-clearance case-thickness total-height))
+
+    )
+
+    ; M2 insert adapter
+    (difference 
+      (union 
+        (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+        (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+      )
+    )
+  )
+)
+
+(def cable-holder 
+  (difference
+    (cube total-cable-holder-length total-cable-holder-width total-cable-holder-height)
+    (translate [0 0 case-thickness] (cube cable-holder-length cable-holder-depth total-cable-holder-height))
+  )
+)
+
+(def sensor-case (with-fn ROUND-RES (difference 
+    (union
+      base
+      ;cable-holder
+    )
+
+    ; M2 screw holes (front)
+    (translate [(- (/ sensor-holder-distance 2)) (- (+ (/ (+ lens-thickness case-thickness 5) 2) (/ pcb-thickness 2))) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad (+ lens-thickness case-thickness 5))))
+    (translate [(/ sensor-holder-distance 2) (- (+ (/ (+ lens-thickness case-thickness 5) 2) (/ pcb-thickness 2))) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad (+ lens-thickness case-thickness 5))))
+
+    ; M2 insert holes (back)
+      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
+
+  )))
 
 ;;;;;;;;;;;;;
 ;; Outputs ;;
@@ -2977,7 +3116,9 @@ need to adjust for difference for thumb-z only"
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			(translate [0 0 0] (model-switch-plates-right false))
+			;(translate [0 0 0] (model-switch-plates-right false))
+            sensor-case
+			;(translate [0 0 0] (thumb-test false))
 			;trackswitch-mount
             ;(union
             ;  top-screw-insert-holes
