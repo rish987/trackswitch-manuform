@@ -125,8 +125,8 @@
                   (= column 1)  [0  -5  2  ] ;;index
                   (= column 2)  [0   -1.95 -2.1  ] ;;middle
                   (= column 3)  [0   -5.65 2.4] ;;ring
-                  (= column 4)  [0 -16  6  ] ;;pinky
-                  (>= column 5) [0 -16  6  ] ;;pinky outer
+                  (= column 4)  [0 -12.5  6  ] ;;pinky
+                  (>= column 5) [0 -12.5  6  ] ;;pinky outer
                   :else [0 0 0]))
 
 (def keyboard-z-offset 25.5)  ; controls overall height
@@ -1054,7 +1054,7 @@ need to adjust for difference for thumb-z only"
 (def trackball-x-rotate 77)
 (def trackball-y-rotate -22)
 (def trackball-z-rotate 30)
-(def trackball-thumb-offset [-39.5 8.0 19])
+(def trackball-thumb-offset [-41.5 12.0 19])
 
 (defn apply-trackball-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn shape]
   (->> shape
@@ -2449,7 +2449,7 @@ need to adjust for difference for thumb-z only"
 (def M2-insert-rad (/ 3.53 2))
 (def M2-insert-height 4)
 (def sensor-holder-outer-rad (/ 7 2))
-(def sensor-holder-distance 23.5)
+(def sensor-holder-distance 23.85)
 
 (def sensor-cable-out-clearance 23.5)
 (def sensor-cable-below-clearance 2.00)
@@ -2464,7 +2464,8 @@ need to adjust for difference for thumb-z only"
 (def M2-washer-rad (/ 5.45 2))
 (def M2-head-depth 1.5)
 (def M2-screw-length 12)
-(def M2-screw-rad (/ 2.00 2))
+(def M2-short-screw-length 7)
+(def M2-screw-rad (/ 2.25 2))
 
 (def trackswitch-cover-mount-cut-depth (+ trackswitch-cover-mount-cut-screw-clearance M2-head-depth))
 (def trackswitch-cover-mount-cut (translate [0 0 (/ trackswitch-cover-mount-cut-depth 2)] (screw-insert-shape ROUND-RES 0 M2-washer-rad M2-washer-rad trackswitch-cover-mount-cut-depth)))
@@ -2660,11 +2661,11 @@ need to adjust for difference for thumb-z only"
            (trackswitch-place trackswitch-offset-x-rot)
       )
 
-      (->> (trackswitch-cover-insert M2-insert-rad top-screw-length)
+      (->> (trackswitch-cover-insert M2-insert-rad M2-short-screw-length)
            (translate [(- (/ mount-height 2) cover-insert-total-rad) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
            (trackswitch-place trackswitch-offset-x-rot)
       )
-      (->> (trackswitch-cover-insert M2-insert-rad top-screw-length)
+      (->> (trackswitch-cover-insert M2-insert-rad M2-short-screw-length)
            (translate [(- cover-insert-total-rad (/ mount-height 2)) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
            (trackswitch-place trackswitch-offset-x-rot)
       )
@@ -2963,14 +2964,17 @@ need to adjust for difference for thumb-z only"
 (def case-thickness 2.5)
 (def cable-offset 1.4)
 (def cables-width 20.8)
-(def cables-height 3)
+(def cables-height 3.35)
 (def sensor-width (- pcb-length (* 2 2.7)))
-(def screw-width 2.3)
-(def screw-depth 1.9)
-(def screw-offset (/ 13.5 2))
+(def dowel-width 2.5)
+(def dowel-depth 1.9)
+(def dowel-offset (/ 13.5 2))
 (def cable-holder-length sensor-width)
 (def cable-holder-depth 2.7)
 (def cable-holder-height 10)
+
+(def lens-adapter-width 3.55)
+(def lens-adapter-thickness 1.2)
 
 (def total-thickness (+ pcb-thickness (* 2 case-thickness)))
 (def total-height pcb-height)
@@ -2989,8 +2993,8 @@ need to adjust for difference for thumb-z only"
       (translate [0 0 0] (cube pcb-length pcb-thickness total-height))
 
       ; space for lens dowels
-      (translate [screw-offset (+ (/ screw-depth 2) (/ pcb-thickness 2)) 0] (cube screw-width screw-depth total-height))
-      (translate [(- screw-offset) (+ (/ screw-depth 2) (/ pcb-thickness 2)) 0] (cube screw-width screw-depth total-height))
+      (translate [dowel-offset (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
+      (translate [(- dowel-offset) (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
 
       ; lens cutout
       (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2))) 0] (cube sensor-width case-thickness total-height))
@@ -3001,20 +3005,18 @@ need to adjust for difference for thumb-z only"
     )
 
     ; lens adapter
-    (translate [(+ (/ screw-width 2) (/ sensor-width 2)) (- (+ (/ (+ lens-thickness case-thickness) 2) (/ pcb-thickness 2))) 0] (cube screw-width (+ lens-thickness case-thickness) total-height))
-    (translate [(- (+ (/ screw-width 2) (/ sensor-width 2))) (- (+ (/ (+ lens-thickness case-thickness) 2) (/ pcb-thickness 2))) 0] (cube screw-width (+ lens-thickness case-thickness) total-height))
+    (translate [(+ (/ lens-adapter-width 2) (/ sensor-width 2)) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
+    (translate [(- (+ (/ lens-adapter-width 2) (/ sensor-width 2))) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
     (difference
-      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube sensor-width case-thickness total-height))
-      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-clearance case-thickness total-height))
+      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube sensor-width lens-adapter-thickness total-height))
+      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-clearance lens-adapter-thickness total-height))
 
     )
 
     ; M2 insert adapter
-    (difference 
-      (union 
-        (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
-        (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
-      )
+    (union 
+      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
     )
   )
 )
@@ -3026,21 +3028,30 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(def sensor-case (with-fn ROUND-RES (difference 
+(def sensor-case (with-fn ROUND-RES (let [
+                       M2-screw-length (+ lens-thickness total-thickness)
+                       M2-screw-offset (+ (- (/ M2-screw-length 2)) (/ pcb-thickness 2) case-thickness)
+                       M2-screw (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad M2-screw-length))
+                      ] 
+  (difference 
     (union
       base
       ;cable-holder
     )
 
-    ; M2 screw holes (front)
-    (translate [(- (/ sensor-holder-distance 2)) (- (+ (/ (+ lens-thickness case-thickness 5) 2) (/ pcb-thickness 2))) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad (+ lens-thickness case-thickness 5))))
-    (translate [(/ sensor-holder-distance 2) (- (+ (/ (+ lens-thickness case-thickness 5) 2) (/ pcb-thickness 2))) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad (+ lens-thickness case-thickness 5))))
+    ; M2 screw holes
+    (translate [(- (/ sensor-holder-distance 2)) M2-screw-offset 0] M2-screw)
+    (translate [(/ sensor-holder-distance 2) M2-screw-offset 0] M2-screw)
 
     ; M2 insert holes (back)
       (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
       (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
 
-  )))
+    ; hole to make room for M2 nut
+      (translate [(- (/ sensor-holder-distance 2)) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
+
+  ))))
 
 ;;;;;;;;;;;;;
 ;; Outputs ;;
@@ -3070,8 +3081,12 @@ need to adjust for difference for thumb-z only"
 ;;             (if use_hotswap_holder (thumb-layout (hotswap-case-cutout false)))
 ;;         )))
 ;
-;(spit "things/switch-plates-right.scad"
-;      (write-scad (model-switch-plates-right false)))
+
+(when (not testing) 
+(spit "things/switch-plates-right.scad"
+      (write-scad (model-switch-plates-right false)))
+)
+
 ;(spit "things/switch-plates-left.scad"
 ;      (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
 ;; (spit "things/switch-plate-cutouts.scad"
@@ -3105,7 +3120,7 @@ need to adjust for difference for thumb-z only"
 ;      (write-scad
 ;        trackswitch-mount))
 
-(spit "things/test.scad"
+(when testing (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ;(debug
@@ -3116,9 +3131,9 @@ need to adjust for difference for thumb-z only"
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			;(translate [0 0 0] (model-switch-plates-right false))
-            sensor-case
+			(translate [0 0 0] (model-switch-plates-right false))
 			;(translate [0 0 0] (thumb-test false))
+            ;sensor-case
 			;trackswitch-mount
             ;(union
             ;  top-screw-insert-holes
@@ -3150,4 +3165,4 @@ need to adjust for difference for thumb-z only"
                     ; (color BRO model-wrist-rest-right-holes)
                 ; 
             ; )
-      ))
+      )))
