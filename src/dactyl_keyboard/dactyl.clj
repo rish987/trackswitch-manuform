@@ -993,9 +993,11 @@
 (def fat-web-post-bm (translate [                                 0  (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 (def fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 (def upper-fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height  2) 0) 0] upper-fat-web-post-top))
+(def upper-fat-web-post-tl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-bl (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-bot))
 (def upper-fat-web-post-bl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-bot-lower))
 (def upper-fat-web-post-tr (translate [(- (/ mount-width  2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] upper-fat-web-post-top))
+(def upper-fat-web-post-tr-lower (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] upper-fat-web-post-bot))
 
 (def trackball-post (->> (cube fat-post-size fat-post-size sensor-height)
@@ -1525,9 +1527,15 @@ need to adjust for difference for thumb-z only"
 ; dx1, dy1, dx2, dy2 = direction of the wall. '1' for front, '-1' for back, '0' for 'not in this direction'.
 ; place1, place2 = function that places an object at a location, typically refers to the center of a key position.
 ; post1, post2 = the shape that should be rendered
-(defn wall-brace' [place1 dx1 dy1 post1 
-                  place2 dx2 dy2 post2
-                  upper border]
+(defn wall-brace' [place1 dx1 dy1 post1 upper1
+                  place2 dx2 dy2 post2 upper2
+                  border]
+  (let [
+         dx1 (if upper1 0 dx1)
+         dy1 (if upper1 0 dy1)
+         dx2 (if upper2 0 dx2)
+         dy2 (if upper2 0 dy2)
+       ]
   "If you want to change the wall, use this.
    place1 means the location at the keyboard, marked by key-place or thumb-xx-place
    dx1 means the movement from place1 in x coordinate, multiplied by wall-xy-locate.
@@ -1562,15 +1570,15 @@ need to adjust for difference for thumb-z only"
                     e: the result of bottom-hull translation from wall-locate2
                     f: the result of bottom-hull translation from wall-locate3"
   (union
-    (->> ((if (and upper (not border)) union hull)
+    (->> ((if (and upper1 upper2 (not border)) hull hull)
       (hull
         (place1 (translate (wall-locate1 dx1 dy1 border) post1))
         ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
         (place1 post1)
       )
       (hull
-        (place1 (translate (wall-locate2' dx1 dy1 upper border) post1))
-        (place2 (translate (wall-locate2' dx2 dy2 upper border) post2))
+        (place1 (translate (wall-locate2' dx1 dy1 upper1 border) post1))
+        (place2 (translate (wall-locate2' dx2 dy2 upper2 border) post2))
       )
       (hull
         (place2 (translate (wall-locate1 dx2 dy2 border) post2))
@@ -1580,28 +1588,28 @@ need to adjust for difference for thumb-z only"
     (color YEL))
     (when (not border)
       (->> (bottom-hull
-        (place1 (translate (wall-locate2' dx1 dy1 upper border) post1))
+        (place1 (translate (wall-locate2' dx1 dy1 upper1 border) post1))
         ; (place1 (translate (wall-locate2 dx1 dy1 border) post1))
-        (place2 (translate (wall-locate2' dx2 dy2 upper border) post2))
+        (place2 (translate (wall-locate2' dx2 dy2 upper2 border) post2))
         ; (place2 (translate (wall-locate2 dx2 dy2 border) post2))
         )
         (color ORA))
     )
-  ))
+  )))
 
 (defn wall-brace-upper [place1 dx1 dy1 post1 
                   place2 dx2 dy2 post2
                   border]
-  (wall-brace' place1 dx1 dy1 post1 
-                  place2 dx2 dy2 post2
-                  true border))
+  (wall-brace' place1 0 0 post1 true
+                  place2 0 0 post2 true
+                  border))
 
 (defn wall-brace [place1 dx1 dy1 post1 
                   place2 dx2 dy2 post2
                   border]
-  (wall-brace' place1 dx1 dy1 post1 
-                  place2 dx2 dy2 post2
-                  false border))
+  (wall-brace' place1 dx1 dy1 post1 false
+                  place2 dx2 dy2 post2 false
+                  border))
 
 (defn wall-brace-deeper [place1 dx1 dy1 post1 
                          place2 dx2 dy2 post2
@@ -1935,11 +1943,12 @@ need to adjust for difference for thumb-z only"
 
         (union
           (->> (wall-brace-upper        (partial thumb-m-place' border)  -1  1 fat-web-post-tl (partial thumb-u-place' border)  -1  0 upper-fat-web-post-bl-lower border) (color BRO))
-          (->> (wall-brace-upper        (partial thumb-u-place' border)  -1  0 upper-fat-web-post-bl-lower (partial thumb-u-place' border)  -1  0 upper-fat-web-post-tl border) (color BRO))
-          (->> (wall-brace-upper        (partial thumb-u-place' border)  -1  0 upper-fat-web-post-tl (partial thumb-u-place' border)  0 1  upper-fat-web-post-tl border) (color GRE))
-          (->> (wall-brace-upper        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tl (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr border) (color BRO))
-          (->> (wall-brace-upper        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr (partial thumb-ur-place' border)  0  1 upper-fat-web-post-tl border) (color BRO))
-          (->> (wall-brace-upper        (partial thumb-ur-place' border)  0  1 upper-fat-web-post-tl (partial (if border key-place key-place-shifted) firstcol (- lastrow 2))  -1 0  web-post-bl border) (color BRO))
+          (->> (wall-brace-upper        (partial thumb-u-place' border)  -1  0 upper-fat-web-post-bl-lower (partial thumb-u-place' border)  -1  0 upper-fat-web-post-tl-lower border) (color BRO))
+          (->> (wall-brace-upper        (partial thumb-u-place' border)  -1  0 upper-fat-web-post-tl-lower (partial thumb-u-place' border)  0 1  upper-fat-web-post-tl-lower border) (color GRE))
+          (->> (wall-brace-upper        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tl-lower (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr-lower border) (color BRO))
+          ;(->> (wall-brace-upper        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr-lower (partial thumb-ur-place' border)  0  1 upper-fat-web-post-tl-lower border) (color BRO))
+          (->> (wall-brace'        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr-lower true (partial (if border key-place key-place-shifted) firstcol (- lastrow 2))  -1 0  plate-post-bl false border) (color BRO))
+          ;(->> (key-wall-brace  firstcol (- lastrow 2) -1 -1 web-post-bl firstcol (- lastrow 2) -1 0 web-post-bl border) (color BRO))
         )
       )
     ))
