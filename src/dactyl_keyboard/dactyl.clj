@@ -6,6 +6,7 @@
             [scad-clj.model :refer :all]))
 
 (def testing true)
+;(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -147,8 +148,8 @@
 (def wall-xy-offset 1)
 (def wall-thickness 1)  ; wall thickness parameter
 
-(def thumb-pos [-17 -2 -13.5] )
-(def thumb-rot [0 10 0] )
+(def thumb-pos [-17 -9 -13.5] )
+(def thumb-rot [0 -3 0] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; General variables ;;
@@ -1002,7 +1003,7 @@
 (def fat-web-post (->> fat-web-post'
                        (translate [0 0 (+ (/ web-thickness -2)
                                           plate-thickness)])))
-(def upper-post-offset 6)
+(def upper-post-offset 9)
 
 (def upper-fat-web-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (+ (- (/ web-thickness 2)) 0)] fat-web-post')))
 (def upper-fat-web-post-bot (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
@@ -1074,12 +1075,13 @@ need to adjust for difference for thumb-z only"
        (rot-x-fn (deg2rad (nth rot 0)))
        (rot-y-fn (deg2rad (nth rot 1)))
        (rot-z-fn (deg2rad (nth rot 2)))
-       (move-fn thumborigin)
        (move-fn move))
 
        (rot-x-fn (deg2rad (nth thumb-rot 0)))
        (rot-y-fn (deg2rad (nth thumb-rot 1)))
        (rot-z-fn (deg2rad (nth thumb-rot 2)))
+
+       (move-fn thumborigin)
      ))
 
 (defn thumb-place [rot move shape]
@@ -1277,6 +1279,8 @@ need to adjust for difference for thumb-z only"
 (def thumb-m-move [-23 -15.2 -6])
 (def thumb-r-rot [14 -35   10])
 (def thumb-r-move [-4.5 -10 5])
+(def thumb-l-rot [ 6  -5   25])
+(def thumb-l-move [-43 -23.5 -11.5])
 
 ; distance from top of plate to top of keycap
 (def key-top-dist sa-height2)
@@ -1300,7 +1304,7 @@ need to adjust for difference for thumb-z only"
 (defn thumb-ur-place [shape] (thumb-place thumb-r-rot thumb-r-move (key-upper-place shape))) ; upper
 (defn thumb-m-place [shape] (thumb-place thumb-m-rot thumb-m-move shape)) ; middle
 (defn thumb-u-place [shape] (thumb-place thumb-m-rot thumb-m-move (key-upper-place shape))) ; upper
-(defn thumb-l-place [shape] (thumb-place [ 6  -5   25] [-43 -23.5 -11.5] shape)) ; left
+(defn thumb-l-place [shape] (thumb-place thumb-l-rot thumb-l-move shape)) ; left
 
 ; convexer
 (defn thumb-r-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move shape)) ; right
@@ -1351,6 +1355,8 @@ need to adjust for difference for thumb-z only"
 (def wall-border-xy-offset 1.1)
 (def wall-border-thickness 1)  ; wall thickness parameter
 
+(def upper-case-out (- (+ upper-post-offset (/ fat-post-size 2)) swap-z))
+
 (defn wall-locate0 [dx dy border] [(* dx (if border wall-border-thickness wall-thickness))
                                    (* dy (if border wall-border-thickness wall-thickness))
                                    0])
@@ -1359,7 +1365,7 @@ need to adjust for difference for thumb-z only"
                                    0])
 (defn wall-locate2' [dx dy upper border] [(* dx (if border wall-border-xy-offset wall-xy-offset))
                                    (* dy (if border wall-border-xy-offset wall-xy-offset))
-                                   (if upper (if border (- upper-post-offset) 0) (if border wall-border-z-offset wall-z-offset))])
+                                   (if upper (if border (- upper-case-out) 0) (if border wall-border-z-offset wall-z-offset))])
 (defn wall-locate2 [dx dy border] (wall-locate2' dx dy false border))
 (defn wall-locate3 [dx dy border] [(* dx (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
                                    (* dy (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
@@ -1367,7 +1373,12 @@ need to adjust for difference for thumb-z only"
 
 (defn thumb-connectors [left]
   (union
-    (when left (union
+    (when left (letfn
+                 [
+                   (case-post-br [shape] (translate (wall-locate1 1 -1 true) shape))
+                   (case-br [shape] (union (case-post-br shape) (translate [0 0 (- upper-case-out)] (case-post-br shape))))
+                 ]
+    (union
       ; top one
       (->> (triangle-hulls
                (thumb-u-place plate-post-bl)
@@ -1401,7 +1412,7 @@ need to adjust for difference for thumb-z only"
                (key-place (inc firstcol)    cornerrow  plate-post-bl)
                (key-place (inc firstcol)    cornerrow  plate-post-tl)
                (thumb-r-place  plate-post-tr)
-               (thumb-ur-place  plate-post-br)
+               (thumb-ur-place  (case-br plate-post-br))
            ) (color RED) )
 
       (->> (triangle-hulls
@@ -1426,10 +1437,23 @@ need to adjust for difference for thumb-z only"
 
       (->> (triangle-hulls
                (key-place firstcol    (dec cornerrow)  web-post-br)
-               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
-               (key-place (inc firstcol)    cornerrow  plate-post-tl)
                (thumb-ur-place  upper-fat-web-post-tr-lower)
-               (thumb-ur-place  fat-web-post-br)
+               (thumb-ur-place  upper-fat-web-post-tl-lower)
+               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+           ) (color ORA) )
+
+      (->> (triangle-hulls
+               (key-place firstcol    (dec cornerrow)  web-post-br)
+               (thumb-ur-place  upper-fat-web-post-tr-lower)
+               (key-place (inc firstcol)    cornerrow  plate-post-tl)
+               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+               (key-place firstcol    (dec cornerrow)  web-post-br)
+           ) (color BLU) )
+
+      (->> (triangle-hulls
+               (key-place (inc firstcol)    cornerrow  plate-post-tl)
+               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+               (thumb-ur-place  (case-br fat-web-post-br))
            ) (color BLU) )
 
       ; partially fills  N and B keys sockets, do not use unless you cut those back out
@@ -1490,7 +1514,7 @@ need to adjust for difference for thumb-z only"
       ;         (thumb-u-place web-post-bl)
       ;       )
       ;     ) (color RED))))
-    ))
+    )))
 
     ; top two
     (->> (if use_hotswap_holder 
@@ -1639,10 +1663,10 @@ need to adjust for difference for thumb-z only"
         (place1 post1)
       )
       (hull
-        (when (and border1 upper1) (place1 (translate [0 0 (- upper-post-offset)] post1)))
+        (when (and border1 upper1) (place1 (translate [0 0 (- upper-case-out)] post1)))
         (place1 (translate (wall-locate2' dx1 dy1 upper1 border1) post1))
         (place2 (translate (wall-locate2' dx2 dy2 upper2 border2) post2))
-        (when (and border2 upper2) (place2 (translate [0 0 (- upper-post-offset)] post2)))
+        (when (and border2 upper2) (place2 (translate [0 0 (- upper-case-out)] post2)))
       )
       (hull
         (place2 (translate (wall-locate1 dx2 dy2 border2) post2))
@@ -2054,7 +2078,7 @@ need to adjust for difference for thumb-z only"
             (thumb-ur-place' border upper-fat-web-post-tl-lower)
           )
 
-          (->> (wall-brace'        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr-lower true (partial (if border key-place key-place-shifted) firstcol (- lastrow 2))  -1 0  wall-post-bl false border) (color BRO))
+          (->> (wall-brace'        (partial thumb-u-place' border)  0  1 upper-fat-web-post-tr-lower true (partial (if border key-place key-place-shifted) firstcol (- lastrow 2))  0 0  wall-post-bl false border) (color BRO))
           ;(->> (key-wall-brace  firstcol (- lastrow 2) -1 -1 web-post-bl firstcol (- lastrow 2) -1 0 web-post-bl border) (color BRO))
         )
       )
@@ -2131,6 +2155,15 @@ need to adjust for difference for thumb-z only"
          (translate position)
          )))
 
+(defn screw-insert-thumb [res rot bottom-radius top-radius height offset]
+  (let [
+         orig-position (shift-model-position (thumb-position [0 0 0] offset [0 0 0] ))
+         position [(first orig-position) (second orig-position) (/ height 2)]
+       ]
+    (->> (screw-insert-shape res rot bottom-radius top-radius height)
+         (translate position)
+         )))
+
 (defn screw-insert-relative-z [res rot column row bottom-radius top-radius height offset]
   (let [
          orig-position (key-position column row [0 0 0])
@@ -2142,8 +2175,8 @@ need to adjust for difference for thumb-z only"
 
 (defn screw-insert-relative-z-thumb [res rot bottom-radius top-radius height offset]
   (let [
-         orig-position (thumb-position [0 0 0] [0 0 0] [0 0 0])
-         position (map + (shift-model-position (map + offset orig-position)) [0 0 (- (/ height 2))])
+         orig-position (thumb-position [0 0 0] offset [0 0 0] )
+         position (map + (shift-model-position orig-position) [0 0 (- (/ height 1))])
        ]
     (->> (screw-insert-shape res rot bottom-radius top-radius height)
          (translate position)
@@ -2155,11 +2188,11 @@ need to adjust for difference for thumb-z only"
   (union 
     (->> (screw-insert ROUND-RES 0 2             1 bottom-radius top-radius height [ -3   4.50 screw-insert-bottom-offset]) (color RED)) ; top middle
     (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-3.25  5    screw-insert-bottom-offset]) (color PIN)) ; left
-    (->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-13 6    screw-insert-bottom-offset]) (color NBL)) ; trackball
-    (->> (screw-insert ROUND-RES 0 0       lastrow bottom-radius top-radius height [-19 -15.0  screw-insert-bottom-offset]) (color BRO)) ; thumb
-    (->> (screw-insert ROUND-RES 0 lastcol       1 bottom-radius top-radius height [ 3  5  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert ROUND-RES 0 2       lastrow bottom-radius top-radius height [ -4.25     -3.5  screw-insert-bottom-offset]) (color BLA)) ; bottom middle
-    (->> (screw-insert ROUND-RES 0 lastcol (- lastrow 1) bottom-radius top-radius height [ 4.25     -3.50  screw-insert-bottom-offset]) (color YEL)) ; bottom right
+    ;(->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-13 6    screw-insert-bottom-offset]) (color NBL)) ; trackball
+    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-l-move [-2.5 -4.5 0])) (color BRO)) ; thumb
+    (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height [ 3  5  screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-r-move [6.5 -1.2 0])) (color BLA)) ; bottom middle
+    (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 4.25     -3.50  screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
 (def screw-insert-height 6.5) ; Hole Depth Y: 4.4
@@ -2925,11 +2958,11 @@ need to adjust for difference for thumb-z only"
   (shift-model (difference
     (union
       (key-places single-plate-blank)
-      (debug case-top-border)
+      (debug (case-top-border mirror-internals))
       (if use_flex_pcb_holder flex-pcb-holders)
-      connectors
+      (connectors mirror-internals)
       (thumb-layout mirror-internals single-plate-blank)
-      thumb-connectors
+      (thumb-connectors mirror-internals)
     )
   ))
 )
@@ -3046,7 +3079,7 @@ need to adjust for difference for thumb-z only"
       (shift-model 
         (union
           caps-cutout
-          thumbcaps-cutout
+          (thumbcaps-cutout mirror-internals)
           (thumb-key-cutouts mirror-internals)
           (if (not (or use_hotswap_holder use_solderless)) 
               (union key-space-below
@@ -3321,19 +3354,19 @@ need to adjust for difference for thumb-z only"
 ;
 
 (when (not testing) 
-(spit "things/switch-plates-right.scad"
-      (write-scad (model-switch-plates-right false)))
+  (spit "things/switch-plates-right.scad"
+        (write-scad (model-switch-plates-right false)))
+  (spit "things/case-walls-right.scad"
+        (write-scad (model-case-walls-right false)))
+  (spit "things/case-walls-left.scad"
+        (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
+  (spit "things/switch-plates-left.scad"
+        (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
 )
 
-;(spit "things/switch-plates-left.scad"
-;      (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
 ;; (spit "things/switch-plate-cutouts.scad"
 ;;       (write-scad (model-switch-plate-cutouts false)))
 ;
-;(spit "things/case-walls-right.scad"
-;      (write-scad (model-case-walls-right false)))
-;(spit "things/case-walls-left.scad"
-;      (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
 ;
 ;(spit "things/right.scad"
 ;      (write-scad (model-right false)))
@@ -3358,18 +3391,20 @@ need to adjust for difference for thumb-z only"
 ;      (write-scad
 ;        trackswitch-mount))
 
-(when testing (spit "things/test.scad"
+(spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ;(debug
             ;;(color BLU
-              ;(model-case-walls-right true)
+              (model-case-walls-right true)
+              ;(difference (model-case-walls-right true) (model-switch-plates-right true))
               ;model-bottom-plate
             ;)
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			(union (translate [0 0 0] (model-switch-plates-right true)))
+			;(union (translate [0 0 0] (model-switch-plates-right true)))
+			;(color YEL (shift-model (translate thumborigin (cylinder 10 30))))
             ;(sa-cap-cutout 1)
             ;(union
             ;  (single-plate false)
@@ -3414,4 +3449,4 @@ need to adjust for difference for thumb-z only"
                     ; (color BRO model-wrist-rest-right-holes)
                 ; 
             ; )
-      )))
+      ))
