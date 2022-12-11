@@ -1788,11 +1788,11 @@ need to adjust for difference for thumb-z only"
     (color CYA))
     (if (not border)
       (->> (bottom-hull
-          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
-          (place1 (translate (wall-locate3 dx1 dy1 border) post1))
+          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
+          (place1 (translate (wall-locate2 dx1 dy1 border) post1))
   
-        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
-        (place2 (translate (wall-locate2 dx2 dy2 border) post2))
+        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
+        (place2 (translate (wall-locate3 dx2 dy2 border) post2))
         )
        (color NBL))
     )
@@ -2017,7 +2017,8 @@ need to adjust for difference for thumb-z only"
   (let [ thumb-o-place' (if thumb-u thumb-u-place' thumb-l-place') ]
   (union 
     ; thumb walls
-    (->> ((if bottom-row wall-brace-right wall-brace-right) (partial thumb-r-place' border)  0 -1 fat-web-post-br (partial thumb-r-place' border)  0 -1 fat-web-post-bl border) (color ORA))
+    (->> (wall-brace-right (partial thumb-r-place' border)  0 -1 fat-web-post-br (partial thumb-r-place' border)  0 -1 fat-web-post-bl border) (color ORA))
+    (->> (wall-brace (partial thumb-r-place' border)  0 -1 fat-web-post-br (partial thumb-r-place' border)  0 -1 fat-web-post-bl border) (color ORA))
     (->> (wall-brace-deeper (partial thumb-m-place' border)  0 -1 fat-web-post-br (partial thumb-m-place' border)  0 -1 fat-web-post-bl border) (color YEL))
     (->> (wall-brace        (partial thumb-m-place' border)  0 -1 fat-web-post-br (partial thumb-m-place' border)  0 -1 fat-web-post-bl border) (color YEL))
     ; (->> (wall-brace-deeper thumb-l-place  0 -1 fat-web-post-br thumb-l-place  0 -1 fat-web-post-bl border) (color DGR))
