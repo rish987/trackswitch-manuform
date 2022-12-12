@@ -3,6 +3,7 @@
   (:require [clojure.core.matrix :refer [array matrix mmul]]
             [clojure.string :as str]
             [scad-clj.scad :refer :all]
+            [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
 (def testing true)
@@ -2314,64 +2315,6 @@ need to adjust for difference for thumb-z only"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def usb-holder-vertical true)
-(def usb-holder-stl 
-  (if usb-holder-vertical
-    (import "../things/usb_holder_vertical.stl")
-    (import "../things/usb_holder_w_reset.stl")
-  )
-)
-(def usb-holder-cutout-stl 
-  (if usb-holder-vertical
-    (import "../things/usb_holder_vertical_cutout.stl")
-    (import "../things/usb_holder_w_reset_cutout.stl")
-  )
-)
-
-(def usb-holder-clearance 0.3)
-(def usb-holder-cutout-height 
-  (if usb-holder-vertical 
-    (+ 30.6 usb-holder-clearance)
-    (+ 15 usb-holder-clearance)
-  )
-)
-
-(def usb-holder-cutout-bottom-offset (/ usb-holder-cutout-height 2))
-
-;TODO horizontal and vertical usb holders have different origin points
-; because, i can't pic a standard origin for different versions
-(def usb-holder-bottom-offset 
-  (if usb-holder-vertical 
-    (/ usb-holder-cutout-height 2)
-    (/ usb-holder-clearance 2)
-  )
-)
-
-(def usb-holder-z-rotate 1.5)
-(def usb-holder-offset-coordinates
-  (if use_hotswap_holder
-    [-35.5 31.60 usb-holder-bottom-offset]
-    [-15.5 47.95 usb-holder-bottom-offset]))
-(defn usb-holder-place [shape]
-  (->> shape
-       (translate usb-holder-offset-coordinates)
-       (rotate (deg2rad usb-holder-z-rotate) [0 0 1])
-  ))
-    
-(def usb-holder (usb-holder-place usb-holder-stl))
-(def usb-holder-cutout (usb-holder-place usb-holder-cutout-stl))
-(def usb-holder-space
-  (color RED
-    (translate [0 0 usb-holder-cutout-bottom-offset]
-      (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
-        (offset usb-holder-clearance (projection {:cut false}
-            (scale [1.001 1 1] usb-holder-cutout)
-          )
-        )
-      )
-    )
-  )
-)
 
 ;;;;;;;;;;;;;;;;
 ;; PCB Holder ;;
@@ -3053,9 +2996,7 @@ need to adjust for difference for thumb-z only"
                   )
                   (when (not testing) 
                     (model-switch-plate-cutouts mirror-internals)
-                  ;(case controller-holder 1 usb-holder-space
-                  ;                        2 pcb-holder-space
-                  ;)
+                  (controller-holder usb-holder-space)
                   )
                   screw-insert-holes
                   top-screw-insert-holes
@@ -3397,7 +3338,7 @@ need to adjust for difference for thumb-z only"
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ;(debug
             ;;(color BLU
-              (model-case-walls-right true)
+              usb-holder-space
               ;(difference (model-case-walls-right true) (model-switch-plates-right true))
               ;model-bottom-plate
             ;)
