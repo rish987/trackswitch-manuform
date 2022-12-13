@@ -3338,7 +3338,7 @@ need to adjust for difference for thumb-z only"
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ;(debug
             ;;(color BLU
-              usb-holder-space
+              usb-holder
               ;(difference (model-case-walls-right true) (model-switch-plates-right true))
               ;model-bottom-plate
             ;)
