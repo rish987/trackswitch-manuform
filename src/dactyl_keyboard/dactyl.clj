@@ -1941,11 +1941,11 @@ need to adjust for difference for thumb-z only"
     (key-wall-brace-less (dec lastcol) 2 1 1 web-post-tr lastcol 2 0 1 web-post-tl border)
     (key-wall-brace-less lastcol 2 0 1 web-post-tl lastcol 2 0 1 web-post-tr border)
     ; top-right corner
-    (key-wall-brace lastcol 2 0 1 web-post-tr lastcol 2 1 0 web-post-tr border)
+    (key-wall-brace-less lastcol 2 0 1 web-post-tr lastcol 2 1 0 web-post-tr border)
     ; (key-wall-brace  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
     (key-wall-brace-less lastcol 2 1 0 web-post-tr lastcol 2 1 0 web-post-br border)
-    ; bottom-left corner
-    (key-wall-brace lastcol 2 1 0 web-post-br lastcol 2 0 -1 web-post-br border)
+    ; bottom-right corner
+    (key-wall-brace-less lastcol 2 1 0 web-post-br lastcol 2 0 -1 web-post-br border)
     (key-wall-brace-less lastcol 2 0 -1 web-post-br lastcol 2 0 -1 web-post-bl border)
     (key-wall-brace-less lastcol 2 0 -1 web-post-bl (dec lastcol) 2 1 -1 web-post-br border)
     (for [y (range 3 lastrow)] (key-wall-brace-less (dec lastcol) (dec y) 1 0 web-post-br (dec lastcol) y 1 0 web-post-tr border))
@@ -3023,7 +3023,7 @@ need to adjust for difference for thumb-z only"
                          (when (= controller-holder 2) pcb-holder-screw-post)
                   )
                   (usb-holder-shift (if mirror-internals (mirror [0 0 0] usb-holder-space) usb-holder-space))
-                  (model-switch-plate-cutouts mirror-internals)
+                  (when (not testing) (model-switch-plate-cutouts mirror-internals))
                   screw-insert-holes
                   top-screw-insert-holes
       )
