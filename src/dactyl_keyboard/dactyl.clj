@@ -6,8 +6,8 @@
             [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
-(def testing true)
-;(def testing false)
+;(def testing true)
+(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -989,12 +989,29 @@
 (def plate-post (->> (cube plate-post-size plate-post-size plate-post-thickness)
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5)
                                       )])))
+
+(def short-post-thickness 1)
+(def short-post-size 1.2)
+(def short-post (->> (cube short-post-size short-post-size short-post-thickness)
+                   (translate [0 0 (+ (- (/ short-post-thickness 2)) (/ plate-post-thickness 2))])
+                   (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5))])
+                                      ))
+
+(def short-post-adj (/ short-post-size 2))
+
+(def short-post-tr (translate [(- (/ mount-width  2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post))
+(def short-post-tl (translate [(+ (/ mount-width -2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post))
+(def short-post-bl (translate [(+ (/ mount-width -2) short-post-adj) (+ (/ mount-height -2) short-post-adj) 0] short-post))
+(def short-post-br (translate [(- (/ mount-width  2) short-post-adj) (+ (/ mount-height -2) short-post-adj) 0] short-post))
+
 (def plate-post-adj (/ plate-post-size 2))
-(def plate-post-tr (translate [(- (/ mount-width  2) plate-post-adj) (- (/ mount-height  2) plate-post-adj) 0] plate-post))
+
 (def plate-post-tm (translate [                                   0  (- (/ mount-height  2) plate-post-adj) 0] plate-post))
+(def plate-post-bm (translate [                                   0  (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
+
+(def plate-post-tr (translate [(- (/ mount-width  2) plate-post-adj) (- (/ mount-height  2) plate-post-adj) 0] plate-post))
 (def plate-post-tl (translate [(+ (/ mount-width -2) plate-post-adj) (- (/ mount-height  2) plate-post-adj) 0] plate-post))
 (def plate-post-bl (translate [(+ (/ mount-width -2) plate-post-adj) (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
-(def plate-post-bm (translate [                                   0  (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
 (def plate-post-br (translate [(- (/ mount-width  2) plate-post-adj) (+ (/ mount-height -2) plate-post-adj) 0] plate-post))
 
 ; fat web post for very steep angles between thumb and finger clusters
@@ -1410,10 +1427,15 @@ need to adjust for difference for thumb-z only"
            ) (color RED))
 
       (->> (triangle-hulls
-               (key-place (inc firstcol)    cornerrow  plate-post-bl)
-               (key-place (inc firstcol)    cornerrow  plate-post-tl)
-               (thumb-r-place  plate-post-tr)
+               (key-place (inc firstcol)    cornerrow  short-post-bl)
+               (key-place (inc firstcol)    cornerrow  short-post-tl)
                (thumb-ur-place  (case-br fat-web-post-br))
+           ) (color RED) )
+
+      (->> (triangle-hulls
+               (key-place (inc firstcol)    cornerrow  short-post-bl)
+               (thumb-r-place  short-post-tr)
+               (thumb-ur-place  short-post-br)
            ) (color RED) )
 
       (->> (triangle-hulls
@@ -1446,14 +1468,14 @@ need to adjust for difference for thumb-z only"
       (->> (triangle-hulls
                (key-place firstcol    (dec cornerrow)  web-post-br)
                (thumb-ur-place  upper-fat-web-post-tr-lower)
-               (key-place (inc firstcol)    cornerrow  plate-post-tl)
+               (key-place (inc firstcol)    cornerrow  short-post-tl)
                (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
                (key-place firstcol    (dec cornerrow)  web-post-br)
            ) (color BLU) )
 
       (->> (triangle-hulls
-               (key-place (inc firstcol)    cornerrow  plate-post-tl)
-               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+               (key-place (inc firstcol)    cornerrow  short-post-tl)
+               (key-place (inc firstcol)    (dec cornerrow)  short-post-bl)
                (thumb-ur-place  (case-br fat-web-post-br))
            ) (color BLU) )
 
@@ -3345,6 +3367,8 @@ need to adjust for difference for thumb-z only"
             ;(difference (model-case-walls-right true))
 			;(union usb-holder usb-holder-cutout usb-holder-space)
             (model-switch-plates-right true)
+            ; (union plate-post-br short-post-bl)
+            ; (debug (single-plate false))
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
