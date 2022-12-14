@@ -2687,6 +2687,9 @@ need to adjust for difference for thumb-z only"
 (def sensor-cable-out-clearance 23.5)
 (def sensor-cable-below-clearance 2.00)
 
+(def sensor-case-wall-thickness 2.00)
+(def sensor-case-clearance 0.3)
+
 (def buffer-dist 0.5)
 
 (def trackswitch-cover-clearance 2)
@@ -2778,8 +2781,8 @@ need to adjust for difference for thumb-z only"
 
 (def rotated-bottom-trim     (sensor-hole-angle
                                bottom-trim))
-(def sensor-shape     (sensor-hole-angle (translate (map + bottom-trim-origin [0 (- (/ sensor-cable-below-clearance 2)) (- (/ trim 2) sensor-height )])
-                               (cube sensor-length (+ sensor-width sensor-cable-below-clearance) (* sensor-height 2)))))
+(def sensor-cutout     (let [wall-thickness (+ sensor-case-wall-thickness sensor-case-clearance)] (sensor-hole-angle (translate (map + bottom-trim-origin [(/ wall-thickness 2) (- (/ wall-thickness 2)) (- (/ trim 2) sensor-height)])
+                               (cube (+ sensor-length wall-thickness) (+ sensor-width wall-thickness) (* sensor-height 2))))))
 
 (defn filler-rotate [p] (
                          ->> p
@@ -2855,35 +2858,36 @@ need to adjust for difference for thumb-z only"
 )
 
 (def trackball-mount
-   (difference
-    (union
-     (difference (union (trackswitch-place trackswitch-offset-x-rot (union
-       ;trackswitch-mount
-       (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
-            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
-       )
-       (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
-            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
-       )
+  (difference
+    (union 
+      (trackswitch-place trackswitch-offset-x-rot (union
+        ;trackswitch-mount
+        (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+             (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
+        )
+        (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+             (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
+        )
 
-       (->> (trackswitch-cover-insert cover-insert-total-rad (+ trackswitch-cover-insert-height trackswitch-cover-clearance))
-            (translate [(- (/ mount-height 2) cover-insert-total-rad) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
-       )
-       (->> (trackswitch-cover-insert cover-insert-total-rad (+ trackswitch-cover-insert-height trackswitch-cover-clearance))
-            (translate [(- cover-insert-total-rad (/ mount-height 2)) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
-       )
-     ))
-       (union (union 
-         (trackball-mount-rotate cup)
-         (filler-rotate cup)
-       ))
-     )
-     ; Subtract out the bottom trim clearing a hole for the sensor
-     rotated-bottom-trim
-     )
-    ;sensor-holder-outer
+        (->> (trackswitch-cover-insert cover-insert-total-rad (+ trackswitch-cover-insert-height trackswitch-cover-clearance))
+             (translate [(- (/ mount-height 2) cover-insert-total-rad) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
+        )
+        (->> (trackswitch-cover-insert cover-insert-total-rad (+ trackswitch-cover-insert-height trackswitch-cover-clearance))
+             (translate [(- cover-insert-total-rad (/ mount-height 2)) 0 (- trackswitch-mount-top-offset trackswitch-cover-clearance)])
+        )
+      ))
+
+      (trackball-mount-rotate cup)
+      (filler-rotate cup)
     )
 
+    ; Subtract out the bottom trim clearing a hole for the sensor
+    rotated-bottom-trim
+  )
+)
+
+(def trackball-cutout
+   (union
     (union
       (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
@@ -2903,6 +2907,7 @@ need to adjust for difference for thumb-z only"
            (trackswitch-place trackswitch-offset-x-rot)
       )
     )
+
     ; subtract out room for the axels
     rotated-dowells
     (sensor-hole-angle sensor-holder-outer)
@@ -3022,19 +3027,20 @@ need to adjust for difference for thumb-z only"
                          top-screw-block-outers
                          (when (= controller-holder 2) pcb-holder-screw-post)
                   )
-                  (usb-holder-shift (if mirror-internals (mirror [0 0 0] usb-holder-space) usb-holder-space))
+                  (usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder-space (not mirror-internals))) (usb-holder-space (not mirror-internals))))
                   (when (not testing) (model-switch-plate-cutouts mirror-internals))
                   screw-insert-holes
                   top-screw-insert-holes
       )
-      (when testing (debug (usb-holder-shift (if mirror-internals (mirror [0 0 0] usb-holder) usb-holder))))
+      (when testing (debug (usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder (not mirror-internals))) (usb-holder (not mirror-internals))))))
     )
 )
 
 (defn model-case-walls-right [mirror-internals]
   ; (union
   (difference
-    (model-case-walls-right-base mirror-internals)
+    (union (model-case-walls-right-base mirror-internals))
+    (when (not mirror-internals) (shift-model (trackball-rotate (union trackball-cutout sensor-cutout))))
     (when (not testing) (union
       (when recess-bottom-plate
         (union
@@ -3081,7 +3087,7 @@ need to adjust for difference for thumb-z only"
             ))
             (key-places single-plate-cutout)
             (thumb-layout mirror-internals single-plate-cutout)
-            (trackball-rotate sensor-shape)
+            (trackball-rotate sensor-cutout)
           )
           (when (not testing) (key-places (single-plate mirror-internals)))
           (when use_flex_pcb_holder flex-pcb-holders)
@@ -3091,48 +3097,50 @@ need to adjust for difference for thumb-z only"
       )
       (when top-screw-insert-top-plate-bumps top-screw-insert-outers)
     )
+    (shift-model (trackball-rotate trackball-cutout))
     (when (not testing) (union
-    (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
-    (shift-model (union 
-      caps-cutout
-      (thumbcaps-cutout mirror-internals)
-      (thumb-key-cutouts mirror-internals)
-      (when (not (or use_hotswap_holder use_solderless)) 
-          (union key-space-below
-                thumb-space-below))
-      (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
-      (when use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
+      (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
+      (shift-model (union 
+        caps-cutout
+        (thumbcaps-cutout mirror-internals)
+        (thumb-key-cutouts mirror-internals)
+        (when (not (or use_hotswap_holder use_solderless)) 
+            (union key-space-below
+                  thumb-space-below))
+        (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
+        (when use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
     ))))
   )
 )
 
 (defn thumb-test [mirror-internals]
   (difference
-      (shift-model 
-        (union 
-          (difference 
-            (union
-              (trackball-wall true)
-              (thumb-wall mirror-internals true)
-              (thumb-connectors mirror-internals)
-              ;(color CYA connectors)
-            )
-            (thumb-layout mirror-internals single-plate-cutout)
-            (when (not mirror-internals) trackball-rotate sensor-shape)
+    (shift-model 
+      (union 
+        (difference 
+          (union
+            (trackball-wall true)
+            (thumb-wall mirror-internals true)
+            (thumb-connectors mirror-internals)
+            ;(color CYA connectors)
           )
-          (when (not testing) (thumb-layout mirror-internals (single-plate mirror-internals)))
-          (trackball-rotate trackball-mount)
+          (thumb-layout mirror-internals single-plate-cutout)
+          (when (not mirror-internals) trackball-rotate sensor-cutout)
         )
+        (when (not testing) (thumb-layout mirror-internals (single-plate mirror-internals)))
+        (trackball-rotate trackball-mount)
       )
+    )
     (when (not testing) (union
-    (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
-    (shift-model (union 
-      caps-cutout
-      (thumbcaps-cutout mirror-internals)
-      (thumb-key-cutouts mirror-internals)
-      (when (not (or use_hotswap_holder use_solderless)) 
-          (union thumb-space-below))
-      (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
+      (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
+      (shift-model (union 
+        (trackball-rotate trackball-cutout)
+        caps-cutout
+        (thumbcaps-cutout mirror-internals)
+        (thumb-key-cutouts mirror-internals)
+        (when (not (or use_hotswap_holder use_solderless)) 
+            (union thumb-space-below))
+        (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
     ))))
   )
 )
@@ -3158,7 +3166,7 @@ need to adjust for difference for thumb-z only"
       connectors
       ;(thumb-layout (single-plate mirror-internals))
       thumb-connectors
-      (union (difference (case-walls mirror-internals) usb-holder-space)
+      (union (difference (case-walls mirror-internals) (usb-holder-space (not mirror-internals)))
              ;screw-insert-holes) 
        screw-insert-outers))
     
@@ -3368,10 +3376,10 @@ need to adjust for difference for thumb-z only"
               ;usb-holder
               ;model-bottom-plate
             ;)
-            (difference (model-case-walls-right true))
+            ;(difference (model-case-walls-right false))
 			;(union usb-holder usb-holder-cutout usb-holder-space)
-			;(union usb-holder-space usb-holder)
-            ;(model-switch-plates-right true)
+			(union (usb-holder true))
+            ;(model-switch-plates-right false)
             ; (union plate-post-br short-post-bl)
             ; (debug (single-plate false))
 
