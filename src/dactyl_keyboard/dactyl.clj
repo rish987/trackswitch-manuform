@@ -2994,8 +2994,10 @@ need to adjust for difference for thumb-z only"
                          (when (= controller-holder 2) pcb-holder-screw-post)
                   )
                   (when (not testing) 
-                    (model-switch-plate-cutouts mirror-internals)
-                  usb-holder-space
+                    (union 
+                      (model-switch-plate-cutouts mirror-internals)
+                      usb-holder-space
+                    )
                   )
                   screw-insert-holes
                   top-screw-insert-holes
@@ -3340,8 +3342,9 @@ need to adjust for difference for thumb-z only"
               ;usb-holder
               ;model-bottom-plate
             ;)
-            (difference (model-case-walls-right true))
+            ;(difference (model-case-walls-right true))
 			;(union usb-holder usb-holder-cutout usb-holder-space)
+            (model-switch-plates-right true)
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
