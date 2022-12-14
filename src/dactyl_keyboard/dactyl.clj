@@ -149,8 +149,8 @@
 (def wall-xy-offset 1)
 (def wall-thickness 1)  ; wall thickness parameter
 
-(def thumb-pos [-17 -9 -13.5] )
-(def thumb-rot [0 -3 0] )
+(def thumb-pos [-10 -9 -13.5] )
+(def thumb-rot [0 -5 0] )
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;; General variables ;;
@@ -1377,35 +1377,35 @@ need to adjust for difference for thumb-z only"
     (when left (letfn
                  [
                    (case-post-br [shape] (translate (wall-locate1 1 -1 true) shape))
-                   (case-br [shape] (union (case-post-br shape) (translate [0 0 (- upper-case-out)] (case-post-br shape))))
+                   (case-br [shape] (union shape (case-post-br shape) (translate [0 0 (- upper-case-out)] (case-post-br shape))))
                  ]
     (union
       ; top one
       (->> (triangle-hulls
-               (thumb-u-place plate-post-bl)
-               (thumb-u-place plate-post-br)
+               (thumb-u-place fat-web-post-bl)
+               (thumb-u-place fat-web-post-br)
                (thumb-m-place plate-post-tl)
                (thumb-m-place plate-post-tr)
            ) (color GRE))
 
       (->> (triangle-hulls
-               (thumb-ur-place plate-post-bl)
-               (thumb-ur-place plate-post-br)
+               (thumb-ur-place fat-web-post-bl)
+               (thumb-ur-place fat-web-post-br)
                (thumb-r-place plate-post-tl)
                (thumb-r-place plate-post-tr)
            ) (color GRE))
 
       (->> (triangle-hulls
-               (thumb-u-place plate-post-br)
+               (thumb-u-place fat-web-post-br)
                (thumb-m-place plate-post-tr)
-               (thumb-ur-place plate-post-bl)
+               (thumb-ur-place fat-web-post-bl)
                (thumb-r-place plate-post-tl)
            ) (color RED))
 
       (->> (triangle-hulls
-               (thumb-u-place plate-post-br)
+               (thumb-u-place fat-web-post-br)
                (thumb-u-place plate-post-tr)
-               (thumb-ur-place plate-post-bl)
+               (thumb-ur-place fat-web-post-bl)
                (thumb-ur-place plate-post-tl)
            ) (color RED))
 
@@ -1413,7 +1413,7 @@ need to adjust for difference for thumb-z only"
                (key-place (inc firstcol)    cornerrow  plate-post-bl)
                (key-place (inc firstcol)    cornerrow  plate-post-tl)
                (thumb-r-place  plate-post-tr)
-               (thumb-ur-place  (case-br plate-post-br))
+               (thumb-ur-place  (case-br fat-web-post-br))
            ) (color RED) )
 
       (->> (triangle-hulls
@@ -1996,17 +1996,16 @@ need to adjust for difference for thumb-z only"
        ]
   (union 
     (key-wall-brace 3 real-lastrow 0   -1 fat-web-post-bl     3   real-lastrow 0.5 -1 fat-web-post-br border)
-    (key-wall-brace 3 real-lastrow 0.5 -1 fat-web-post-br 4 cornerrow 0.5 -1 fat-web-post-bl border)
+    (key-wall-brace 3 real-lastrow 0.5 -1 fat-web-post-br 4 cornerrow -1 0 fat-web-post-bl border)
+    (key-wall-brace 4 cornerrow -1 0 fat-web-post-bl 4 cornerrow 0 -1 fat-web-post-bl border)
     (for [x (range 4 (dec ncols))] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br border)) ; TODO fix extra wall
     (for [x (range 5 (dec ncols))] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br border))
-    (->> (if bottom-row
-        (wall-brace thumb-r-place 1 0 fat-web-post-br (partial key-place 3 lastrow) -1 0 web-post-bl border) 
+    (->> 
         (union 
           (wall-brace thumb-r-place 0 -1 fat-web-post-br thumb-r-place 1 0 fat-web-post-br border) ; corner
           (wall-brace thumb-r-place 1 0 fat-web-post-br thumb-r-place 1 0 fat-web-post-tr border) 
-          (wall-brace thumb-r-place 1 0 fat-web-post-tr (partial key-place 3 real-lastrow) -1 0 fat-web-post-bl border) 
+          (wall-brace thumb-r-place 1 0 fat-web-post-tr (partial key-place 3 real-lastrow) -1 -1 fat-web-post-bl border) 
         )
-      )
       (color RED)
     )
   ))
@@ -2996,7 +2995,7 @@ need to adjust for difference for thumb-z only"
                   )
                   (when (not testing) 
                     (model-switch-plate-cutouts mirror-internals)
-                  (controller-holder usb-holder-space)
+                  usb-holder-space
                   )
                   screw-insert-holes
                   top-screw-insert-holes
@@ -3295,7 +3294,7 @@ need to adjust for difference for thumb-z only"
 ;;         )))
 ;
 
-(when (not testing) 
+(when (not testing)
   (spit "things/switch-plates-right.scad"
         (write-scad (model-switch-plates-right false)))
   (spit "things/case-walls-right.scad"
@@ -3338,14 +3337,14 @@ need to adjust for difference for thumb-z only"
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
             ;(debug
             ;;(color BLU
-              usb-holder
-              ;(difference (model-case-walls-right true) (model-switch-plates-right true))
+              ;usb-holder
               ;model-bottom-plate
             ;)
+            (difference (model-case-walls-right true))
+			;(union usb-holder usb-holder-cutout usb-holder-space)
 
             ;(model-right false)
 			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			;(union (translate [0 0 0] (model-switch-plates-right true)))
 			;(color YEL (shift-model (translate thumborigin (cylinder 10 30))))
             ;(sa-cap-cutout 1)
             ;(union

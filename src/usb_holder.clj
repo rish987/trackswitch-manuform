@@ -47,7 +47,7 @@
 (def ardumicro-usb-protrude 1.4)
 (def ardumicro-usb-width (+ 7.8 clearance))
 (def ardumicro-usb-height (+ 2.8 clearance))
-(def ardumicro-usb-z-offset 0.95)
+(def ardumicro-usb-z-offset (+ 0.95 0.65))
 (def ardumicro-usb-interface-thickness 1)
 (def ardumicro-usb-cable-width (+ 11.10 clearance))
 (def ardumicro-usb-cable-height (+ 7.00 clearance))
@@ -56,7 +56,7 @@
 (def trrs-length (+ 12.08 clearance))
 (def trrs-height ardumicro-height)
 (def trrs-rad (+ 2.50 clearance))
-(def trrs-protrude 2.20)
+(def trrs-protrude 2.10)
 
 (def angle-cutout-offset 1)
 (def angle-cutout-angle 7)
