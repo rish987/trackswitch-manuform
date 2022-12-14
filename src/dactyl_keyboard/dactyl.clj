@@ -6,8 +6,8 @@
             [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
-;(def testing true)
-(def testing false)
+(def testing true)
+;(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -20,6 +20,9 @@
 
 (defn rotate-z [angle shape]
   (rotate angle [0 0 1] shape))
+
+(def usb-holder-z-rotate 2.2)
+(def usb-holder-offset [-13 -5.43 0])
 
 (defn rotate-around-x [angle position]
   (mmul
@@ -2210,7 +2213,7 @@ need to adjust for difference for thumb-z only"
 (defn screw-insert-all-shapes [bottom-radius top-radius height]
   (union 
     (->> (screw-insert ROUND-RES 0 2             1 bottom-radius top-radius height [ -3   4.50 screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-3.25  5    screw-insert-bottom-offset]) (color PIN)) ; left
+    ;(->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-3.25  5    screw-insert-bottom-offset]) (color PIN)) ; left FIXME
     ;(->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-13 6    screw-insert-bottom-offset]) (color NBL)) ; trackball
     (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-l-move [-2.5 -4.5 0])) (color BRO)) ; thumb
     (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height [ 3  5  screw-insert-bottom-offset]) (color PUR)) ; top right
@@ -3007,6 +3010,10 @@ need to adjust for difference for thumb-z only"
   )
 )
 
+(defn usb-holder-shift [shape] (let [orig-position (shift-model-position (key-position firstcol (dec firstrow) [0 0 0])) 
+                                    position (map + usb-holder-offset [(first orig-position) (second orig-position) 0])] 
+  (translate position (rotate-z (deg2rad usb-holder-z-rotate) shape))))
+
 (defn model-case-walls-right-base [mirror-internals]
     (union
       (when use_flex_pcb_holder flex-pcb-holders)
@@ -3015,15 +3022,12 @@ need to adjust for difference for thumb-z only"
                          top-screw-block-outers
                          (when (= controller-holder 2) pcb-holder-screw-post)
                   )
-                  (when (not testing) 
-                    (union 
-                      (model-switch-plate-cutouts mirror-internals)
-                      usb-holder-space
-                    )
-                  )
+                  (usb-holder-shift (if mirror-internals (mirror [0 0 0] usb-holder-space) usb-holder-space))
+                  (model-switch-plate-cutouts mirror-internals)
                   screw-insert-holes
                   top-screw-insert-holes
       )
+      (when testing (debug (usb-holder-shift (if mirror-internals (mirror [0 0 0] usb-holder) usb-holder))))
     )
 )
 
@@ -3364,9 +3368,10 @@ need to adjust for difference for thumb-z only"
               ;usb-holder
               ;model-bottom-plate
             ;)
-            ;(difference (model-case-walls-right true))
+            (difference (model-case-walls-right true))
 			;(union usb-holder usb-holder-cutout usb-holder-space)
-            (model-switch-plates-right true)
+			;(union usb-holder-space usb-holder)
+            ;(model-switch-plates-right true)
             ; (union plate-post-br short-post-bl)
             ; (debug (single-plate false))
 

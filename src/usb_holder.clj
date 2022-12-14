@@ -7,19 +7,10 @@
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
-(def usb-holder-z-rotate 1.5)
 (def usb-holder-clearance 0.3)
 (def usb-holder-bottom-offset 
     (/ usb-holder-clearance 2)
 )
-(def usb-holder-offset-coordinates
-    [-16 49.75 usb-holder-bottom-offset])
-
-(defn usb-holder-place [shape]
-  (->> shape
-       (translate usb-holder-offset-coordinates)
-       (rotate (deg2rad usb-holder-z-rotate) [0 0 1])
-  ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder ;;
@@ -76,6 +67,7 @@
 (def reset-rad (+ (/ 6.75 2) clearance))
 
 (def total-height (+ reset-ardumicro-tare ardumicro-extra-height))
+(def cutout-height (+ total-height (* 2 usb-holder-clearance)))
 
 (def ardumicro-total-height (+ ardumicro-height ardumicro-extra-height))
 
@@ -86,11 +78,11 @@
                            (translate [(/ ardumicro-mountholes-width 2) (/ ardumicro-mountholes-length 2) (+ (/ ardumicro-mountholes-height 2) ardumicro-extra-height)] (with-fn 64 (cylinder ardumicro-mountholes-rad ardumicro-mountholes-height)))
                          )))
 
-(def mount-base (translate [(- (+ trrs-width (* mount-insert-depth 2))) (fb-wall-adj ardumicro-length) (- total-height)] (difference 
+(defn mount-base [cutout] (let [total-height (if cutout cutout-height total-height)] (translate [(if cutout 0 (- (+ trrs-width (* mount-insert-depth 2)))) (fb-wall-adj ardumicro-length) (- total-height)] (difference 
                            (translate [0 0 0] (cube mount-width mount-thickness total-height :center false))
                            (translate [0 (/ (- mount-thickness mount-insert-thickness) 2) 0] (cube mount-insert-depth mount-insert-thickness total-height :center false))
                            (translate [(- mount-width mount-insert-depth) (/ (- mount-thickness mount-insert-thickness) 2) 0] (cube mount-insert-depth mount-insert-thickness total-height :center false))
-                         )))
+                         ))))
 
 (defn ardumicro-place [shape] (translate [0 0 (- total-height)] shape))
 (def ardumicro-mountholes (ardumicro-place (union
@@ -166,25 +158,28 @@
                   ))
 
 
-(def mount (difference mount-base trrs-cutout trrs-hole-cutout ardumicro-hole-cutout ardumicro-usb-cutout reset-cutout))
+(def mount (difference (mount-base false) trrs-cutout trrs-hole-cutout ardumicro-hole-cutout ardumicro-usb-cutout reset-cutout))
 
-(def usb-holder (union (difference (union mount trrs-holder ardumicro-holder) angle-cutout) ardumicro-mountholes))
+(defn usb-holder-shift [shape] (translate [(+ trrs-width (* mount-insert-depth 2)) (- (+ (fb-wall-adj ardumicro-length) mount-thickness)) (+ total-height usb-holder-bottom-offset)] shape))
+(defn usb-holder-space-shift [shape] (translate [0 (- (+ (fb-wall-adj ardumicro-length) mount-thickness)) 0] shape))
+(def usb-holder (usb-holder-shift (union (difference (union mount trrs-holder ardumicro-holder) angle-cutout) ardumicro-mountholes)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder Cutout ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(def usb-holder-cutout-stl (import "../things/usb_holder_vertical_cutout.stl"))
+(def usb-holder-cutout-height cutout-height)
+(def body-cutout (translate [0 0 (- cutout-height)] (cube mount-width (fb-wall-adj ardumicro-length) cutout-height :center false)))
 
-(def usb-holder-cutout-height (+ 15 usb-holder-clearance))
+(def usb-holder-cutout' (usb-holder-space-shift (union (union (mount-base true) body-cutout))))
 
-(def usb-holder-cutout (usb-holder-place
+(def usb-holder-cutout 
       (extrude-linear {:height usb-holder-cutout-height :twist 0 :convexity 0}
         (offset usb-holder-clearance (project
-            (scale [1.001 1 1] usb-holder-cutout-stl)
+            (scale [1.001 1 1] usb-holder-cutout')
           )
         )
-      )))
+      ))
 
 (def usb-holder-cutout-bottom-offset (/ usb-holder-cutout-height 2))
 
