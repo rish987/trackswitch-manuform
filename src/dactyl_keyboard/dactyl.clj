@@ -136,6 +136,62 @@
                   (>= column 5) [0 -12.5  6  ] ;;pinky outer
                   :else [0 0 0]))
 
+(defn below-rot [column] (cond
+                  (= column 1)  180 ;;index
+                  (= column 2)  180 ;;middle
+                  (= column 3)  180 ;;ring
+                  :else 0))
+
+(defn below-extra-dist [column] (cond
+                  (= column 1)  2 ;;index
+                  (= column 2)  2 ;;middle
+                  (= column 3)  2 ;;ring
+                  :else 0))
+
+(defn below-x-rot [column] (cond
+                  (= column 1)  (- 20) ;;index
+                  (= column 2)  (- 20) ;;middle
+                  (= column 3)  (- 20) ;;ring
+                  :else 0))
+
+
+(defn above-rot [column] (cond
+                  (= column 0)  45 ;;index outer
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
+                  (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
+                  :else 0))
+
+(defn above-extra-dist [column] (cond
+                  (= column 0)  12.55 ;;index outer
+                  (= column 1)  7.2 ;;index
+                  (= column 2)  7.2 ;;middle
+                  (= column 3)  3.4 ;;ring
+                  (= column 4)  1.9 ;;pinky
+                  :else 0))
+
+(defn above-z-off [column] (cond
+                  (= column 0)  9.5 ;;index outer
+                  (= column 1)  6.2 ;;index
+                  (= column 2)  3 ;;middle
+                  (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
+                  :else 0))
+
+(defn above-x-rot [column] (cond
+                  (= column 0)  (- 27) ;;index outer
+                  (= column 1)  (- 25) ;;index
+                  (= column 2)  (- 20) ;;middle
+                  (= column 3)  (- 20) ;;ring
+                  (= column 4)  (- 20) ;;pinky
+                  :else 0))
+
+(def g-rot 100)
+(def g-extra-dist 3.4)
+(def g-x-off 2.65)
+(def g-x-rot -20)
+
 (def keyboard-z-offset 25.5)  ; controls overall height
 
 (def  extra-x 2)         ; extra horizontal space between the base of keys
@@ -792,7 +848,7 @@
 (def columns' (range firstcol lastcol))
 (def rows (range firstrow (inc lastrow)))
 
-(defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn column row shape]
+(defn apply-key-geometry' [translate-fn rotate-x-fn rotate-y-fn column row shape]
   (let [; begin wonky code to handle tilted outer columns
         extra-row-tilt (if (> tilt-outer-columns 0)
                                 (case column
@@ -897,10 +953,65 @@
          ;(translate-fn [0 0 keyboard-z-offset])
          )))
 
+(def homerow 2)
+
+; distance from top of plate to top of keycap
+(def key-top-dist sa-height2)
+
+; distance from center of keycap to top edge of keycap
+(def key-edge-dist (/ sa-length2 2))
+
+(defn key-upper-place'' [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn extra-dist x-off z-off x-rot z-rot shape] (->> shape
+  (rotate-x-fn (deg2rad 90))
+  (translate-fn [0 (+ plate-thickness key-top-dist) key-edge-dist])
+  (translate-fn [x-off 0 0])
+  (rotate-x-fn (deg2rad x-rot))
+  (translate-fn [0 (+ key-edge-dist extra-dist) (+ plate-thickness key-top-dist)])
+  (translate-fn [0 0 z-off])
+  (rotate-z-fn (deg2rad z-rot))
+))
+
+(defn key-upper-place' [extra-dist x-off z-off x-rot z-rot shape] 
+  (key-upper-place'' translate rotate-x rotate-y rotate-z extra-dist x-off z-off x-rot z-rot shape)
+)
+
+(defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape] (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape))
+(defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape]
+  (if (and (or (= row homerow) (and (= row 3) (= column 4))) (not (and (= row homerow) (= column 0))))
+    (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape)
+    (if (and (= row homerow) (= column 0))
+      (->> 
+           (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn g-extra-dist g-x-off 0 g-x-rot g-rot shape)
+           (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
+      )
+      (if (= row 1) 
+        (if (= column 0) 
+          (->> 
+               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) 0 (above-z-off column) (above-x-rot column) (above-rot column) shape)
+               (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
+          )
+          (->> 
+               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) 0 (above-z-off column) (above-x-rot column) (above-rot column) shape)
+               (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
+          )
+        )
+        (when (= row 3)
+          (->> 
+              (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-x-rot column) (below-rot column) shape)
+              (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
+          )
+        )
+      )
+    )
+  )
+)
+
+
 (defn key-place [column row shape]
   (apply-key-geometry translate
                       rotate-x
                       rotate-y
+                      rotate-z
                       column row shape))
 
 (defn shift-model [model] (->> model
@@ -913,8 +1024,11 @@
 
 (defn key-place-shifted [column row shape] (shift-model (key-place column row shape)))
 
+(defn key-position-orig [column row position]
+  (apply-key-geometry' (partial map +) rotate-around-x rotate-around-y column row position))
+
 (defn key-position [column row position]
-  (apply-key-geometry (partial map +) rotate-around-x rotate-around-y column row position))
+  (apply-key-geometry (partial map +) rotate-around-x rotate-around-y rotate-around-z column row position))
 
 (def caps
     (apply union
@@ -1070,7 +1184,7 @@
 ;;;;;;;;;;;;
 
 (def thumborigin
-  (map + (key-position 1 cornerrow [(/ mount-width 2) 
+  (map + (key-position-orig 1 cornerrow [(/ mount-width 2) 
                                     (- (/ mount-height 2)) 
                                     0])
        thumb-pos))
@@ -1303,50 +1417,34 @@ need to adjust for difference for thumb-z only"
 (def thumb-l-rot [ 6  -5   25])
 (def thumb-l-move [-43 -23.5 -11.5])
 
-; distance from top of plate to top of keycap
-(def key-top-dist sa-height2)
-
-; distance from center of keycap to top edge of keycap
-(def key-edge-dist (/ sa-length2 2))
-
 (def thumb-upper-x-rot (- 20.00))
 
 (def key-upper-extra-dist 4.2)
 
-(defn key-upper-place' [shape extra-dist x-off z-off x-rot z-rot] (->> shape
-  (rotate-x (deg2rad 90))
-  (translate [0 (+ plate-thickness key-top-dist) key-edge-dist])
-  (translate [x-off 0 0])
-  (rotate-x (deg2rad x-rot))
-  (translate [0 (+ key-edge-dist extra-dist) (+ plate-thickness key-top-dist)])
-  (translate [0 0 z-off])
-  (rotate-z (deg2rad z-rot))
-))
+(defn key-upper-place [x-rot z-rot shape] (key-upper-place' key-upper-extra-dist 0 0 x-rot z-rot shape))
 
-(defn key-upper-place [shape x-rot z-rot] (key-upper-place' shape key-upper-extra-dist 0 0 x-rot z-rot))
-
-(defn thumb-upper-place [shape] (key-upper-place shape thumb-upper-x-rot 0))
+(defn thumb-upper-place [shape] (key-upper-place thumb-upper-x-rot 0 shape))
 
 (def thumb-u-z-rot 54)
 (def thumb-u-z-off (- 1.5))
 (def thumb-u-x-off (- 3))
 (def thumb-u-x-rot (- 27.00))
 (def thumb-u-extra-dist 4.5)
-(defn thumb-u-uplace [shape] (key-upper-place' shape thumb-u-extra-dist thumb-u-x-off thumb-u-z-off thumb-u-x-rot thumb-u-z-rot))
+(defn thumb-u-uplace [shape] (key-upper-place' thumb-u-extra-dist thumb-u-x-off thumb-u-z-off thumb-u-x-rot thumb-u-z-rot shape))
 
 (def thumb-ub-z-rot 105)
 (def thumb-ub-z-off (- 1.5))
 (def thumb-ub-x-off (- 10))
 (def thumb-ub-x-rot (- 27.00))
 (def thumb-ub-extra-dist 8.5)
-(defn thumb-ub-uplace [shape] (key-upper-place' shape thumb-ub-extra-dist thumb-ub-x-off thumb-ub-z-off thumb-ub-x-rot thumb-ub-z-rot))
+(defn thumb-ub-uplace [shape] (key-upper-place' thumb-ub-extra-dist thumb-ub-x-off thumb-ub-z-off thumb-ub-x-rot thumb-ub-z-rot shape))
 
 (def thumb-urr-z-rot (- 75))
 
 ; convexer
 (defn thumb-r-place [shape] (thumb-place thumb-r-rot thumb-r-move shape)) ; right
 (defn thumb-ur-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-upper-place shape))) ; upper-right
-(defn thumb-urr-place [shape] (thumb-place thumb-r-rot thumb-r-move (key-upper-place shape thumb-upper-x-rot thumb-urr-z-rot))) ; upper-right right
+(defn thumb-urr-place [shape] (thumb-place thumb-r-rot thumb-r-move (key-upper-place thumb-upper-x-rot thumb-urr-z-rot shape))) ; upper-right right
 (defn thumb-m-place [shape] (thumb-place thumb-m-rot thumb-m-move shape)) ; middle
 (defn thumb-u-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-u-uplace shape))) ; upper-right left
 (defn thumb-ub-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-ub-uplace shape))) ; upper-right back
@@ -1355,7 +1453,7 @@ need to adjust for difference for thumb-z only"
 ; convexer
 (defn thumb-r-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move shape))
 (defn thumb-ur-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-upper-place shape)))
-(defn thumb-urr-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (key-upper-place shape thumb-upper-x-rot thumb-urr-z-rot)))
+(defn thumb-urr-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (key-upper-place thumb-upper-x-rot thumb-urr-z-rot shape)))
 (defn thumb-m-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-m-rot thumb-m-move shape))
 (defn thumb-u-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-u-uplace shape)))
 (defn thumb-ub-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-ub-uplace shape)))
@@ -3515,7 +3613,9 @@ need to adjust for difference for thumb-z only"
               ;model-bottom-plate
             ;)
             (union ;(union (model-case-walls-right true)) 
-                   (union (model-switch-plates-right true))
+                   ;(union (model-switch-plates-right true))
+                   caps-cutout
+                   (thumbcaps-cutout true)
             )
 			;(union usb-holder usb-holder-cutout usb-holder-space)
 			;(union (usb-holder true))
