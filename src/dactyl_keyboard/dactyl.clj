@@ -136,7 +136,7 @@
                   (>= column 5) [0 -12.5  6  ] ;;pinky outer
                   :else [0 0 0]))
 
-(defn below-rot [column] (cond
+(defn below-rot [column] (cond ;; FIXME
                   (= column 1)  180 ;;index
                   (= column 2)  180 ;;middle
                   (= column 3)  180 ;;ring
@@ -149,11 +149,16 @@
                   :else 0))
 
 (defn below-x-rot [column] (cond
-                  (= column 1)  (- 20) ;;index
-                  (= column 2)  (- 20) ;;middle
-                  (= column 3)  (- 20) ;;ring
+                  (= column 1)  (- 30) ;;index
+                  (= column 2)  (- 30) ;;middle
+                  (= column 3)  (- 30) ;;ring
                   :else 0))
 
+(defn below-z-rot [column] (cond
+                  (= column 1)  180 ;;index
+                  (= column 2)  180 ;;middle
+                  (= column 3)  180 ;;ring
+                  :else 0))
 
 (defn above-rot [column] (cond
                   (= column 0)  45 ;;index outer
@@ -164,33 +169,58 @@
                   :else 0))
 
 (defn above-extra-dist [column] (cond
-                  (= column 0)  12.55 ;;index outer
-                  (= column 1)  7.2 ;;index
-                  (= column 2)  7.2 ;;middle
-                  (= column 3)  3.4 ;;ring
-                  (= column 4)  1.9 ;;pinky
+                  (= column 0)  5.5 ;;index outer
+                  (= column 1)  2 ;;index
+                  (= column 2)  3 ;;middle
+                  (= column 3)  2 ;;ring
+                  (= column 4)  2 ;;pinky
+                  :else 0))
+
+(defn above-z-rot [column] (cond
+                  (= column 0)  -22 ;;index outer
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
+                  (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
+                  :else 0))
+
+(defn above-x-off [column] (cond
+                  (= column 0)  -3.5 ;;index outer
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
+                  (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
                   :else 0))
 
 (defn above-z-off [column] (cond
-                  (= column 0)  9.5 ;;index outer
-                  (= column 1)  6.2 ;;index
-                  (= column 2)  3 ;;middle
+                  (= column 0)  3.7 ;;index outer
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
                   (= column 4)  0 ;;pinky
                   :else 0))
 
 (defn above-x-rot [column] (cond
                   (= column 0)  (- 27) ;;index outer
-                  (= column 1)  (- 25) ;;index
-                  (= column 2)  (- 20) ;;middle
-                  (= column 3)  (- 20) ;;ring
-                  (= column 4)  (- 20) ;;pinky
+                  (= column 1)  (- 30) ;;index
+                  (= column 2)  (- 30) ;;middle
+                  (= column 3)  (- 30) ;;ring
+                  (= column 4)  (- 30) ;;pinky
                   :else 0))
 
-(def g-rot 100)
-(def g-extra-dist 3.4)
-(def g-x-off 2.65)
-(def g-x-rot -20)
+(def g-rot 110)
+(def g-extra-dist 3.9)
+(def g-x-off -0.4)
+(def g-x-rot (- 30))
+(def g-z-off -1)
+(def g-z-rot (+ 0 (+ 10))) ; FIXME
+
+(def p-rot (- 105))
+(def p-extra-dist 3.9)
+(def p-x-off 1)
+(def p-x-rot (- 20))
+(def p-z-off 0)
+(def p-z-rot (+ 90 (- 15))) ; FIXME
 
 (def keyboard-z-offset 25.5)  ; controls overall height
 
@@ -716,6 +746,8 @@
 
 (defn single-plate [mirror-internals] (single-plate' mirror-internals false))
 
+(defn single-plate-cutout' [thickness] (translate [0 0 (/ thickness 2)] (cube (+ keyswitch-width single-plate-wall-thickness) (+ keyswitch-height single-plate-wall-thickness) thickness)))
+
 (def single-plate-cutout (translate [0 0 (/ (* plate-thickness 1) 2)] (cube (+ keyswitch-width single-plate-wall-thickness) (+ keyswitch-height single-plate-wall-thickness) (* plate-thickness 1))))
 
 (def single-plate-blank
@@ -961,7 +993,8 @@
 ; distance from center of keycap to top edge of keycap
 (def key-edge-dist (/ sa-length2 2))
 
-(defn key-upper-place'' [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn extra-dist x-off z-off x-rot z-rot shape] (->> shape
+(defn key-upper-place'' [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn extra-dist x-off z-off init-z-rot x-rot z-rot shape] (->> shape
+  (rotate-z-fn (deg2rad init-z-rot))
   (rotate-x-fn (deg2rad 90))
   (translate-fn [0 (+ plate-thickness key-top-dist) key-edge-dist])
   (translate-fn [x-off 0 0])
@@ -972,32 +1005,39 @@
 ))
 
 (defn key-upper-place' [extra-dist x-off z-off x-rot z-rot shape] 
-  (key-upper-place'' translate rotate-x rotate-y rotate-z extra-dist x-off z-off x-rot z-rot shape)
+  (key-upper-place'' translate rotate-x rotate-y rotate-z extra-dist x-off z-off 0 x-rot z-rot shape)
 )
 
 (defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape] (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape))
 (defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape]
-  (if (and (or (= row homerow) (and (= row 3) (= column 4))) (not (and (= row homerow) (= column 0))))
+  (if (and (or (= row homerow) (and (= row 3) (= column 4))) (not (and (= row homerow) (or (= column 0) (= column 5)))))
     (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape)
-    (if (and (= row homerow) (= column 0))
-      (->> 
-           (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn g-extra-dist g-x-off 0 g-x-rot g-rot shape)
-           (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
+    (if (= row homerow)
+      (if (= column 0)
+        (->> 
+             (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn g-extra-dist g-x-off g-z-off g-z-rot g-x-rot g-rot shape)
+             (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
+        )
+        ; column 5
+        (->> 
+             (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn p-extra-dist p-x-off p-z-off p-z-rot p-x-rot p-rot shape)
+             (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 4 homerow)
+        )
       )
       (if (= row 1) 
         (if (= column 0) 
           (->> 
-               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) 0 (above-z-off column) (above-x-rot column) (above-rot column) shape)
+               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) (above-x-off column) (above-z-off column) (above-z-rot column) (above-x-rot column) (above-rot column) shape)
                (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
           )
           (->> 
-               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) 0 (above-z-off column) (above-x-rot column) (above-rot column) shape)
+               (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) (above-x-off column) (above-z-off column) (above-z-rot column) (above-x-rot column) (above-rot column) shape)
                (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
           )
         )
         (when (= row 3)
           (->> 
-              (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-x-rot column) (below-rot column) shape)
+              (key-upper-place'' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-z-rot column) (below-x-rot column) (below-rot column) shape)
               (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
           )
         )
@@ -1114,6 +1154,8 @@
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5))])
                                       ))
 
+(def upper-post-offset 9) ; amount of clearance to insert hotswap behind vertical keys
+
 (def short-post-adj (/ short-post-size 2))
 
 (def short-post-tr (translate [(- (/ mount-width  2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post))
@@ -1138,12 +1180,29 @@
 (def fat-web-post (->> fat-web-post'
                        (translate [0 0 (+ (/ web-thickness -2)
                                           plate-thickness)])))
-(def upper-post-offset 9)
+
+(def upper-fat-web-post-bot-lower-z-off (- (+ (- (/ web-thickness 1)) plate-thickness (/ fat-post-size 2))))
+(def upper-fat-web-post-bot-lower-y-off (/ mount-height -2))
+
+(def upper-behind-cutout 
+    (let [post-offset upper-fat-web-post-bot-lower-z-off post-width fat-post-size width (- upper-post-offset post-offset post-width)] 
+    (union
+      (translate [0 0 (- (+ post-offset (/ post-width 2)))]
+       (single-plate-cutout' (+ post-offset (/ post-width 2))))
+      (translate [0 (+ (- (/ web-thickness 2)) upper-fat-web-post-bot-lower-y-off) (- (- (/ width 2)) (+ post-offset (/ post-width 2)))]
+       (cube (- mount-width (* 2 fat-post-size)) web-thickness width))
+      (translate [0 (- (/ single-plate-wall-thickness 2)) (- (- (/ width 2)) (+ post-offset (/ post-width 2)))]
+       (cube (- mount-width (* 2 fat-post-size)) (+ keyswitch-height single-plate-wall-thickness single-plate-wall-thickness) width))
+    )
+  )
+)
+
 
 (def upper-fat-web-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (+ (- (/ web-thickness 2)) 0)] fat-web-post')))
 (def upper-fat-web-post-bot (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
 (def upper-fat-web-post-bot-out (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
-(def upper-fat-web-post-bot-lower (rotate-x (deg2rad (- 90)) (translate [0 (- (+ (- (/ web-thickness 1)) plate-thickness (/ fat-post-size 2))) (- (/ web-thickness 2))] fat-web-post')))
+
+(def upper-fat-web-post-bot-lower (rotate-x (deg2rad (- 90)) (translate [0 upper-fat-web-post-bot-lower-z-off (- (/ web-thickness 2))] fat-web-post')))
 
 (def fat-post-adj (/ fat-post-size 2))
 (def fat-web-post-tr (translate [(- (/ mount-width  2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
@@ -1473,6 +1532,18 @@ need to adjust for difference for thumb-z only"
     )
     ;(thumb-l-place shape)
     ))
+
+(defn upper-layout [left shape]
+  (union
+    (key-place 0 2 shape)
+    (when left (union
+      (thumb-u-place shape)
+      (thumb-ur-place shape)
+      (thumb-ub-place shape)
+    ))
+    (thumb-urr-place shape)
+    ;(thumb-l-place shape)
+  ))
 
 (defn thumbcaps [left] (thumb-layout left
                    (if rendered-caps
@@ -2201,18 +2272,22 @@ need to adjust for difference for thumb-z only"
 
 
 (defn left-wall [left border]
+  (let [key-place' (if border key-place key-place-shifted)]
   (union 
     ; left-back-corner
     (->> (key-wall-brace firstcol firstrow 0 1 web-post-tl firstcol firstrow -1 0 web-post-tl border)
          (color GRE))
     ; (key-wall-brace  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
 
-    (for [y (range firstrow (dec lastrow))] (key-wall-brace firstcol      y  -1 0 web-post-tl firstcol y -1 0 web-post-bl border))
-    (for [y (range (inc firstrow) (if track-ball (dec lastrow) (lastrow)))] (key-wall-brace firstcol (dec y) -1 0 web-post-bl firstcol y -1 0 web-post-tl border))
+    ;(for [y (range firstrow (- lastrow 2))] (key-wall-brace firstcol      y  -1 0 web-post-tl firstcol y -1 0 web-post-bl border))
+    ;(for [y (range (inc firstrow) (- lastrow 2))] (key-wall-brace firstcol (dec y) -1 0 web-post-bl firstcol y -1 0 web-post-tl border))
+    (->> (wall-brace-upper (partial key-place' firstcol 1)  -1  0 upper-fat-web-post-tl-lower (partial key-place' firstcol 1)  0 0 upper-fat-web-post-bl-lower border) (color YEL))
+    ;(->> (wall-brace-upper (partial key-place' firstcol 1)  -1  0 upper-fat-web-post-bl-lower (partial key-place' firstcol 2)  0 0 upper-fat-web-post-br-lower border) (color YEL))
+    ;(->> (wall-brace-upper (partial key-place' firstcol 2)  -1  0 upper-fat-web-post-br-lower (partial key-place' firstcol 2)  -1  0 upper-fat-web-post-tr-lower border) (color YEL))
 
     (if left 
       (when border
-        (->> (wall-brace'' (partial (if border key-place key-place-shifted) firstcol (- lastrow 2))  -1  0 web-post-bl false true false (partial thumb-ur-place' border)  -1  0 upper-fat-web-post-tl-lower true false false) (color BRO))
+        (->> (wall-brace-upper (partial key-place' firstcol 1)  -1  0 upper-fat-web-post-bl-lower (partial thumb-ur-place' border)  -1  0 upper-fat-web-post-tl-lower border) (color BRO))
         ;(key-wall-brace firstcol (- lastrow 2) 0 -1 web-post-bl firstcol (- lastrow 2) 0 -1 web-post-br border)
         ;(key-wall-brace firstcol (- lastrow 2) 0 -1 web-post-br (inc firstcol) (- lastrow 2) -1 -1 web-post-bl border)
         ;(key-wall-brace (inc firstcol) (- lastrow 2) -1 -1 web-post-bl (inc firstcol) (dec lastrow) -1 0 web-post-tl border)
@@ -2221,8 +2296,7 @@ need to adjust for difference for thumb-z only"
       ) 
       (trackball-wall border)
     )
-    ; thumb connector
-    ; (->> (wall-brace (partial key-place 0 cornerrow) -1 0 web-post-bl thumb-l-place 0 1 fat-web-post-tr border) (color WHI))
+  )
   )
 )
 
@@ -3306,11 +3380,12 @@ need to adjust for difference for thumb-z only"
           (difference 
             (union
               (case-top-border mirror-internals)
-              (color CYA (connectors mirror-internals))
-              (thumb-connectors mirror-internals)
+              ;(color CYA (connectors mirror-internals))
+              ;(thumb-connectors mirror-internals)
               (when testing (union
                 (debug caps-cutout)
                 (debug (thumbcaps-cutout mirror-internals))
+                (debug (upper-layout mirror-internals upper-behind-cutout))
               ))
             )
             (when testing (union
@@ -3318,6 +3393,7 @@ need to adjust for difference for thumb-z only"
               (thumbcaps-cutout mirror-internals)
             ))
             (key-places single-plate-cutout)
+            (upper-layout mirror-internals upper-behind-cutout)
             (thumb-layout mirror-internals single-plate-cutout)
             (when (not mirror-internals) (trackball-rotate sensor-cutout))
           )
@@ -3327,7 +3403,7 @@ need to adjust for difference for thumb-z only"
           (when (not mirror-internals) (trackball-rotate trackball-mount))
         )
       )
-      (when top-screw-insert-top-plate-bumps top-screw-insert-outers)
+      ;(when top-screw-insert-top-plate-bumps top-screw-insert-outers)
     )
     (when (not mirror-internals) (shift-model (trackball-rotate trackball-cutout)))
     (when (not testing) (union
@@ -3382,7 +3458,7 @@ need to adjust for difference for thumb-z only"
     ; (union 
       (switch-plates-right mirror-internals)
     ; )
-    top-screw-insert-holes
+    ;top-screw-insert-holes
   )
   ; (debug top-screw))
   ; (debug top-screw))
@@ -3613,9 +3689,17 @@ need to adjust for difference for thumb-z only"
               ;model-bottom-plate
             ;)
             (union ;(union (model-case-walls-right true)) 
-                   ;(union (model-switch-plates-right true))
-                   caps-cutout
-                   (thumbcaps-cutout true)
+                   (union (model-switch-plates-right true))
+                   ;(key-places (single-plate false))
+                   ;(thumbcaps-cutout true)
+
+                   ;(color BLA single-plate-cutout)
+                   ;(color GRE upper-fat-web-post-bl-lower)
+                   ;(color GRE upper-fat-web-post-br-lower)
+                   ;(color GRE upper-fat-web-post-tl-lower)
+                   ;(color GRE upper-fat-web-post-tr-lower)
+                   ;(color WHI upper-behind-cutout)
+                   ;(debug (single-plate false))
             )
 			;(union usb-holder usb-holder-cutout usb-holder-space)
 			;(union (usb-holder true))
