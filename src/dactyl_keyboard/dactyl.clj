@@ -1155,10 +1155,16 @@
                    (translate [0 0 (+ (- (/ short-post-thickness 2)) (/ plate-post-thickness 2))])
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5))])
                                       ))
+(def short-post-back (translate [0 0 (- short-post-thickness web-thickness)] short-post))
 
 (def upper-post-offset 9) ; amount of clearance to insert hotswap behind vertical keys
 
 (def short-post-adj (/ short-post-size 2))
+
+(def short-post-back-tr (translate [(- (/ mount-width  2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post-back))
+(def short-post-back-tl (translate [(+ (/ mount-width -2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post-back))
+(def short-post-back-bl (translate [(+ (/ mount-width -2) short-post-adj) (+ (/ mount-height -2) short-post-adj) 0] short-post-back))
+(def short-post-back-br (translate [(- (/ mount-width  2) short-post-adj) (+ (/ mount-height -2) short-post-adj) 0] short-post-back))
 
 (def short-post-tr (translate [(- (/ mount-width  2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post))
 (def short-post-tl (translate [(+ (/ mount-width -2) short-post-adj) (- (/ mount-height  2) short-post-adj) 0] short-post))
@@ -1781,58 +1787,78 @@ need to adjust for difference for thumb-z only"
                (thumb-ub-place plate-post-tr)
            ) (color RED))
 
-      (->> (triangle-hulls
-               (key-place (inc firstcol)    cornerrow  short-post-bl)
-               (key-place (inc firstcol)    cornerrow  short-post-tl)
-               (thumb-ur-place  (case-br fat-web-post-br))
-           ) (color RED) )
+    (->> (triangle-hulls
+      ;(key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
+      (thumb-r-place short-post-tr)
+      (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
+      (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
+      ;(thumb-r-place pl
+      ) (color RED))
 
-      (->> (triangle-hulls
-               (key-place (inc firstcol)    cornerrow  short-post-bl)
-               (thumb-r-place  short-post-tr)
-               (thumb-ur-place  short-post-br)
-           ) (color RED) )
+    (->> (triangle-hulls
+      (key-place 1 cornerrow (translate [0 0 0] short-post-back-br))
+      (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
+      (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
+      ) (color RED))
 
-      (->> (triangle-hulls
-               (thumb-r-place plate-post-tr)
-               (key-place (inc firstcol) cornerrow web-post-br)
-               (key-place (inc firstcol) cornerrow web-post-bl)
-           ) (color NBL))
+    (->> (triangle-hulls
+      (key-place 1 cornerrow (translate [0 0 0] fat-web-post-br))
+      (key-place 0 homerow (translate [0 0 0] fat-web-post-bl))
+      (thumb-ur-place plate-post-br)
+      ) (color RED))
 
-      (->> (triangle-hulls
-               (key-place firstcol    (dec cornerrow)  web-post-bl)
-               (key-place firstcol    (dec cornerrow)  web-post-br)
-               (thumb-ur-place  upper-fat-web-post-tl-lower)
-               (thumb-ur-place  upper-fat-web-post-tr-lower)
-           ) (color ORA) )
+      ;(->> (triangle-hulls
+      ;         (key-place (inc firstcol)    cornerrow  short-post-bl)
+      ;         (key-place (inc firstcol)    cornerrow  short-post-tl)
+      ;         (thumb-ur-place  (case-br fat-web-post-br))
+      ;     ) (color RED) )
 
-      (->> (triangle-hulls
-               (key-place firstcol    (dec cornerrow)  web-post-bl)
-               (key-place firstcol    (dec cornerrow)  web-post-br)
-               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
-               (thumb-ur-place  upper-fat-web-post-tl-lower)
-           ) (color ORA) )
+      ;(->> (triangle-hulls
+      ;         (key-place (inc firstcol)    cornerrow  short-post-bl)
+      ;         (thumb-r-place  short-post-tr)
+      ;         (thumb-ur-place  short-post-br)
+      ;     ) (color RED) )
 
-      (->> (triangle-hulls
-               (key-place firstcol    (dec cornerrow)  web-post-br)
-               (thumb-ur-place  upper-fat-web-post-tr-lower)
-               (thumb-ur-place  upper-fat-web-post-tl-lower)
-               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
-           ) (color ORA) )
+      ;(->> (triangle-hulls
+      ;         (thumb-r-place plate-post-tr)
+      ;         (key-place (inc firstcol) cornerrow web-post-br)
+      ;         (key-place (inc firstcol) cornerrow web-post-bl)
+      ;     ) (color NBL))
 
-      (->> (triangle-hulls
-               (key-place firstcol    (dec cornerrow)  web-post-br)
-               (thumb-ur-place  upper-fat-web-post-tr-lower)
-               (key-place (inc firstcol)    cornerrow  short-post-tl)
-               (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
-               (key-place firstcol    (dec cornerrow)  web-post-br)
-           ) (color BLU) )
+      ;(->> (triangle-hulls
+      ;         (key-place firstcol    (dec cornerrow)  web-post-bl)
+      ;         (key-place firstcol    (dec cornerrow)  web-post-br)
+      ;         (thumb-ur-place  upper-fat-web-post-tl-lower)
+      ;         (thumb-ur-place  upper-fat-web-post-tr-lower)
+      ;     ) (color ORA) )
 
-      (->> (triangle-hulls
-               (key-place (inc firstcol)    cornerrow  short-post-tl)
-               (key-place (inc firstcol)    (dec cornerrow)  short-post-bl)
-               (thumb-ur-place  (case-br fat-web-post-br))
-           ) (color BLU) )
+      ;(->> (triangle-hulls
+      ;         (key-place firstcol    (dec cornerrow)  web-post-bl)
+      ;         (key-place firstcol    (dec cornerrow)  web-post-br)
+      ;         (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+      ;         (thumb-ur-place  upper-fat-web-post-tl-lower)
+      ;     ) (color ORA) )
+
+      ;(->> (triangle-hulls
+      ;         (key-place firstcol    (dec cornerrow)  web-post-br)
+      ;         (thumb-ur-place  upper-fat-web-post-tr-lower)
+      ;         (thumb-ur-place  upper-fat-web-post-tl-lower)
+      ;         (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+      ;     ) (color ORA) )
+
+      ;(->> (triangle-hulls
+      ;         (key-place firstcol    (dec cornerrow)  web-post-br)
+      ;         (thumb-ur-place  upper-fat-web-post-tr-lower)
+      ;         (key-place (inc firstcol)    cornerrow  short-post-tl)
+      ;         (key-place (inc firstcol)    (dec cornerrow)  web-post-bl)
+      ;         (key-place firstcol    (dec cornerrow)  web-post-br)
+      ;     ) (color BLU) )
+
+      ;(->> (triangle-hulls
+      ;         (key-place (inc firstcol)    cornerrow  short-post-tl)
+      ;         (key-place (inc firstcol)    (dec cornerrow)  short-post-bl)
+      ;         (thumb-ur-place  (case-br fat-web-post-br))
+      ;     ) (color BLU) )
 
       ; partially fills  N and B keys sockets, do not use unless you cut those back out
       ; (->> (triangle-hulls
@@ -1949,71 +1975,86 @@ need to adjust for difference for thumb-z only"
     ;  (key-place 1 cornerrow web-post-bl)
     ;  (key-place 1 cornerrow web-post-br)) (color BLU))
     (->> (triangle-hulls
-      (key-place 1 cornerrow web-post-bl)
-      (thumb-r-place plate-post-tr)
-      (key-place 1 cornerrow web-post-br)
+      (key-place 1 cornerrow fat-web-post-tr)
+      (key-place 1 cornerrow fat-web-post-tl)
+      (thumb-urr-place fat-web-post-tl)
+      ) (color NBL))
+    (hull ;jankiness here 
+      (key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
+
+      (key-place 1 cornerrow (translate [0 0 0] plate-post-br))
+      (key-place 1 cornerrow (translate [0 0 -2] plate-post-tr))
+
+      (key-place 1 cornerrow (translate [0 0 -2] plate-post-br))
+    )
+    (->> (triangle-hulls
+      (key-place 1 cornerrow (translate [0 0 0] short-post-back-br))
+      (key-place 1 cornerrow (translate [0 0 0] short-post-back-tr))
+      (thumb-urr-place (translate [0 0 -1] short-post-bl))
+      (thumb-urr-place (translate [0 0 0] plate-post-tl))
+      ;(thumb-r-place plate-post-tr)
       ) (color NBL))
     (->> (triangle-hulls
-      (thumb-urr-place upper-fat-web-post-tl-lower)
-      (key-place 1 cornerrow web-post-br)
-      (key-place 2 real-lastrow web-post-bl)
+      (key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
+      (thumb-urr-place (translate [0 0 -1] short-post-bl))
+      (thumb-urr-place (translate [0 0 0] plate-post-tl))
+      ;(thumb-r-place plate-post-tr)
       ) (color NBL))
-    (->> (triangle-hulls
-      (thumb-urr-place upper-fat-web-post-tl-lower)
-      (key-place 2 real-lastrow web-post-bl)
-      (key-place 2 real-lastrow web-post-br)
-      ) (color NBL))
-    (->> (triangle-hulls
-      (thumb-urr-place upper-fat-web-post-tl-lower)
-      (key-place 3 real-lastrow web-post-bl)
-      (key-place 2 real-lastrow web-post-br)
-      ) (color NBL))
-    (->> (triangle-hulls
-      (thumb-urr-place upper-fat-web-post-tl-lower)
-      (thumb-urr-place upper-fat-web-post-bl-lower)
-      (key-place 1 real-lastrow web-post-br)
-      ) (color NBL))
-    (->> (triangle-hulls
-      (thumb-urr-place fat-web-post-bl)
-      (key-place 1 real-lastrow web-post-br)
-      (key-place 1 real-lastrow web-post-bl)
-      (thumb-r-place fat-web-post-tr)
-      (thumb-urr-place fat-web-post-bl)
-      ) (color NBL))
-    ;(->> (hull
+    ;(->> (triangle-hulls
+    ;  (thumb-urr-place upper-fat-web-post-tl-lower)
     ;  (key-place 1 cornerrow web-post-br)
-    ;  (key-place 3 real-lastrow web-post-bl)
-    ;  (key-place 2 real-lastrow web-post-br)
     ;  (key-place 2 real-lastrow web-post-bl)
     ;  ) (color NBL))
-    (when (not left)
-      (->> (hull
-        (thumb-m-place web-post-tr)
-        (thumb-m-place web-post-tl)
-        (key-place 1 real-lastrow web-post-bl)
-        (trackball-place trackball-post-bl)
-        (trackball-place trackball-post-br)
-        ;(thumb-l-place web-post-tr)
-        ) (color NBL)))
-    (when (not left)
-      (->> (hull
-        (thumb-m-place web-post-tr)
-        (thumb-m-place web-post-tl)
-        (key-place 1 real-lastrow web-post-bl)
-        (key-place 1 real-lastrow web-post-br)
-        (thumb-r-place web-post-tl)
-        ) (color NBL)))
     ;(->> (triangle-hulls
-    ;  (key-place 2 lastrow web-post-tl)
-    ;  ; (thumb-r-place fat-web-post-tr)
-    ;  ; (key-place 2 lastrow web-post-bl)
-    ;  (thumb-r-place fat-web-post-br)) (color PUR))
-    (when bottom-row (->> (triangle-hulls
-      (thumb-r-place web-post-br)
-      (key-place 2 lastrow web-post-bl)
-      (if use_hotswap_holder (key-place 3 lastrow plate-post-bl)
-                      (key-place 3 lastrow web-post-bl))
-      (key-place 2 lastrow web-post-br)) (color PIN)))
+    ;  (thumb-urr-place upper-fat-web-post-tl-lower)
+    ;  (key-place 2 real-lastrow web-post-bl)
+    ;  (key-place 2 real-lastrow web-post-br)
+    ;  ) (color NBL))
+    ;(->> (triangle-hulls
+    ;  (thumb-urr-place upper-fat-web-post-tl-lower)
+    ;  (key-place 3 real-lastrow web-post-bl)
+    ;  (key-place 2 real-lastrow web-post-br)
+    ;  ) (color NBL))
+    ;(->> (triangle-hulls
+    ;  (thumb-urr-place upper-fat-web-post-tl-lower)
+    ;  (thumb-urr-place upper-fat-web-post-bl-lower)
+    ;  (key-place 1 real-lastrow web-post-br)
+    ;  ) (color NBL))
+    ;(->> (triangle-hulls
+    ;  (thumb-urr-place fat-web-post-bl)
+    ;  (key-place 1 real-lastrow web-post-br)
+    ;  (key-place 1 real-lastrow web-post-bl)
+    ;  (thumb-r-place fat-web-post-tr)
+    ;  (thumb-urr-place fat-web-post-bl)
+    ;  ) (color NBL))
+    ;;(->> (hull
+    ;;  (key-place 1 cornerrow web-post-br)
+    ;;  (key-place 3 real-lastrow web-post-bl)
+    ;;  (key-place 2 real-lastrow web-post-br)
+    ;;  (key-place 2 real-lastrow web-post-bl)
+    ;;  ) (color NBL))
+    ;(when (not left)
+    ;  (->> (hull
+    ;    (thumb-m-place web-post-tr)
+    ;    (thumb-m-place web-post-tl)
+    ;    (key-place 1 real-lastrow web-post-bl)
+    ;    (trackball-place trackball-post-bl)
+    ;    (trackball-place trackball-post-br)
+    ;    ;(thumb-l-place web-post-tr)
+    ;    ) (color NBL)))
+    ;(when (not left)
+    ;  (->> (hull
+    ;    (thumb-m-place web-post-tr)
+    ;    (thumb-m-place web-post-tl)
+    ;    (key-place 1 real-lastrow web-post-bl)
+    ;    (key-place 1 real-lastrow web-post-br)
+    ;    (thumb-r-place web-post-tl)
+    ;    ) (color NBL)))
+    ;;(->> (triangle-hulls
+    ;;  (key-place 2 lastrow web-post-tl)
+    ;;  ; (thumb-r-place fat-web-post-tr)
+    ;;  ; (key-place 2 lastrow web-post-bl)
+    ;;  (thumb-r-place fat-web-post-br)) (color PUR))
   ))
 
 ; dx1, dy1, dx2, dy2 = direction of the wall. '1' for front, '-1' for back, '0' for 'not in this direction'.
@@ -3522,7 +3563,7 @@ need to adjust for difference for thumb-z only"
             (union
               (case-top-border mirror-internals)
               (color CYA (connectors mirror-internals))
-              ;(thumb-connectors mirror-internals)
+              (thumb-connectors mirror-internals)
               (when testing (union
                 (debug caps-cutout)
                 (debug (thumbcaps-cutout mirror-internals))
@@ -3831,6 +3872,10 @@ need to adjust for difference for thumb-z only"
             ;)
             (union ;(union (model-case-walls-right true)) 
                    (union (model-switch-plates-right true))
+                   ;(union fat-web-post-tl)
+                   ;(union short-post-bl)
+                   ;(union short-post-back-bl)
+                   ;(debug (single-plate false))
                    ;(key-places (single-plate false))
                    ;(thumbcaps-cutout true)
 
