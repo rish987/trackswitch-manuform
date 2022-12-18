@@ -6,8 +6,8 @@
             [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
+;(def testing true)
 (def testing true)
-;(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -143,15 +143,15 @@
                   :else 0))
 
 (defn below-extra-dist [column] (cond
-                  (= column 1)  2 ;;index
-                  (= column 2)  2 ;;middle
-                  (= column 3)  2 ;;ring
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
+                  (= column 3)  0 ;;ring
                   :else 0))
 
 (defn below-x-rot [column] (cond
-                  (= column 1)  (- 30) ;;index
-                  (= column 2)  (- 30) ;;middle
-                  (= column 3)  (- 30) ;;ring
+                  (= column 1)  (- 23) ;;index
+                  (= column 2)  (- 23) ;;middle
+                  (= column 3)  (- 23) ;;ring
                   :else 0))
 
 (defn below-z-rot [column] (cond
@@ -786,7 +786,8 @@
 
 (def sa-key-height-from-plate 7.39)
 (def sa-cap-bottom-height (+ sa-key-height-from-plate plate-thickness))
-(def sa-cap-bottom-height-pressed (+ 3 plate-thickness))
+(def sa-cap-bottom-height-pressed 0)
+(def sa-cap-bottom-height-pressed' (+ sa-cap-bottom-height-pressed plate-thickness))
 
 (def sa-double-length 37.5)
 (defn sa-cap [keysize col row]
@@ -837,7 +838,8 @@
 (defn sa-cap-cutout [keysize]
     (let [ cutout-x 0.40
            cutout-y 0.30
-           cutout-z-offset (- sa-cap-bottom-height-pressed 2.99)
+           bl0 (/ 16.1 2)
+           bw0 (/ 16.1 2)
            bl1 (case keysize 
                      1   (+ (/ sa-length1 2) cutout-y)
                      1.5 (+ (/ sa-length1 2) cutout-y)
@@ -854,6 +856,7 @@
                      1   (+ (/ sa-length2 2) cutout-x)
                      1.5 (+ (/ 27.94 2) cutout-x)
                      2   (+ (/ sa-length2 2) cutout-x))
+           keycap-cutout-xy0 (polygon [[bw0 bl0] [bw0 (- bl0)] [(- bw0) (- bl0)] [(- bw0) bl0]])
            keycap-cutout-xy1 (polygon [[bw1 bl1] [bw1 (- bl1)] [(- bw1) (- bl1)] [(- bw1) bl1]])
            keycap-cutout-xy2 (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
            key-cap-cutout (hull (->> keycap-cutout-xy1
@@ -861,14 +864,25 @@
                                      (translate [0 0 0.05]))
                                 (->> keycap-cutout-xy1
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                     (translate [0 0 sa-height1]))
+                                     (translate [0 0 (- sa-height1 sa-cap-bottom-height-pressed)]))
                                 (->> keycap-cutout-xy2
                                      (extrude-linear {:height 0.1 :twist 0 :convexity 0})
-                                     (translate [0 0 sa-height2]))
+                                     (translate [0 0 (- sa-height2 sa-cap-bottom-height-pressed)]))
                           )
+           bottom-height-cutout (hull (->> keycap-cutout-xy0
+                                           (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                           (translate [0 0 0.05]))
+                                      (->> keycap-cutout-xy0
+                                           (extrude-linear {:height 0.1 :twist 0 :convexity 0})
+                                           (translate [0 0 sa-cap-bottom-height-pressed]))
+                                )
          ]
-         (->> key-cap-cutout
-              (translate [0 0 cutout-z-offset]))
+         (union
+           (->> key-cap-cutout
+              (translate [0 0 sa-cap-bottom-height-pressed']))
+           (->> bottom-height-cutout
+              (translate [0 0 plate-thickness]))
+         )
     )
 )
 
@@ -1976,29 +1990,10 @@ need to adjust for difference for thumb-z only"
     ;  (key-place 1 cornerrow web-post-bl)
     ;  (key-place 1 cornerrow web-post-br)) (color BLU))
     (->> (triangle-hulls
-      (key-place 1 cornerrow fat-web-post-tr)
-      (key-place 1 cornerrow fat-web-post-tl)
-      (thumb-urr-place fat-web-post-tl)
-      ) (color NBL))
-    (hull ;jankiness here 
-      (key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
-
-      (key-place 1 cornerrow (translate [0 0 0] plate-post-br))
-      (key-place 1 cornerrow (translate [0 0 -2] plate-post-tr))
-
-      (key-place 1 cornerrow (translate [0 0 -2] plate-post-br))
-    )
-    (->> (triangle-hulls
-      (key-place 1 cornerrow (translate [0 0 0] short-post-back-br))
-      (key-place 1 cornerrow (translate [0 0 0] short-post-back-tr))
+      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-tl))
+      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-tr))
       (thumb-urr-place (translate [0 0 -1] short-post-bl))
-      (thumb-urr-place (translate [0 0 0] plate-post-tl))
-      ;(thumb-r-place plate-post-tr)
-      ) (color NBL))
-    (->> (triangle-hulls
-      (key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
-      (thumb-urr-place (translate [0 0 -1] short-post-bl))
-      (thumb-urr-place (translate [0 0 0] plate-post-tl))
+      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-br))
       ;(thumb-r-place plate-post-tr)
       ) (color NBL))
     ;(->> (triangle-hulls
@@ -2508,7 +2503,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(defn front-wall [border]
+(defn front-wall [left border]
   (let [ 
         thumb-r-place (if border thumb-r-place (partial thumb-r-place' border)) 
         thumb-urr-place (if border thumb-urr-place (partial thumb-urr-place' border)) 
@@ -2520,6 +2515,13 @@ need to adjust for difference for thumb-z only"
     ;(key-wall-brace 3 real-lastrow 0   -1 fat-web-post-bl     3   real-lastrow 0.5 -1 fat-web-post-br border)
     ;(key-wall-brace 3 real-lastrow 0.5 -1 fat-web-post-br 4 cornerrow -1 0 fat-web-post-bl border)
     ;(key-wall-brace 4 cornerrow -1 0 fat-web-post-bl 4 cornerrow 0 -1 fat-web-post-bl border)
+
+    (when (and left border) (union
+      (key-wall-brace 1 3 0 -1 fat-web-post-br 1 3 1 0 fat-web-post-br border)
+      (key-wall-brace 1 3 1 0 fat-web-post-br 1 3 1 0 fat-web-post-tr border)
+      (key-wall-brace 1 3 1 0 fat-web-post-tr 1 3 0 1 fat-web-post-tr border)
+      (key-wall-brace 1 3 0 1 fat-web-post-tr 1 3 0 1 fat-web-post-tl border)
+    ))
 
     (->> 
         (union 
@@ -2623,7 +2625,7 @@ need to adjust for difference for thumb-z only"
     (right-wall false)
     (back-wall false)
     (left-wall left false)
-    (front-wall false)
+    (front-wall left false)
     (thumb-wall left false)
   )
 )
@@ -2633,7 +2635,7 @@ need to adjust for difference for thumb-z only"
     (right-wall true)
     (back-wall true)
     (left-wall left true)
-    (front-wall true)
+    (front-wall left true)
     (thumb-wall left true)
   )
 )
@@ -3872,7 +3874,8 @@ need to adjust for difference for thumb-z only"
               ;model-bottom-plate
             ;)
             (union ;(union (model-case-walls-right true)) 
-                   (union (model-switch-plates-right true))
+                   ;(union (sa-cap-cutout 1) (debug (single-plate true)))
+                   (switch-plates-right true)
                    ;(union fat-web-post-tl)
                    ;(union short-post-bl)
                    ;(union short-post-back-bl)
