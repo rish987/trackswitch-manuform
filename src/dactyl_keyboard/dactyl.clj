@@ -1385,7 +1385,13 @@ need to adjust for difference for thumb-z only"
 
 (defn upper-layout [left shape]
   (union
+    (key-place 0 1 shape)
+    (key-place 1 1 shape)
+    (key-place 2 1 shape)
+    (key-place 3 1 shape)
+    (key-place 4 1 shape)
     (key-place 0 2 shape)
+    (key-place 5 2 shape)
     (when left (union
       (thumb-u-place shape)
       (thumb-ur-place shape)
@@ -1603,6 +1609,18 @@ need to adjust for difference for thumb-z only"
              (key-place      5       2  fat-web-post-bl)
              (key-place      4       2  plate-post-br)
              (key-place      4       2  plate-post-tr)
+             )
+
+           (triangle-hulls ;top right corner filler
+             (key-place      5       2  fat-web-post-bl)
+             (key-place      4       1  plate-post-br)
+             (key-place      4       2  plate-post-tr)
+             )
+
+           (triangle-hulls ;bot right corner filler
+             (key-place      5       2  fat-web-post-br)
+             (key-place      4       2  plate-post-br)
+             (key-place      4       3  plate-post-tr)
              )
 
            ; top two to the main keyboard, starting on the left
@@ -2364,15 +2382,26 @@ need to adjust for difference for thumb-z only"
   (union
     ; (key-wall-brace 0 0 0 1 web-post-tl          0  0 0 1 web-post-tr border)
     (for [c (range firstcol (dec ncols))] 
-                  (case c  0 (key-wall-brace c firstrow 0 1 web-post-tl          c  firstrow 0 1 web-post-tr border)
-                           1 (key-wall-brace c firstrow 0 1 web-post-tl          c  firstrow 0 1 web-post-tm border)
-                             (key-wall-brace c firstrow 0 1 web-post-tl          c  firstrow 0 1 web-post-tr border)
+                  (union 
+                    (wall-brace-upper        (partial key-place' border c firstrow)  1  1 upper-fat-web-post-tl-lower (partial key-place' border c firstrow)  1  1 upper-fat-web-post-tr-lower border)
+                    (when border (union
+                      (upper-key-case-top-wall (partial key-place' border c firstrow))
+                      (upper-key-case-back-wall (partial key-place' border c firstrow))
+                    ))
                   )
     )
     (for [c (range 1 (dec ncols))]
-                  (case c 1 (key-wall-brace c firstrow 0 1 web-post-tl (dec c) firstrow 0 1 web-post-tr border)
-                          2 (key-wall-brace c firstrow 0 1 fat-web-post-tl (dec c) firstrow 0 1 fat-web-post-tm border)
-                          (->> (key-wall-brace c firstrow 0 1 fat-web-post-tl (dec c) firstrow 0 1 fat-web-post-tr border) (color PUR))
+                  (union 
+                    (->> (wall-brace-upper (partial key-place' border c firstrow) 0 1 upper-fat-web-post-tl-lower (partial key-place' border (dec c) firstrow) 0 1 upper-fat-web-post-tr-lower border) (color PUR))
+                    (when border (union
+                      (->> (wall-brace-upper-extend (partial key-place' border c firstrow)  0   1  fat-web-post-tl (partial key-place' border (dec c) firstrow) -1 0 fat-web-post-tr true) (color BRO)) ; corner
+                      (hull
+                        ((partial key-place' border c firstrow) upper-fat-web-post-tl)
+                        ((partial key-place' border c firstrow) upper-fat-web-post-bl)
+                        ((partial key-place' border (dec c) firstrow) upper-fat-web-post-tr)
+                        ((partial key-place' border (dec c) firstrow) upper-fat-web-post-br)
+                      )
+                    ))
                   )
     )
   )
@@ -2397,9 +2426,6 @@ need to adjust for difference for thumb-z only"
 (defn left-wall [left border]
   (let [key-place' (partial key-place' border)]
   (union 
-    ; left-back-corner
-    (->> (key-wall-brace firstcol firstrow 0 1 web-post-tl firstcol firstrow -1 0 web-post-tl border)
-         (color GRE))
     ; (key-wall-brace  0 0  -1 0 web-post-tl 0 1 -1 0 web-post-bl border)
 
     ;(for [y (range firstrow (- lastrow 2))] (key-wall-brace firstcol      y  -1 0 web-post-tl firstcol y -1 0 web-post-bl border))
