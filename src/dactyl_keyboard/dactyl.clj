@@ -6,8 +6,8 @@
             [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
-;(def testing true)
 (def testing true)
+;(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -98,7 +98,6 @@
 (def tilt-outer-columns 7)        ; angle to tilt outer columns in degrees, adjust spacing where this is used if increased
 (def recess-bottom-plate false)
 (def adjustable-wrist-rest-holder-plate true)
-(def thumb-u false)               ; use upper thumb key
 
 ; ** for two part designs only **
 (def top-screw-insert-top-plate-bumps true) ; add additional threaded insert holder to top plate
@@ -140,28 +139,32 @@
                   (= column 1)  180 ;;index
                   (= column 2)  180 ;;middle
                   (= column 3)  180 ;;ring
+                  (= column 4)  180 ;;pinky
                   :else 0))
 
 (defn below-extra-dist [column] (cond
-                  (= column 1)  0 ;;index
-                  (= column 2)  0 ;;middle
-                  (= column 3)  0 ;;ring
+                  (= column 1)  2.5 ;;index
+                  (= column 2)  2.5 ;;middle
+                  (= column 3)  2.5 ;;ring
+                  (= column 4)  1.5 ;;pinky
                   :else 0))
 
 (defn below-x-rot [column] (cond
                   (= column 1)  (- 23) ;;index
                   (= column 2)  (- 23) ;;middle
                   (= column 3)  (- 23) ;;ring
+                  (= column 4)  (- 47) ;;pinky -- keep this lower or else it will get in the way when actuating "s"
                   :else 0))
 
 (defn below-z-rot [column] (cond
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
                   :else 0))
 
 (defn above-rot [column] (cond
-                  (= column 0)  45 ;;index outer
+                  (= column 0)  32 ;;index outer
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
@@ -169,15 +172,15 @@
                   :else 0))
 
 (defn above-extra-dist [column] (cond
-                  (= column 0)  5.5 ;;index outer
-                  (= column 1)  2 ;;index
-                  (= column 2)  3 ;;middle
-                  (= column 3)  2 ;;ring
-                  (= column 4)  2 ;;pinky
+                  (= column 0)  7.6 ;;index outer
+                  (= column 1)  3 ;;index
+                  (= column 2)  3.7 ;;middle
+                  (= column 3)  3 ;;ring
+                  (= column 4)  1.5 ;;pinky
                   :else 0))
 
 (defn above-z-rot [column] (cond
-                  (= column 0)  -22 ;;index outer
+                  (= column 0)  -21 ;;index outer
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
@@ -185,7 +188,7 @@
                   :else 0))
 
 (defn above-x-off [column] (cond
-                  (= column 0)  -3.5 ;;index outer
+                  (= column 0)  -7.2 ;;index outer
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
@@ -201,26 +204,47 @@
                   :else 0))
 
 (defn above-x-rot [column] (cond
-                  (= column 0)  (- 27) ;;index outer
-                  (= column 1)  (- 30) ;;index
-                  (= column 2)  (- 30) ;;middle
-                  (= column 3)  (- 30) ;;ring
-                  (= column 4)  (- 30) ;;pinky
+                  (= column 0)  (- 37) ;;index outer
+                  (= column 1)  (- 42) ;;index
+                  (= column 2)  (- 42) ;;middle
+                  (= column 3)  (- 42) ;;ring
+                  (= column 4)  (- 42) ;;pinky
                   :else 0))
 
-(def g-rot 110)
-(def g-extra-dist 3.9)
-(def g-x-off -0.4)
+(def g-rot 100)
+(def g-extra-dist 3.5)
+(def g-x-off -0.35)
 (def g-x-rot (- 30))
-(def g-z-off -1)
-(def g-z-rot (+ 0 (+ 10)))
+(def g-z-off -1.5)
+(def g-z-rot (+ 0 (+ 8.5)))
 
-(def p-rot (- 105))
+(def p-rot (- 100))
 (def p-extra-dist 3.9)
-(def p-x-off 1)
-(def p-x-rot (- 20))
+(def p-x-off 0.7)
+(def p-x-rot (- 36))
 (def p-z-off 0)
-(def p-z-rot (+ 0 (- 15)))
+(def p-z-rot (+ 0 (- 18)))
+
+(def v-key-case-extend 1.5)
+(def v-key-case-wall-thickness 0.3)
+
+(def thumb-u-z-rot 54)
+(def thumb-u-z-off (- 1.5))
+(def thumb-u-x-off (- 3))
+(def thumb-u-x-rot (- 40.00))
+(def thumb-u-extra-dist 4.5)
+
+(def thumb-ub-z-rot 125)
+(def thumb-ub-z-off (- 1.5))
+(def thumb-ub-x-off (- 20.3))
+(def thumb-ub-x-rot (- 27.00))
+(def thumb-ub-extra-dist 6.5)
+
+(def thumb-urr-z-rot (- 75))
+(def thumb-urr-x-rot (- 24))
+(def thumb-urr-extra-dist 5.2)
+(def thumb-urr-x-off 6)
+(def thumb-urr-z-off 0)
 
 (def keyboard-z-offset 25.5)  ; controls overall height
 
@@ -748,7 +772,11 @@
 
 (defn single-plate-cutout' [thickness] (translate [0 0 (/ thickness 2)] (cube (+ keyswitch-width single-plate-wall-thickness) (+ keyswitch-height single-plate-wall-thickness) thickness)))
 
-(def single-plate-cutout (translate [0 0 (/ (* plate-thickness 1) 2)] (cube (+ keyswitch-width single-plate-wall-thickness) (+ keyswitch-height single-plate-wall-thickness) (* plate-thickness 1))))
+(def single-plate-cutout (single-plate-cutout' plate-thickness))
+
+(defn single-plate-extra-cutout' [thickness] (translate [0 0 (- plate-thickness (/ thickness 2))] (cube (+ keyswitch-width single-plate-wall-thickness) (+ keyswitch-height single-plate-wall-thickness) thickness)))
+
+(def single-plate-extra-cutout (single-plate-extra-cutout' (/ web-thickness 2)))
 
 (def single-plate-blank
     (union 
@@ -786,7 +814,7 @@
 
 (def sa-key-height-from-plate 7.39)
 (def sa-cap-bottom-height (+ sa-key-height-from-plate plate-thickness))
-(def sa-cap-bottom-height-pressed 0)
+(def sa-cap-bottom-height-pressed 2.5)
 (def sa-cap-bottom-height-pressed' (+ sa-cap-bottom-height-pressed plate-thickness))
 
 (def sa-double-length 37.5)
@@ -838,8 +866,8 @@
 (defn sa-cap-cutout [keysize]
     (let [ cutout-x 0.40
            cutout-y 0.30
-           bl0 (/ 16.1 2)
-           bw0 (/ 16.1 2)
+           bl0 (/ 16.15 2)
+           bw0 (/ 16.15 2)
            bl1 (case keysize 
                      1   (+ (/ sa-length1 2) cutout-y)
                      1.5 (+ (/ sa-length1 2) cutout-y)
@@ -1022,9 +1050,8 @@
   (key-upper-place'' translate rotate-x rotate-y rotate-z extra-dist x-off z-off 0 x-rot z-rot shape)
 )
 
-(defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape] (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape))
 (defn apply-key-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn column row shape]
-  (if (and (or (= row homerow) (and (= row 3) (= column 4))) (not (and (= row homerow) (or (= column 0) (= column 5)))))
+  (if (and (or (= row homerow)) (not (and (= row homerow) (or (= column 0) (= column 5)))))
     (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column row shape)
     (if (= row homerow)
       (if (= column 0)
@@ -1163,12 +1190,12 @@
                    (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5)
                                       )])))
 
+(def plate-top-offset (+ (/ plate-post-thickness 2) plate-post-thickness (/ plate-post-thickness -1.5)))
+
 (def short-post-thickness 1)
 (def short-post-size 1.2)
 (def short-post (->> (cube short-post-size short-post-size short-post-thickness)
-                   (translate [0 0 (+ (- (/ short-post-thickness 2)) (/ plate-post-thickness 2))])
-                   (translate [0 0 (+ plate-post-thickness (/ plate-post-thickness -1.5))])
-                                      ))
+                   (translate [0 0 (+ (- (/ short-post-thickness 2)) plate-top-offset)])))
 (def short-post-back (translate [0 0 (- short-post-thickness web-thickness)] short-post))
 
 (def upper-post-offset 9) ; amount of clearance to insert hotswap behind vertical keys
@@ -1206,8 +1233,8 @@
 (def upper-fat-web-post-bot-lower-z-off (- (+ (- (/ web-thickness 1)) plate-thickness (/ fat-post-size 2))))
 (def upper-fat-web-post-bot-lower-y-off (/ mount-height -2))
 
-(def upper-behind-cutout 
-    (let [post-offset upper-fat-web-post-bot-lower-z-off post-width fat-post-size width (- upper-post-offset post-offset post-width)] 
+(defn upper-behind-cutout' [width]
+    (let [post-offset upper-fat-web-post-bot-lower-z-off post-width fat-post-size width width] 
     (union
       (translate [0 0 (- (+ post-offset (/ post-width 2)))]
        (single-plate-cutout' (+ post-offset (/ post-width 2))))
@@ -1219,6 +1246,7 @@
   )
 )
 
+(def upper-behind-cutout (upper-behind-cutout' (- upper-post-offset upper-fat-web-post-bot-lower-z-off fat-post-size)))
 
 (def upper-fat-web-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (+ (- (/ web-thickness 2)) 0)] fat-web-post')))
 (def upper-fat-web-post-bot (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
@@ -1228,11 +1256,11 @@
 
 (def fat-post-adj (/ fat-post-size 2))
 (def fat-web-post-tr (translate [(- (/ mount-width  2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
-(def fat-web-post-tm (translate [                                 0  (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
 (def fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
 (def fat-web-post-bl (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
-(def fat-web-post-bm (translate [                                 0  (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 (def fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
+(def fat-web-post-tm (translate [                                 0  (- (/ mount-height  2) fat-post-adj) 0] fat-web-post))
+(def fat-web-post-bm (translate [                                 0  (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 (def upper-fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height  2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-tl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-bl (translate [(+ (/ mount-width -2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot))
@@ -1241,6 +1269,14 @@
 (def upper-fat-web-post-tr-lower (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot))
 (def upper-fat-web-post-br-lower (translate [(- (/ mount-width  2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot-lower))
+
+(def short-post-bl-lower (translate [0 (- short-post-size) 0] short-post-bl))
+(def short-post-br-lower (translate [0 (- short-post-size) 0] short-post-br))
+(def short-post-back-bl-lower (translate [0 (- short-post-size) 0] short-post-back-bl))
+(def short-post-back-br-lower (translate [0 (- short-post-size) 0] short-post-back-br))
+
+(def fat-web-post-bl-lower (translate [0 (- fat-post-size) 0] fat-web-post-bl))
+(def fat-web-post-br-lower (translate [0 (- fat-post-size) 0] fat-web-post-br))
 
 (def trackball-post (->> (cube fat-post-size fat-post-size sensor-height)
                        (translate [0 0 (+ (/ web-thickness -2)
@@ -1354,27 +1390,16 @@ need to adjust for difference for thumb-z only"
 
 (defn thumb-upper-place [shape] (key-upper-place thumb-upper-x-rot 0 shape))
 
-(def thumb-u-z-rot 54)
-(def thumb-u-z-off (- 1.5))
-(def thumb-u-x-off (- 3))
-(def thumb-u-x-rot (- 27.00))
-(def thumb-u-extra-dist 4.5)
 (defn thumb-u-uplace [shape] (key-upper-place' thumb-u-extra-dist thumb-u-x-off thumb-u-z-off thumb-u-x-rot thumb-u-z-rot shape))
-
-(def thumb-ub-z-rot 105)
-(def thumb-ub-z-off (- 1.5))
-(def thumb-ub-x-off (- 10))
-(def thumb-ub-x-rot (- 27.00))
-(def thumb-ub-extra-dist 8.5)
 (defn thumb-ub-uplace [shape] (key-upper-place' thumb-ub-extra-dist thumb-ub-x-off thumb-ub-z-off thumb-ub-x-rot thumb-ub-z-rot shape))
 
-(def thumb-urr-z-rot (- 75))
-(def thumb-urr-x-rot (- 24))
+(defn thumb-urr-uplace [shape] (key-upper-place' thumb-urr-extra-dist thumb-urr-x-off thumb-urr-z-off thumb-urr-x-rot thumb-urr-z-rot shape))
+
 
 ; convexer
 (defn thumb-r-place [shape] (thumb-place thumb-r-rot thumb-r-move shape)) ; right
 (defn thumb-ur-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-upper-place shape))) ; upper-right
-(defn thumb-urr-place [shape] (thumb-place thumb-r-rot thumb-r-move (key-upper-place thumb-urr-x-rot thumb-urr-z-rot shape))) ; upper-right right
+(defn thumb-urr-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-urr-uplace shape))) ; upper-right right
 (defn thumb-m-place [shape] (thumb-place thumb-m-rot thumb-m-move shape)) ; middle
 (defn thumb-u-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-u-uplace shape))) ; upper-right left
 (defn thumb-ub-place [shape] (thumb-place thumb-r-rot thumb-r-move (thumb-ub-uplace shape))) ; upper-right back
@@ -1383,7 +1408,7 @@ need to adjust for difference for thumb-z only"
 ; convexer
 (defn thumb-r-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move shape))
 (defn thumb-ur-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-upper-place shape)))
-(defn thumb-urr-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (key-upper-place thumb-urr-x-rot thumb-urr-z-rot shape)))
+(defn thumb-urr-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-urr-uplace shape)))
 (defn thumb-m-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-m-rot thumb-m-move shape))
 (defn thumb-u-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-u-uplace shape)))
 (defn thumb-ub-place' [border shape] ((if border thumb-place thumb-place-shifted) thumb-r-rot thumb-r-move (thumb-ub-uplace shape)))
@@ -1484,11 +1509,11 @@ need to adjust for difference for thumb-z only"
                         (key-place column  row fat-web-post-tl)
                         (key-place column  row plate-post-br)
                     )
-                    icol-tl (if (and (= row cornerrow) (not= column 3))
+                    icol-tl (if (= row cornerrow)
                         (key-place (inc column)  row fat-web-post-br)
                         (key-place (inc column)  row plate-post-tl)
                     )
-                    icol-bl (if (and (= row cornerrow) (not= column 3)) 
+                    icol-bl (if (= row cornerrow) 
                         (key-place (inc column)  row fat-web-post-tr)
                         (key-place (inc column)  row plate-post-bl)
                     )
@@ -1514,7 +1539,7 @@ need to adjust for difference for thumb-z only"
            (for [column columns'
                  row (range firstrow cornerrow)]
              (let [
-                   is-upper (and (= row (dec cornerrow)) (not= column 4))
+                   is-upper (= row (dec cornerrow))
                    irow-tl (if is-upper
                        (key-place column  (inc row) fat-web-post-br)
                        (key-place column  (inc row) plate-post-tl)
@@ -1534,8 +1559,8 @@ need to adjust for difference for thumb-z only"
                   ]
              (when (not (skip-pos left (inc row) column))
              (triangle-hulls
-               (key-place column      row  (if (= row 1) fat-web-post-bl web-post-bl))
-               (key-place column      row  (if (= row 1) fat-web-post-br web-post-br))
+               (key-place column      row  (if (= row 1) fat-web-post-bl plate-post-bl))
+               (key-place column      row  (if (= row 1) fat-web-post-br plate-post-br))
                tpost-tl
                tpost-tr)))
            )
@@ -1548,11 +1573,11 @@ need to adjust for difference for thumb-z only"
                          (key-place column  row fat-web-post-br)
                          (key-place column  row plate-post-br)
                      )
-                     irow-col-tr (if (and (= row homerow) (not= column 4))
+                     irow-col-tr (if (= row homerow)
                          (key-place column  (inc row) fat-web-post-bl)
                          (key-place column  (inc row) plate-post-tr)
                      )
-                     irow-icol-tl (if (and (= row homerow) (not= column 3))
+                     irow-icol-tl (if (= row homerow)
                          (key-place (inc column) (inc row) fat-web-post-br)
                          (key-place (inc column) (inc row) plate-post-tl)
                      )
@@ -1582,7 +1607,7 @@ need to adjust for difference for thumb-z only"
            (triangle-hulls ;diagonal
              (key-place      0       1  fat-web-post-bl)
              (key-place      0       1  fat-web-post-br)
-             (key-place      0       2  fat-web-post-br)
+             (key-place      0       2  fat-web-post-br-lower)
              (key-place      1       1  fat-web-post-bl)
              (key-place      1       2  plate-post-tl)
              )
@@ -1595,33 +1620,32 @@ need to adjust for difference for thumb-z only"
              )
 
            (triangle-hulls ;fill n key gap
-             (key-place      0       2  fat-web-post-br)
              (key-place      0       2  fat-web-post-bl)
              (key-place      1       2  plate-post-bl)
              (key-place      1       3  fat-web-post-br)
              )
 
            (triangle-hulls ;fill outer index gap
-             (key-place      0       1  fat-web-post-bl)
-             (key-place      0       1  (translate [0 0 (- upper-case-out)] fat-web-post-bl))
-             (key-place      0       2  (translate [0 0 (- upper-case-out)] fat-web-post-br))
-             (key-place      0       2  fat-web-post-br)
+             (key-place      0       1  fat-web-post-bl-lower)
+             (key-place      0       1  (translate [0 0 (- upper-case-out)] fat-web-post-bl-lower))
+             (key-place      0       2  (translate [0 0 (- upper-case-out)] fat-web-post-br-lower))
+             (key-place      0       2  fat-web-post-br-lower)
              )
 
            ;; bottom row to front wall/thumb-urr connections
            (triangle-hulls
              (key-place      3       3  fat-web-post-tr)
              (key-place      3       3  fat-web-post-tl)
-             (thumb-urr-place upper-fat-web-post-tr-lower)
-             (key-place      4       3  fat-web-post-bl)
+             (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-br-lower))
+             (key-place      4       3  fat-web-post-tr)
              )
 
            (triangle-hulls
              (key-place      2       3  fat-web-post-tl)
              (key-place      2       3  fat-web-post-tr)
              (key-place      3       3  fat-web-post-tr)
-             (thumb-urr-place upper-fat-web-post-tr-lower)
-             (thumb-urr-place upper-fat-web-post-tl-lower)
+             (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-br-lower))
+             (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-bl-lower))
              )
 
            ;; pinky key connections
@@ -1633,89 +1657,16 @@ need to adjust for difference for thumb-z only"
              )
 
            (triangle-hulls ;top right corner filler
-             (key-place      5       2  fat-web-post-bl)
-             (key-place      4       1  plate-post-br)
+             (key-place      5       2  fat-web-post-bl-lower)
+             (key-place      4       1  fat-web-post-br-lower)
              (key-place      4       2  plate-post-tr)
              )
 
            (triangle-hulls ;bot right corner filler
-             (key-place      5       2  fat-web-post-br)
+             (key-place      5       2  fat-web-post-br-lower)
              (key-place      4       2  plate-post-br)
-             (key-place      4       3  plate-post-tr)
+             (key-place      4       3  short-post-bl-lower)
              )
-
-           ; top two to the main keyboard, starting on the left
-           (when bottom-row
-             (->> (if use_hotswap_holder
-                  (triangle-hulls
-                    (key-place 2 lastrow   plate-post-br)
-                    (key-place 3 lastrow   plate-post-bl)
-                    (key-place 2 lastrow   plate-post-tr)
-                    (key-place 3 lastrow   plate-post-tl)
-                    (key-place 3 cornerrow plate-post-bl)
-                    (key-place 3 lastrow   fat-web-post-tl)
-                    (key-place 3 cornerrow fat-web-post-bl)
-                    (key-place 3 lastrow   fat-web-post-tr)
-                    (key-place 3 cornerrow fat-web-post-br)
-                    (key-place 3 lastrow   plate-post-tr)
-                    (key-place 3 cornerrow plate-post-br)
-                    (key-place 4 cornerrow plate-post-bl))
-                  (triangle-hulls
-                    (key-place 2 lastrow   fat-web-post-br)
-                    (key-place 3 lastrow   fat-web-post-bl)
-                    (key-place 2 lastrow   fat-web-post-tr)
-                    (key-place 3 lastrow   fat-web-post-tl)
-                    (key-place 3 cornerrow fat-web-post-bl)
-                    (key-place 3 lastrow   fat-web-post-tr)
-                    (key-place 3 cornerrow fat-web-post-br)
-                    (key-place 4 cornerrow fat-web-post-bl)))
-                (color BLA))
-             (->> (if use_hotswap_holder
-                  (triangle-hulls
-                    (key-place 1 cornerrow plate-post-br)
-                    (key-place 2 lastrow   plate-post-tl)
-                    (key-place 2 cornerrow plate-post-bl)
-                    (key-place 2 lastrow   fat-web-post-tl)
-                    (key-place 2 cornerrow fat-web-post-bl)
-                    (key-place 2 lastrow   fat-web-post-tr)
-                    (key-place 2 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow   plate-post-tr)
-                    (key-place 2 cornerrow plate-post-br)
-                    (key-place 3 cornerrow plate-post-bl))
-                  (triangle-hulls
-                    (key-place 1 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow   fat-web-post-tl)
-                    (key-place 2 cornerrow fat-web-post-bl)
-                    (key-place 2 lastrow   fat-web-post-tr)
-                    (key-place 2 cornerrow fat-web-post-br)
-                    (key-place 3 cornerrow fat-web-post-bl)))
-                (color GRE))
-
-             (->> (if use_hotswap_holder
-                  (triangle-hulls
-                    (key-place 3 lastrow   plate-post-tr)
-                    (key-place 3 lastrow   plate-post-br)
-                    (key-place 3 lastrow   plate-post-tr)
-                    (key-place 4 cornerrow plate-post-bl))
-                  (triangle-hulls
-                    (key-place 3 lastrow   fat-web-post-tr)
-                    (key-place 3 lastrow   fat-web-post-br)
-                    (key-place 3 lastrow   fat-web-post-tr)
-                    (key-place 4 cornerrow fat-web-post-bl)))
-                (color CYA))
-
-             (->> (if use_hotswap_holder
-                  (triangle-hulls
-                    (key-place 1 cornerrow plate-post-br)
-                    (key-place 2 lastrow   plate-post-tl)
-                    (key-place 2 lastrow   plate-post-bl))
-                     
-                   (triangle-hulls
-                    (key-place 1 cornerrow fat-web-post-br)
-                    (key-place 2 lastrow   fat-web-post-tl)
-                    (key-place 2 lastrow   fat-web-post-bl)))
-                (color MAG))
-           )
   )
 )
 
@@ -1754,32 +1705,31 @@ need to adjust for difference for thumb-z only"
                    (case-br [shape] (union shape (case-post-br shape) (translate [0 0 (- upper-case-out)] (case-post-br shape))))
                  ]
     (union
-         
-        (->> (triangle-hulls
-                 (thumb-u-place fat-web-post-bl)
-                 (thumb-r-place plate-post-bl)
-                 (thumb-u-place fat-web-post-br)
-                 (thumb-r-place plate-post-tl)
-             ) (color GRE))
+      (->> (triangle-hulls
+               (thumb-u-place fat-web-post-bl)
+               (thumb-r-place plate-post-bl)
+               (thumb-u-place fat-web-post-br)
+               (thumb-r-place plate-post-tl)
+           ) (color GRE))
 
-        (->> (triangle-hulls
-                 (thumb-u-place fat-web-post-br)
-                 (thumb-ur-place fat-web-post-bl)
-                 (thumb-r-place plate-post-tl)
-             ) (color RED))
+      (->> (triangle-hulls
+               (thumb-u-place fat-web-post-br)
+               (thumb-ur-place fat-web-post-bl)
+               (thumb-r-place plate-post-tl)
+           ) (color RED))
 
-        (->> (triangle-hulls
-                 (thumb-ub-place fat-web-post-bl)
-                 (thumb-r-place plate-post-bl)
-                 (thumb-ub-place fat-web-post-br)
-             ) (color GRE))
+      (->> (triangle-hulls
+               (thumb-ub-place fat-web-post-bl)
+               (thumb-r-place plate-post-bl)
+               (thumb-ub-place fat-web-post-br)
+           ) (color GRE))
 
-        (->> (triangle-hulls
-                 (thumb-ub-place fat-web-post-br)
-                 (thumb-u-place fat-web-post-bl)
-                 (thumb-r-place plate-post-bl)
-                 (thumb-r-place plate-post-tl)
-             ) (color RED))
+      (->> (triangle-hulls
+               (thumb-ub-place fat-web-post-br)
+               (thumb-u-place fat-web-post-bl)
+               (thumb-r-place plate-post-bl)
+               (thumb-r-place plate-post-tl)
+           ) (color RED))
 
       (->> (triangle-hulls
                (thumb-ur-place fat-web-post-bl)
@@ -1802,25 +1752,25 @@ need to adjust for difference for thumb-z only"
                (thumb-ub-place plate-post-tr)
            ) (color RED))
 
-    (->> (triangle-hulls
-      ;(key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
-      (thumb-r-place short-post-tr)
-      (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
-      (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
-      ;(thumb-r-place pl
-      ) (color RED))
+      (->> (triangle-hulls
+        ;(key-place 1 cornerrow (translate [0 0 0] plate-post-tr))
+        (thumb-r-place short-post-tr)
+        (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
+        (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
+        ;(thumb-r-place pl
+        ) (color RED))
 
-    (->> (triangle-hulls
-      (key-place 1 cornerrow (translate [0 0 0] short-post-back-br))
-      (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
-      (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
-      ) (color RED))
+      (->> (triangle-hulls
+        (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) short-post-back-br]) short-post-back-br)))
+        (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
+        (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
+        ) (color RED))
 
-    (->> (triangle-hulls
-      (key-place 1 cornerrow (translate [0 0 0] fat-web-post-br))
-      (key-place 0 homerow (translate [0 0 0] fat-web-post-bl))
-      (thumb-ur-place plate-post-br)
-      ) (color RED))
+      (->> (triangle-hulls
+        (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) fat-web-post-br]) fat-web-post-br)))
+        (key-place 0 homerow (translate [0 0 0] fat-web-post-bl))
+        (thumb-ur-place plate-post-br)
+        ) (color RED))
 
       ;(->> (triangle-hulls
       ;         (key-place (inc firstcol)    cornerrow  short-post-bl)
@@ -1990,10 +1940,10 @@ need to adjust for difference for thumb-z only"
     ;  (key-place 1 cornerrow web-post-bl)
     ;  (key-place 1 cornerrow web-post-br)) (color BLU))
     (->> (triangle-hulls
-      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-tl))
-      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-tr))
+      (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-tl) short-post-back-tl)))
+      (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-tr) short-post-back-tr)))
       (thumb-urr-place (translate [0 0 -1] short-post-bl))
-      (key-place 1 cornerrow (translate [0 0 -1] short-post-back-br))
+      (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-br) short-post-back-br)))
       ;(thumb-r-place plate-post-tr)
       ) (color NBL))
     ;(->> (triangle-hulls
@@ -2395,16 +2345,16 @@ need to adjust for difference for thumb-z only"
 (defn right-wall [border]
   (union 
     ;(key-corner (dec lastcol) firstrow :tr border)
-    (for [y (range 3 lastrow)] (key-wall-brace (dec lastcol)      y  1 0 web-post-tr (dec lastcol) y 1 0 web-post-br border))
+    (for [y (range 3 lastrow)] (key-wall-brace (dec lastcol)      y  -1 0 web-post-bl (dec lastcol) y -1 0 web-post-tl border))
 
     (wall-brace-upper        (partial key-place' border (dec lastcol) 1)  1  1 upper-fat-web-post-tr-lower (partial key-place' border (dec lastcol) 1)  1  1 upper-fat-web-post-br-lower border)
     (wall-brace-upper        (partial key-place' border (dec lastcol) 1)  1  1 upper-fat-web-post-br-lower (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-bl-lower border)
     (wall-brace-upper        (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-bl-lower (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-tl-lower border)
     (wall-brace-upper        (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-tl-lower (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-tr-lower border)
     (wall-brace-upper        (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-tr-lower (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-br-lower border)
-    (wall-brace'        (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-br-lower true (partial key-place' border (dec lastcol) 3)  1  0 web-post-tr false  border)
+    (wall-brace'        (partial key-place' border lastcol 2)  0  0 upper-fat-web-post-br-lower true (partial key-place' border (dec lastcol) 3)  -1  0 web-post-bl false  border)
 
-    (key-corner (dec lastcol) cornerrow :br border)
+    (key-corner (dec lastcol) cornerrow :tl border)
 
     (when border (union
       (upper-key-case-right-wall (partial key-place' border (dec lastcol) 1))
@@ -2490,7 +2440,7 @@ need to adjust for difference for thumb-z only"
 
           (color BRO (hull
             (key-place' firstcol 2 (translate [0 0 (- upper-case-out)] fat-web-post-br))
-            (thumb-ur-place' border (translate [0 0 (- upper-case-out)] fat-web-post-tl))
+            (thumb-ur-place' border (translate [0 0 (- swap-z upper-post-offset)]  short-post-back-tl))
           ))
           ;(key-wall-brace firstcol (- lastrow 2) 0 -1 web-post-bl firstcol (- lastrow 2) 0 -1 web-post-br border)
           ;(key-wall-brace firstcol (- lastrow 2) 0 -1 web-post-br (inc firstcol) (- lastrow 2) -1 -1 web-post-bl border)
@@ -2510,24 +2460,30 @@ need to adjust for difference for thumb-z only"
         key-place (if border key-place key-place-shifted) 
        ]
   (union 
-    (for [x (range 4 (dec ncols))] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl      x  cornerrow 0 -1 fat-web-post-br border)) ; TODO fix extra wall
-    (for [x (range 5 (dec ncols))] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br border))
+    (key-wall-brace 4 cornerrow 0 1 fat-web-post-tr      4  cornerrow 0 1 fat-web-post-tl border)
+    ;(for [x (range 5 (dec ncols))] (key-wall-brace x cornerrow 0 -1 fat-web-post-bl (dec x) cornerrow 0 -1 fat-web-post-br border))
     ;(key-wall-brace 3 real-lastrow 0   -1 fat-web-post-bl     3   real-lastrow 0.5 -1 fat-web-post-br border)
     ;(key-wall-brace 3 real-lastrow 0.5 -1 fat-web-post-br 4 cornerrow -1 0 fat-web-post-bl border)
     ;(key-wall-brace 4 cornerrow -1 0 fat-web-post-bl 4 cornerrow 0 -1 fat-web-post-bl border)
 
-    (when (and left border) (union
-      (key-wall-brace 1 3 0 -1 fat-web-post-br 1 3 1 0 fat-web-post-br border)
-      (key-wall-brace 1 3 1 0 fat-web-post-br 1 3 1 0 fat-web-post-tr border)
-      (key-wall-brace 1 3 1 0 fat-web-post-tr 1 3 0 1 fat-web-post-tr border)
-      (key-wall-brace 1 3 0 1 fat-web-post-tr 1 3 0 1 fat-web-post-tl border)
-    ))
+    ; extra wall for lower index key
+    (when border (letfn [
+                     (new-post [post] (hull post (translate [0 0 (- v-key-case-extend)] post)))
+                   ]
+                   (union
+                     (key-wall-brace 1 3 0 -1 (new-post fat-web-post-br) 1 3 1 0  (new-post fat-web-post-br) border)
+                     (key-wall-brace 1 3 1 0  (new-post fat-web-post-br) 1 3 1 0  (new-post fat-web-post-tr) border)
+                     (key-wall-brace 1 3 1 0  (new-post fat-web-post-tr) 1 3 0 1  (new-post fat-web-post-tr) border)
+                     (key-wall-brace 1 3 0 1  (new-post fat-web-post-tr) 1 3 0 1  (new-post fat-web-post-tl) border)
+                     (key-wall-brace 1 3 0 1  fat-web-post-tl 1 3 -1 0 fat-web-post-tl border)
+                     (key-wall-brace 1 3 -1 0 fat-web-post-tl 1 3 -1 0 fat-web-post-bl border)
+                   )))
 
     (->> 
         (union 
           (wall-brace' thumb-r-place 0 -1 fat-web-post-br false thumb-urr-place 0 0 upper-fat-web-post-br-lower true border)
           (wall-brace' thumb-urr-place 0 0 upper-fat-web-post-br-lower true thumb-urr-place 0 0 upper-fat-web-post-tr-lower true border)
-          (wall-brace' thumb-urr-place 0 0 upper-fat-web-post-tr-lower true (partial key-place 4 3) -1 -1 fat-web-post-bl false border)
+          (wall-brace' thumb-urr-place 0 0 upper-fat-web-post-tr-lower true (partial key-place 4 3) 1 1 fat-web-post-tr false border)
         )
       (color RED)
     )
@@ -2549,7 +2505,7 @@ need to adjust for difference for thumb-z only"
 
     (when border (union
       (when left (union
-        (->> (wall-brace''        (partial thumb-r-place' border)  -1  -1 fat-web-post-bl false border false (partial thumb-ub-place' border)  -1  0 fat-web-post-bl true border true) (color BRO))
+        (->> (wall-brace''        (partial thumb-r-place' border)  -1  -1 fat-web-post-bl false border false (partial thumb-ub-place' border)  0  -1 fat-web-post-bl false border false) (color BRO))
 
         (upper-key-case-left-wall (partial thumb-ub-place' border))
 
@@ -2734,10 +2690,10 @@ need to adjust for difference for thumb-z only"
     ;(->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     ;(->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-    (->> (screw-insert-relative-z res -120 0             1 bottom-radius top-radius height [ -7.2 -17 (+ (- 9) hide-top-screws)]) (color PIN)) ; left-top
-    (->> (screw-insert-relative-z-thumb res -0.0             bottom-radius top-radius height [ 9.5 -6.75  (+ (+ 19.5) hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert-relative-z res  113 5       2 bottom-radius top-radius height       [ (- 18.5)    21.5 (+ (- 16)  hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert-relative-z res -32 3       3 bottom-radius top-radius (* height 1) [0 (- 11.5) (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert-relative-z res -121.5 0             1 bottom-radius top-radius height [ -6.1 -15 (+ (- 6) hide-top-screws)]) (color PIN)) ; left-top
+    (->> (screw-insert-relative-z-thumb res -0.0             bottom-radius top-radius height [ 9.5 -6.75  (+ (+ 21) hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert-relative-z res  126 5       2 bottom-radius top-radius height       [ (- 16)    12 (+ (- 8)  hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert-relative-z res -32 3       3 bottom-radius top-radius (* height 1) [0 (- 11.5) (+ 6.2 hide-top-screws)]) (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]
@@ -3578,6 +3534,8 @@ need to adjust for difference for thumb-z only"
               (thumbcaps-cutout mirror-internals)
             ))
             (key-places single-plate-cutout)
+            ; make extra room to fit in the hotswap in the tight space behind the 'v' key
+            (key-place 1 3 (upper-behind-cutout' (- v-key-case-extend v-key-case-wall-thickness)))
             (upper-layout mirror-internals upper-behind-cutout)
             (thumb-layout mirror-internals single-plate-cutout)
             (when (not mirror-internals) (trackball-rotate sensor-cutout))
@@ -3875,15 +3833,34 @@ need to adjust for difference for thumb-z only"
             ;)
             (union ;(union (model-case-walls-right true)) 
                    ;(union (sa-cap-cutout 1) (debug (single-plate true)))
-                   (switch-plates-right true)
-                   ;(union fat-web-post-tl)
+                   ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))
+                   (union (switch-plates-right true))
+                   ;caps-cutout
+                   ;(thumbcaps-cutout true)
+                   ;(thumbcaps-cutout true)
+                   ;(union single-plate-cutout)
+                   ;(union (sa-cap-cutout 1))
+
+                   ;(union short-post-bl-lower)
+                   ;(union short-post-back-bl-lower)
+                   ;(debug upper-fat-web-post-bl-lower)
+                   ;(debug upper-fat-web-post-tl-lower)
+                   ;(debug upper-fat-web-post-br-lower)
+                   ;(debug upper-fat-web-post-tr-lower)
+                   ;(union (translate [0 0 (+ upper-post-offset)] upper-fat-web-post-tl-lower))
+
+                   ;(debug (upper-behind-cutout' (- v-key-case-extend v-key-case-wall-thickness)))
+                   ;(translate [0 0 0] short-post-back-br)
+                   ;(translate [0 0 (- v-key-case-extend)] short-post-back-br)
                    ;(union short-post-bl)
                    ;(union short-post-back-bl)
                    ;(debug (single-plate false))
                    ;(key-places (single-plate false))
                    ;(thumbcaps-cutout true)
 
-                   ;(color BLA single-plate-cutout)
+                   ;(single-plate true)
+                   ;fat-web-post-br
+                   ;(color BLA single-plate-extra-cutout)
                    ;(color GRE upper-fat-web-post-bl-lower)
                    ;(color GRE upper-fat-web-post-br-lower)
                    ;(color GRE upper-fat-web-post-tl-lower)
