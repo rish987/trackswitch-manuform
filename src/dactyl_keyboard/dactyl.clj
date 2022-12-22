@@ -21,7 +21,7 @@
 (defn rotate-z [angle shape]
   (rotate angle [0 0 1] shape))
 
-(def usb-holder-z-rotate 10)
+(def usb-holder-z-rotate 8)
 (def usb-holder-offset [-11.5 -0.4 0])
 
 (defn rotate-around-x [angle position]
@@ -205,10 +205,10 @@
 
 (defn above-x-rot [column] (cond
                   (= column 0)  (- 37) ;;index outer
-                  (= column 1)  (- 42) ;;index
-                  (= column 2)  (- 42) ;;middle
-                  (= column 3)  (- 42) ;;ring
-                  (= column 4)  (- 42) ;;pinky
+                  (= column 1)  (- 45) ;;index
+                  (= column 2)  (- 45) ;;middle
+                  (= column 3)  (- 45) ;;ring
+                  (= column 4)  (- 45) ;;pinky
                   :else 0))
 
 (def g-rot 100)
@@ -229,7 +229,7 @@
 (def v-key-case-wall-thickness 0.3)
 
 (def thumb-u-z-rot 54)
-(def thumb-u-z-off 0)
+(def thumb-u-z-off 0.5)
 (def thumb-u-x-off (- 3))
 (def thumb-u-x-rot (- 40.00))
 (def thumb-u-extra-dist 4.5)
@@ -1563,8 +1563,8 @@ need to adjust for difference for thumb-z only"
                   ]
              (when (not (skip-pos left (inc row) column))
              (triangle-hulls
-               (key-place column      row  (if (= row 1) fat-web-post-bl plate-post-bl))
-               (key-place column      row  (if (= row 1) fat-web-post-br plate-post-br))
+               (key-place column      row  (if (not= row 3) fat-web-post-bl plate-post-bl))
+               (key-place column      row  (if (not= row 3) fat-web-post-br plate-post-br))
                irow-tl
                irow-tr)))
            )
@@ -1642,6 +1642,13 @@ need to adjust for difference for thumb-z only"
              (key-place      3       3  fat-web-post-tr)
              (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-br-lower))
              (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-bl-lower))
+             )
+
+           (triangle-hulls
+             (key-place      2       3  fat-web-post-tr)
+             (key-place      3       3  fat-web-post-tr)
+             (key-place      1       3  fat-web-post-tl)
+             (thumb-urr-place (translate [0 0 (- swap-z upper-post-offset)] short-post-back-br-lower))
              )
 
            ;; pinky key connections
@@ -2693,7 +2700,7 @@ need to adjust for difference for thumb-z only"
       (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-r-move [-38 35.5 0])) (color BRO)) ; thumb
     )
     (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height [ -3  -10  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-r-move [6.5 -1.0 0])) (color BLA)) ; bottom middle
+    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-r-move [6.5 -0.5 0])) (color BLA)) ; bottom middle
     (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7     -2.90  screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
@@ -2721,10 +2728,10 @@ need to adjust for difference for thumb-z only"
     ;(->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     ;(->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-    (->> (screw-insert-relative-z res -121.5 0             1 bottom-radius top-radius height [ -8.1 -13 (+ (- 8.2) hide-top-screws)]) (color PIN)) ; left-top
-    (->> (screw-insert-relative-z-thumb res -18.0             bottom-radius top-radius height [ 9.5 -9.5  (+ (+ 21) hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert-relative-z res  125 5       2 bottom-radius top-radius height       [ (- 16)    13 (+ (- 8)  hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert-relative-z res -22 3       3 bottom-radius top-radius (* height 1) [0 (- 13.5) (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert-relative-z res -119.0 0             1 bottom-radius top-radius height [ -4.0 -13 (+ (- 11.5) hide-top-screws)]) (color PIN)) ; left-top
+    (->> (screw-insert-relative-z-thumb res -18.0             bottom-radius top-radius height [ 9.5 -9.5  (+ (+ 17.5) hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert-relative-z res  132 5       2 bottom-radius top-radius height       [ -14    11 (+ (- 17)  hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert-relative-z res -22 3       3 bottom-radius top-radius (* height 1) [0 -13.5 (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]
@@ -3896,12 +3903,12 @@ need to adjust for difference for thumb-z only"
             (union ;(union (model-case-walls-right false))
                    ;(union (sa-cap-cutout 1) (debug (single-plate true)))
                    ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))
-                   ;(model-switch-plates-right true)
+                   (model-switch-plates-right true)
                    ;(hotswap-case-cutout false)
                    ;(shift-model (thumb-upper-layout true upper-support-blocker))
                    ;(debug (thumb-test true))
-                   caps-cutout
-                   (thumbcaps-cutout true)
+                   ;caps-cutout
+                   ;(thumbcaps-cutout true)
                    ;(thumbcaps-cutout true)
                    ;(difference
                    ;  (union (single-plate true) (upper-key-case id))
