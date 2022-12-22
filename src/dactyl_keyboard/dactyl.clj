@@ -6,8 +6,8 @@
             [usb_holder :refer [usb-holder usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 
-(def testing true)
 ;(def testing false)
+(def testing true)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -21,8 +21,8 @@
 (defn rotate-z [angle shape]
   (rotate angle [0 0 1] shape))
 
-(def usb-holder-z-rotate 2.2)
-(def usb-holder-offset [-13 -5.43 0])
+(def usb-holder-z-rotate 10)
+(def usb-holder-offset [-11.5 -0.4 0])
 
 (defn rotate-around-x [angle position]
   (mmul
@@ -212,24 +212,24 @@
                   :else 0))
 
 (def g-rot 100)
-(def g-extra-dist 3.5)
+(def g-extra-dist 4.5)
 (def g-x-off -0.35)
-(def g-x-rot (- 30))
-(def g-z-off -1.5)
+(def g-x-rot (- 40))
+(def g-z-off -2.5)
 (def g-z-rot (+ 0 (+ 8.5)))
 
 (def p-rot (- 100))
 (def p-extra-dist 3.9)
 (def p-x-off 0.7)
-(def p-x-rot (- 36))
-(def p-z-off 0)
+(def p-x-rot (- 20))
+(def p-z-off 6.26)
 (def p-z-rot (+ 0 (- 18)))
 
 (def v-key-case-extend 1.5)
 (def v-key-case-wall-thickness 0.3)
 
 (def thumb-u-z-rot 54)
-(def thumb-u-z-off (- 1.5))
+(def thumb-u-z-off 0)
 (def thumb-u-x-off (- 3))
 (def thumb-u-x-rot (- 40.00))
 (def thumb-u-extra-dist 4.5)
@@ -241,7 +241,7 @@
 (def thumb-ub-extra-dist 6.5)
 
 (def thumb-urr-z-rot (- 75))
-(def thumb-urr-x-rot (- 24))
+(def thumb-urr-x-rot (- 40))
 (def thumb-urr-extra-dist 5.2)
 (def thumb-urr-x-off 6)
 (def thumb-urr-z-off 0)
@@ -814,7 +814,7 @@
 
 (def sa-key-height-from-plate 7.39)
 (def sa-cap-bottom-height (+ sa-key-height-from-plate plate-thickness))
-(def sa-cap-bottom-height-pressed 2.5)
+(def sa-cap-bottom-height-pressed 0)
 (def sa-cap-bottom-height-pressed' (+ sa-cap-bottom-height-pressed plate-thickness))
 
 (def sa-double-length 37.5)
@@ -1095,9 +1095,11 @@
                       rotate-z
                       column row shape))
 
-(defn shift-model [model] (->> model
-   (rotate tenting-angle [0 1 0])
-   (translate [0 0 keyboard-z-offset])
+(defn shift-model [model] (union 
+  (->> model
+     (rotate tenting-angle [0 1 0])
+     (translate [0 0 keyboard-z-offset])
+  )
 ))
 
 (defn shift-model-position [position]
@@ -1233,6 +1235,18 @@
 (def upper-fat-web-post-bot-lower-z-off (- (+ (- (/ web-thickness 1)) plate-thickness (/ fat-post-size 2))))
 (def upper-fat-web-post-bot-lower-y-off (/ mount-height -2))
 
+(def upper-support-blocker-height 3.5)
+(def behind-cutout-height (+ keyswitch-height single-plate-wall-thickness single-plate-wall-thickness))
+
+(defn upper-support-blocker' [width]
+    (let [post-offset upper-fat-web-post-bot-lower-z-off post-width fat-post-size width width] 
+    (union
+      (translate [0 (+ (- (/ upper-support-blocker-height 2)) (/ behind-cutout-height 2) (- (/ single-plate-wall-thickness 2)) 1) (- (- (/ width 2)) (+ post-offset (/ post-width 2)))]
+       (cube (- mount-width (* 2 fat-post-size)) upper-support-blocker-height width))
+    )
+  )
+)
+
 (defn upper-behind-cutout' [width]
     (let [post-offset upper-fat-web-post-bot-lower-z-off post-width fat-post-size width width] 
     (union
@@ -1241,12 +1255,13 @@
       (translate [0 (+ (- (/ web-thickness 2)) upper-fat-web-post-bot-lower-y-off) (- (- (/ width 2)) (+ post-offset (/ post-width 2)))]
        (cube (- mount-width (* 2 fat-post-size)) web-thickness width))
       (translate [0 (- (/ single-plate-wall-thickness 2)) (- (- (/ width 2)) (+ post-offset (/ post-width 2)))]
-       (cube (- mount-width (* 2 fat-post-size)) (+ keyswitch-height single-plate-wall-thickness single-plate-wall-thickness) width))
+       (cube (- mount-width (* 2 fat-post-size)) behind-cutout-height width))
     )
   )
 )
 
 (def upper-behind-cutout (upper-behind-cutout' (- upper-post-offset upper-fat-web-post-bot-lower-z-off fat-post-size)))
+(def upper-support-blocker (upper-support-blocker' (- upper-post-offset upper-fat-web-post-bot-lower-z-off fat-post-size)))
 
 (def upper-fat-web-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (+ (- (/ web-thickness 2)) 0)] fat-web-post')))
 (def upper-fat-web-post-bot (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
@@ -2682,8 +2697,8 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7     -2.90  screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
-(def screw-insert-height 6.5) ; Hole Depth Y: 4.4
-(def screw-insert-radius (/ 4.4 2)) ; Hole Diameter C: 4.1-4.4
+(def screw-insert-height 4.1) ; Hole Depth Y: 4.4
+(def screw-insert-radius (/ 5.2 2)) ; Hole Diameter C: 4.1-4.4
 
 (defn screw-insert-holes [left] (screw-insert-all-shapes
                           screw-insert-radius 
@@ -2706,10 +2721,10 @@ need to adjust for difference for thumb-z only"
     ;(->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
     ;(->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
     ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-    (->> (screw-insert-relative-z res -121.5 0             1 bottom-radius top-radius height [ -8.1 -13 (+ (- 7.7) hide-top-screws)]) (color PIN)) ; left-top
+    (->> (screw-insert-relative-z res -121.5 0             1 bottom-radius top-radius height [ -8.1 -13 (+ (- 8.2) hide-top-screws)]) (color PIN)) ; left-top
     (->> (screw-insert-relative-z-thumb res -18.0             bottom-radius top-radius height [ 9.5 -9.5  (+ (+ 21) hide-top-screws)]) (color BRO)) ; thumb
     (->> (screw-insert-relative-z res  125 5       2 bottom-radius top-radius height       [ (- 16)    13 (+ (- 8)  hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert-relative-z res -22 3       3 bottom-radius top-radius (* height 1) [0 (- 13.5) (+ 5.2 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert-relative-z res -22 3       3 bottom-radius top-radius (* height 1) [0 (- 13.5) (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]
@@ -3482,7 +3497,7 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(defn usb-holder-shift [shape] (let [orig-position (shift-model-position (key-position firstcol (dec firstrow) [0 0 0])) 
+(defn usb-holder-shift [shape] (let [orig-position (shift-model-position (key-position firstcol firstrow [0 0 0])) 
                                     position (map + usb-holder-offset [(first orig-position) (second orig-position) 0])] 
   (translate position (rotate-z (deg2rad usb-holder-z-rotate) shape))))
 
@@ -3494,12 +3509,12 @@ need to adjust for difference for thumb-z only"
                          top-screw-block-outers
                          (when (= controller-holder 2) pcb-holder-screw-post)
                   )
-                  ;(usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder-space (not mirror-internals))) (usb-holder-space (not mirror-internals))))
+                  (usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder-space (not mirror-internals))) (usb-holder-space (not mirror-internals))))
                   (when (not testing) (model-switch-plate-cutouts mirror-internals))
                   (screw-insert-holes mirror-internals)
                   top-screw-insert-holes
       )
-      ;(when testing (debug (usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder (not mirror-internals))) (usb-holder (not mirror-internals))))))
+      (when testing (debug (usb-holder-shift (if mirror-internals (mirror [0 0 0] (usb-holder (not mirror-internals))) (usb-holder (not mirror-internals))))))
     )
 )
 
@@ -3565,7 +3580,6 @@ need to adjust for difference for thumb-z only"
             (when (and (not testing) (not mirror-internals)) (trackball-rotate sensor-cutout))
           )
           (when (not testing) (key-places (single-plate mirror-internals)))
-          (when use_flex_pcb_holder flex-pcb-holders)
           (when (not testing) (thumb-layout mirror-internals (single-plate mirror-internals)))
           (when (not mirror-internals) (trackball-rotate trackball-mount))
         )
@@ -3578,10 +3592,7 @@ need to adjust for difference for thumb-z only"
       (shift-model (union 
         caps-cutout
         (thumbcaps-cutout mirror-internals)
-        (thumb-key-cutouts mirror-internals)
-        (when (not (or use_hotswap_holder use_solderless)) 
-            (union key-space-below
-                  thumb-space-below))
+        ;(thumb-key-cutouts mirror-internals)
         (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
         (when use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
     ))))
@@ -3618,7 +3629,7 @@ need to adjust for difference for thumb-z only"
     (when (not testing) (union
       (shift-model (union 
         (thumbcaps-cutout mirror-internals)
-        (thumb-key-cutouts mirror-internals)
+        ;(thumb-key-cutouts mirror-internals)
         (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
     ))))
   )
@@ -3810,25 +3821,39 @@ need to adjust for difference for thumb-z only"
 ;;         )))
 ;
 
+(defn cura-fix [shape] (union
+  (translate [0 0 0.005] (cube 1 1 0.01)) ; make sure cura doesn't change the height when loaded
+  shape
+))
+
 (when (not testing)
   (spit "things/switch-plates-right.scad"
-        (write-scad (model-switch-plates-right false)))
+        (write-scad (cura-fix (model-switch-plates-right false))))
+  (spit "things/upper-support-blockers-right.scad"
+        (write-scad (cura-fix (shift-model (upper-layout false upper-support-blocker)))))
   (spit "things/case-walls-right.scad"
         (write-scad (model-case-walls-right false)))
   (spit "things/thumb-test-right.scad"
-        (write-scad (thumb-test false)))
+        (write-scad (cura-fix (thumb-test false))))
+  (spit "things/upper-support-blockers-thumb-test-right.scad"
+        (write-scad (cura-fix (shift-model (thumb-upper-layout false upper-support-blocker)))))
 
+  (spit "things/switch-plates-left.scad"
+        (write-scad (cura-fix (mirror [-1 0 0] (model-switch-plates-right true)))))
+  (spit "things/upper-support-blockers-left.scad"
+        (write-scad (cura-fix (mirror [-1 0 0] (shift-model (upper-layout true upper-support-blocker))))))
   (spit "things/case-walls-left.scad"
         (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
-  (spit "things/switch-plates-left.scad"
-        (write-scad (mirror [-1 0 0]  (model-switch-plates-right true))))
   (spit "things/thumb-test-left.scad"
-        (write-scad (mirror [-1 0 0] (thumb-test true))))
+        (write-scad (cura-fix (mirror [-1 0 0] (thumb-test true)))))
+  (spit "things/upper-support-blockers-thumb-test-left.scad"
+        (write-scad (cura-fix (mirror [-1 0 0] (shift-model (thumb-upper-layout true upper-support-blocker))))))
 
   (spit "things/ardumicro-holder.scad"
         (write-scad (usb-holder false)))
   (spit "things/promicro-holder.scad"
         (write-scad (usb-holder true)))
+
 )
 
 ;; (spit "things/switch-plate-cutouts.scad"
@@ -3858,6 +3883,8 @@ need to adjust for difference for thumb-z only"
 ;      (write-scad
 ;        trackswitch-mount))
 
+(defn id [shape] shape)
+
 (when testing (spit "things/test.scad"
       (write-scad
             ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
@@ -3866,15 +3893,21 @@ need to adjust for difference for thumb-z only"
               ;usb-holder
               ;model-bottom-plate
             ;)
-            (union (union (model-case-walls-right false))
+            (union ;(union (model-case-walls-right false))
                    ;(union (sa-cap-cutout 1) (debug (single-plate true)))
                    ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))
-                   ;(union (switch-plates-right false))
-                   ;(thumb-test true)
-                   ;caps-cutout
+                   ;(model-switch-plates-right true)
+                   ;(hotswap-case-cutout false)
+                   ;(shift-model (thumb-upper-layout true upper-support-blocker))
+                   ;(debug (thumb-test true))
+                   caps-cutout
+                   (thumbcaps-cutout true)
                    ;(thumbcaps-cutout true)
-                   ;(thumbcaps-cutout true)
-                   ;(union single-plate-cutout)
+                   ;(difference
+                   ;  (union (single-plate true) (upper-key-case id))
+                   ;  (union single-plate-cutout)
+                   ;  (union upper-behind-cutout)
+                   ;)
                    ;(union (sa-cap-cutout 1))
 
                    ;(union short-post-bl-lower)
@@ -3885,7 +3918,8 @@ need to adjust for difference for thumb-z only"
                    ;(debug upper-fat-web-post-tr-lower)
                    ;(union (translate [0 0 (+ upper-post-offset)] upper-fat-web-post-tl-lower))
 
-                   ;(debug (upper-behind-cutout' (- v-key-case-extend v-key-case-wall-thickness)))
+                   ;(debug (union upper-behind-cutout))
+                   ;(union (union upper-support-blocker))
                    ;(translate [0 0 0] short-post-back-br)
                    ;(translate [0 0 (- v-key-case-extend)] short-post-back-br)
                    ;(union short-post-bl)

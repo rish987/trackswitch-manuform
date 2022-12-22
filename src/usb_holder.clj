@@ -176,7 +176,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def usb-holder-cutout-height cutout-height)
-(defn body-cutout [promicro] (translate [0 0 (- cutout-height)] (cube (mount-width promicro) (fb-wall-adj (mclength promicro)) cutout-height :center false)))
+(defn body-cutout [promicro] (translate [0 0 (- cutout-height)] (union
+  (cube (mount-width promicro) (fb-wall-adj (mclength promicro)) cutout-height :center false)
+  (translate [0 (+ (fb-wall-adj (mclength promicro)) mount-thickness) 0] (cube (mount-width promicro) mount-thickness cutout-height :center false)) ; cut out some space in the front too
+)))
 
 (defn usb-holder-cutout' [promicro] (usb-holder-space-shift promicro (union (union (mount-base promicro true) (body-cutout promicro)))))
 
