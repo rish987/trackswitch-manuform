@@ -328,7 +328,7 @@
 
 (def sensor-x-rotate 0)
 (def sensor-y-rotate 0)
-(def sensor-z-rotate 10)
+(def sensor-z-rotate 0)
 
 (def tb-mount-length 18)
 (def tb-mount-width 23)
@@ -1139,7 +1139,8 @@
                          (not= row lastrow))]
              (->> (sa-cap 1 column row)
                 (key-place column row)))))
-(defn key-places [shape]
+
+(defn key-places' [shape flip-g]
   (apply union
          (for [column columns
                row rows
@@ -1148,8 +1149,12 @@
                          (not= row lastrow))
                        (not (= column lastcol))
                        )]
-             (->> shape
+             (->> 
+                ; flip the g shape to make room for trackball
+                (if (and flip-g (= row homerow) (= column 0)) (rotate-z (deg2rad 180) shape) shape)
                 (key-place column row)))))
+
+(defn key-places [shape] (key-places' shape false))
 
 (def key-space-below
   (key-places switch-bottom))
@@ -1375,10 +1380,10 @@ need to adjust for difference for thumb-z only"
 
 (defn thumb-place-shifted [rot move shape] (shift-model (thumb-place rot move shape)))
 
-(def trackball-y-rotate -72)
-(def trackball-x-rotate 13)
-(def trackball-z-rotate 30)
-(def trackball-thumb-offset [-4.5 20.0 12])
+(def trackball-y-rotate -55)
+(def trackball-x-rotate 26)
+(def trackball-z-rotate 15)
+(def trackball-thumb-offset [-20.5 15.2 14.7])
 
 (defn apply-trackball-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn shape]
   (->> shape
@@ -3347,7 +3352,7 @@ need to adjust for difference for thumb-z only"
                                       ))
 (defn dowell-angle [shape] (
                              ->> shape
-                                 ;(rotate (deg2rad (+ 45)) [0 0 1])
+                                 (rotate (deg2rad (+ 17)) [0 0 1])
                                  ;(rotate (deg2rad -30) [0 1 0])
                                  ;(rotate (deg2rad 25) [1 0 0])
                                  ))
@@ -3450,7 +3455,7 @@ need to adjust for difference for thumb-z only"
                     (trackswitch-place (union (debug trackswitch-mount) (debug trackswitch-mount-cutout)))
                     (sensor-hole-angle sensor-case-cutout)
                     rotated-dowells
-                    (sphere (/ trackball-width-plus-bearing 2))
+                    (sphere (/ trackball-width 2))
                     )
     )
 )
@@ -3666,41 +3671,47 @@ need to adjust for difference for thumb-z only"
               (case-top-border mirror-internals)
               (color CYA (connectors mirror-internals))
               (thumb-connectors mirror-internals)
-              (when testing (union
-                (debug caps-cutout)
-                (debug (thumbcaps-cutout mirror-internals))
-                (debug (upper-layout mirror-internals upper-behind-cutout))
-              ))
+              (when (not mirror-internals) (trackball-rotate trackball-mount))
             )
-            (when testing (union
-              caps-cutout
-              (thumbcaps-cutout mirror-internals)
-            ))
             (key-places single-plate-cutout)
             ; make extra room to fit in the hotswap in the tight space behind the 'v' key
             (key-place 1 3 (upper-behind-cutout' (- v-key-case-extend v-key-case-wall-thickness)))
             (upper-layout mirror-internals upper-behind-cutout)
             (thumb-layout mirror-internals single-plate-cutout)
-            (when (and (not testing) (not mirror-internals)) (trackball-rotate sensor-cutout))
+            caps-cutout
+            (thumbcaps-cutout mirror-internals)
+            (when (not mirror-internals) (trackball-rotate trackball-cutout))
           )
-          (when (not testing) (key-places (single-plate mirror-internals)))
-          (when (not testing) (thumb-layout mirror-internals (single-plate mirror-internals)))
-          (when (not mirror-internals) (trackball-rotate trackball-mount))
+          (when (not testing) 
+            (union (key-places' (single-plate mirror-internals) (not mirror-internals))
+            (thumb-layout mirror-internals (single-plate mirror-internals))
+          ))
         )
       )
       (when top-screw-insert-top-plate-bumps top-screw-insert-outers)
     )
-    (when (not mirror-internals) (shift-model (trackball-rotate trackball-cutout)))
+    ; cut away from the bottom of the g-key plate a bit
+    (when (not mirror-internals) (trackball-rotate (sphere (/ (- trackball-width-plus-bearing 1) 2))))
     (when (not testing) (union
       (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
       (shift-model (union 
-        caps-cutout
-        (thumbcaps-cutout mirror-internals)
         ;(thumb-key-cutouts mirror-internals)
         (when use_hotswap_holder (thumb-layout mirror-internals (hotswap-case-cutout mirror-internals)))
-        (when use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
+        (when use_hotswap_holder (key-places' (hotswap-case-cutout mirror-internals) (not mirror-internals)))
     ))))
-  ) (when testing (shift-model (trackball-rotate (debug trackball-debug)))))
+  ) (when testing 
+      (shift-model (union 
+        (when (not mirror-internals) (union
+          (difference
+            (color GRE (key-place 0 2 (rotate-z (deg2rad 180) (single-plate mirror-internals))))
+            (trackball-rotate (sphere (/ trackball-width-plus-bearing 2)))
+          )
+          (debug (trackball-rotate trackball-debug))
+        ))
+        (debug caps-cutout)
+        (debug (thumbcaps-cutout mirror-internals))
+        (debug (upper-layout mirror-internals upper-behind-cutout))
+     ))))
 )
 
 (defn thumb-test [mirror-internals]
