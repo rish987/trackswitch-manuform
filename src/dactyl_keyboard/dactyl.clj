@@ -1485,6 +1485,437 @@ need to adjust for difference for thumb-z only"
 (defn thumb-key-cutouts [mirror-internals] 
     (thumb-layout mirror-internals (single-plate-cut mirror-internals)))
 
+(def top-screw-radius (/ 2.95 2))       ; M3 screw diameter
+(def top-screw-insert-radius (/ 4 2)); M3 screw insert diameter
+(def top-screw-head-radius (/ 4.6 2)) ; M3 screw head diameter (4.4 plus some clearance)
+
+; Screw insert definition & position
+(defn screw-insert-shape [res rot bottom-radius top-radius height]
+  (let [ shape       (->> (binding [*fn* res]
+                       (cylinder [bottom-radius top-radius] height))
+                     )
+         x          (* 2 top-radius)
+         y          (* 0.75 bottom-radius)
+         z          (+ 0.01 height)
+         cut-shape   (if (= TRIANGLE-RES res)
+                         (rotate (deg2rad 30) [0 0 1]
+                             (difference (rotate (deg2rad -30) [0 0 1] shape)
+                                         (translate [0 y 0] (cube x y z))))
+                         shape
+                     )
+         final-shape (rotate (deg2rad rot) [0 0 1] cut-shape)
+  ]
+  final-shape)
+)
+
+(def top-screw-length 16)               ; M2/M3 screw thread length
+(def top-screw-insert-height 10)        ; M2/M3 screw insert length 3.5, use higher value to cut through angled things
+
+(def top-screw-clear-length (- top-screw-length top-screw-insert-height))
+(def top-screw-block-height 4)
+(def top-screw-block-wall-thickness 7)
+(def top-screw-insert-wall-thickness 1.3)
+
+;;;;;;;;;;;;;;;;;
+;; Sensor Case ;;
+;;;;;;;;;;;;;;;;;
+
+(defn eps [x] (+ x 0.1))
+
+(def pcb-width-actual 1.6)
+(def pcb-length 28.5)
+(def pcb-height 21.5)
+
+(def lens-thickness 3.4)
+(def lens-clearance 14.5)
+(def pcb-thickness 4.1)
+
+(def pcb-lens-thickness (+ lens-thickness pcb-thickness))
+
+(def case-thickness 2.5)
+(def cable-offset 1.4)
+(def cables-width 20.8)
+(def cables-height 3.35)
+(def lens-width (- pcb-length (* 2 2.7)))
+(def dowel-width 2.5)
+(def dowel-depth 1.9)
+(def dowel-offset (/ 13.5 2))
+(def cable-holder-length lens-width)
+(def cable-holder-depth 2.7)
+(def cable-holder-height 10)
+
+(def sensor-holder-distance 23.85)
+
+(def M2-insert-height 4)
+(def M2-insert-rad (/ 3.53 2))
+(def M2-washer-rad (/ 5.45 2))
+(def M2-screw-rad (/ 2.25 2))
+
+(def cover-insert-wall-thickness 1.2)
+
+
+(def cover-insert-total-rad (+ M2-insert-rad cover-insert-wall-thickness))
+
+(def lens-adapter-width 3.55)
+(def lens-adapter-thickness 1.2)
+
+;TODO rename
+(def total-thickness (+ pcb-thickness (* 2 case-thickness)))
+(def total-height pcb-height)
+(def total-length (+ pcb-length (* 2 case-thickness)))
+
+(def total-cable-holder-length (+ cable-holder-length (* 2 case-thickness)))
+(def total-cable-holder-height (+ cable-holder-height (* 2 case-thickness)))
+(def total-cable-holder-width (+ cable-holder-depth (* 2 case-thickness)))
+
+(def base
+  (union
+    (difference
+      (cube total-length total-thickness total-height)
+
+      ; PCB cutout
+      (translate [0 0 0] (cube pcb-length pcb-thickness total-height))
+
+      ; space for lens dowels
+      (translate [dowel-offset (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
+      (translate [(- dowel-offset) (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
+
+      ; lens cutout
+      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2))) 0] (cube lens-width case-thickness total-height))
+
+      ; cables cutout
+      (translate [0 (+ (/ case-thickness 2) (/ pcb-thickness 2)) (+ (- (/ cables-height 2)) (/ total-height 2))] (cube cables-width case-thickness cables-height))
+
+    )
+
+    ; lens adapter
+    (translate [(+ (/ lens-adapter-width 2) (/ lens-width 2)) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
+    (translate [(- (+ (/ lens-adapter-width 2) (/ lens-width 2))) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
+    (difference
+      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-width lens-adapter-thickness total-height))
+      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-clearance lens-adapter-thickness total-height))
+
+    )
+
+    ; M2 insert adapter
+    (union 
+      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+    )
+  )
+)
+
+(def cable-holder 
+  (difference
+    (cube total-cable-holder-length total-cable-holder-width total-cable-holder-height)
+    (translate [0 0 case-thickness] (cube cable-holder-length cable-holder-depth total-cable-holder-height))
+  )
+)
+
+(def sensor-case (with-fn ROUND-RES (let [
+                       M2-screw-length (+ lens-thickness total-thickness)
+                       M2-screw-offset (+ (- (/ M2-screw-length 2)) (/ pcb-thickness 2) case-thickness)
+                       M2-screw (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad M2-screw-length))
+                      ] 
+  (difference 
+    (union
+      base
+      ;cable-holder
+    )
+
+    ; M2 screw holes
+    (translate [(- (/ sensor-holder-distance 2)) M2-screw-offset 0] M2-screw)
+    (translate [(/ sensor-holder-distance 2) M2-screw-offset 0] M2-screw)
+
+    ; M2 insert holes (back)
+      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
+
+    ; hole to make room for M2 nut
+      (translate [(- (/ sensor-holder-distance 2)) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
+      (translate [(/ sensor-holder-distance 2) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
+  ))))
+
+(defn bottom-trim-align [shape] (translate (map + bottom-trim-origin [0 0 trim]) shape))
+
+(def lens-adapter-protrude (- (+ lens-thickness lens-adapter-thickness) case-thickness))
+(def M2-insert-protrude (- M2-insert-height case-thickness))
+
+(def sensor-case-cutout-back-clearance 10)
+
+(def sensor-case-cutout-height (+ total-thickness lens-adapter-protrude M2-insert-protrude sensor-case-cutout-back-clearance))
+
+(def sensor-case-cutout (bottom-trim-align (translate [0 0 (- (/ sensor-case-cutout-height 2))] (cube total-length total-height sensor-case-cutout-height))))
+
+(def sensor-case-aligned (bottom-trim-align (translate [0 0 (- (+ (/ total-thickness 2) lens-adapter-protrude))] (rotate-x (deg2rad (- 90)) sensor-case))))
+
+;;;;;;;;;;;;;;;
+;; Trackball ;;
+;;;;;;;;;;;;;;;
+
+(def dowells (union
+              (rotated_dowell 0)
+              (rotated_dowell 120)
+              (rotated_dowell 240))
+  )
+(def vertical-hold 0) ; Millimeters of verticle hold after the curviture of the sphere ends to help hold the ball in
+
+(def cup (
+           difference
+           (union
+            (sphere (/ outer-width 2)) ; Main cup sphere
+            (color BLU (translate [0, 0, (/ vertical-hold 2)] (cylinder (/ outer-width 2) vertical-hold))) ; add a little extra to hold ball in
+           )
+           (sphere (/ trackball-width-plus-bearing 2))
+           (translate [0, 0, (+ (/ outer-width 2) vertical-hold)] (cylinder (/ outer-width 2) outer-width)) ; cut out the upper part of the main cup spher
+           )
+  )
+(def bottom-trim ; trim the bottom off of the cup to get a lower profile
+  (translate bottom-trim-origin (translate [0 0 (/ trim 2)] (cube outer-width outer-width trim)))
+  )
+
+(defn trackball-mount-rotate [thing] (rotate (deg2rad 0) [0 0 1]
+                                     (rotate (deg2rad 0) [1 0 0]
+                                     (rotate (deg2rad 0) [0 1 0]
+                                     thing))))
+
+(def sensor-holder-outer-rad (/ 7 2))
+
+(def sensor-cable-out-clearance 23.5)
+(def sensor-cable-below-clearance 2.00)
+
+(def sensor-case-wall-thickness 2.00)
+(def sensor-case-clearance 0.3)
+
+(def buffer-dist 0.5)
+
+(def trackswitch-cover-clearance 2)
+(def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
+(def trackswitch-cover-mount-cut-gap 0.85)
+(def trackswitch-cover-mount-cut-screw-clearance 10)
+(def M2-head-rad (/ 4.00 2))
+(def M2-head-depth 1.5)
+(def M2-screw-length 12)
+(def M2-short-screw-length 7)
+
+(def trackswitch-cover-mount-cut-depth (+ trackswitch-cover-mount-cut-screw-clearance M2-head-depth))
+(def trackswitch-cover-mount-cut (translate [0 0 (/ trackswitch-cover-mount-cut-depth 2)] (screw-insert-shape ROUND-RES 0 M2-washer-rad M2-washer-rad trackswitch-cover-mount-cut-depth)))
+(def trackswitch-cover-screw-cut (translate [0 0 (- (/ M2-screw-length 2))] (screw-insert-shape ROUND-RES 0 M2-screw-rad M2-screw-rad M2-screw-length)))
+
+(defn sensor-holder-arm-outer' [outer-height outer-radius] (union 
+                                                             (translate [0 0 (- (/ outer-height 2))] (screw-insert-shape ROUND-RES 0 outer-radius outer-radius outer-height))
+                                                             (translate [0 0 trackswitch-cover-mount-cut-gap] trackswitch-cover-mount-cut)
+                                                             (translate [0 0 trackswitch-cover-mount-cut-gap] trackswitch-cover-screw-cut)
+                                                             ))
+
+(defn sensor-holder-arm-inner' [outer-height inner-height inner-radius] (translate [0 0 (- (/ inner-height 2) outer-height)] (screw-insert-shape ROUND-RES 0 inner-radius inner-radius inner-height)))
+
+(def sensor-holder-height 2.0)
+
+(def sensor-cover-insert-height (+ sensor-cable-out-clearance sensor-height))
+(def sensor-cover-insert-top-extra-height 2.90)
+(def sensor-cover-insert-bot-extra-height 6.15)
+(def sensor-cover-insert-top-offset [(+ (/ sensor-width 2) trackswitch-total-radius buffer-dist) (- trackswitch-total-radius (/ sensor-length 3)) 0])
+(def sensor-cover-insert-bot-offset [0 (+ (/ sensor-length 2) trackswitch-total-radius buffer-dist) 0])
+(def sensor-cover-insert-screw-length 8)
+
+(def sensor-holder-arm-outer (sensor-holder-arm-outer' sensor-holder-height sensor-holder-outer-rad))
+(def sensor-holder-arm-inner (sensor-holder-arm-inner' sensor-holder-height sensor-screw-length M2-insert-rad))
+(defn sensor-holder-cover-arm-outer [top] (sensor-holder-arm-outer' (+ sensor-cover-insert-height (if top sensor-cover-insert-top-extra-height sensor-cover-insert-bot-extra-height)) cover-insert-total-rad))
+(defn sensor-holder-cover-arm-inner [top] (sensor-holder-arm-inner' (+ sensor-cover-insert-height (if top sensor-cover-insert-top-extra-height sensor-cover-insert-bot-extra-height)) sensor-cover-insert-screw-length  M2-insert-rad))
+
+(defn sensor-holder-places [outer]
+  (let [
+         arm (if outer sensor-holder-arm-outer sensor-holder-arm-inner)
+       ]
+    (translate (map + bottom-trim-origin [0 0 (+ (/ trim 2))])
+               (rotate (deg2rad 90) [0 0 1]
+                 (union
+                   (translate [0 (- (/ sensor-holder-distance 2)) 0] arm)
+                   (->>
+                    arm
+                    (mirror [0 1 0])
+                    (translate [0 (/ sensor-holder-distance 2) 0])
+                   )
+                 )
+               )
+    )
+  )
+)
+ 
+(def sensor-holder-outer (sensor-holder-places true))
+(def sensor-holder-inner (sensor-holder-places false))
+
+(defn sensor-hole-angle [shape] (
+                                  ->> shape
+                                      (rotate (deg2rad sensor-z-rotate) [0 0 1])
+                                      (rotate (deg2rad sensor-x-rotate) [1 0 0])
+                                      (rotate (deg2rad sensor-y-rotate) [0 1 0])
+                                      ))
+(defn dowell-angle [shape] (
+                             ->> shape
+                                 (rotate (deg2rad (+ 17)) [0 0 1])
+                                 ;(rotate (deg2rad -30) [0 1 0])
+                                 ;(rotate (deg2rad 25) [1 0 0])
+                                 ))
+
+(def rotated-dowells
+  (dowell-angle
+   (translate [0 0 (- (/ holder-thickness' 2))] dowells)
+   ))
+
+(def rotated-bottom-trim     (sensor-hole-angle
+                               bottom-trim))
+
+(def sensor-cutout-height (* sensor-height 3))
+(def sensor-cutout     (let [wall-thickness (+ sensor-case-wall-thickness sensor-case-clearance)] (sensor-hole-angle (translate (map + bottom-trim-origin [(/ wall-thickness 2) (- (/ wall-thickness 2)) (- (/ trim 2) (/ sensor-cutout-height 2))])
+                               (cube (+ sensor-length wall-thickness) (+ lens-width wall-thickness) sensor-cutout-height)))))
+
+(defn filler-rotate [p] (
+                         ->> p
+                             (trackball-mount-rotate)
+                             ;                       (rotate (deg2rad 0) [0 1 0])
+                             (rotate (deg2rad 20) [0 0 1])
+                             (rotate (deg2rad 30) [0 1 0])
+                         ))
+
+(def trackswitch-offset-x-rot -3)
+
+; align with the top dowell
+(defn trackswitch-place [p] (->> p
+                               (rotate (deg2rad 90) [1 0 0])
+                               (translate [0 (/ outer-width 2) 0])
+                               (rotate (deg2rad trackswitch-offset-x-rot) [1 0 0])
+                               (rotate (deg2rad 90) [0 0 1])
+                             ))
+
+(def top-trackswitch-insert-height 4.6)
+(def washer-thickness 0.5)
+(def top-trackswitch-insert-screw-head-depth 2.35)
+(def top-trackswitch-insert-screw-head-washer-depth (+ washer-thickness top-trackswitch-insert-screw-head-depth))
+(def top-trackswitch-insert-washer-rad (/ 7.0 2))
+
+(def top-trackswitch-insert-extra-buffer 0.95)
+
+(def trackswitch-insert-inset 1.0)
+(def trackswitch-insert-z-adj 0.30)
+
+(def trackswitch-insert-extra-height 1.85)
+
+(def top-trackswitch-insert-buffer (+ top-trackswitch-insert-extra-buffer trackswitch-insert-inset))
+(def top-trackswitch-insert-thickness (+ (* trackswitch-total-radius 2) 0.2 top-trackswitch-insert-buffer))
+(def top-trackswitch-insert (translate [0 (/ top-trackswitch-insert-thickness 2) (+ (/ top-trackswitch-insert-height 2))] (cube (+ mount-height (* top-trackswitch-insert-extra-buffer 2)) top-trackswitch-insert-thickness top-trackswitch-insert-height)))
+
+(def trackswitch-cutout-height 20)
+
+(def trackswitch-insert-height 6.0)
+
+(def trackswitch-cover-insert-height 26.5)
+
+(defn trackswitch-insert [radius height]
+   (->> (screw-insert-shape ROUND-RES 0 radius radius height)
+        (translate [0 (- (- (/ mount-width 2)) trackswitch-total-radius trackswitch-insert-inset) (/ height 2)])))
+
+(defn trackswitch-cover-insert [radius height]
+   (->> (screw-insert-shape ROUND-RES 0 radius radius height)
+        (translate [0 (- (- (/ mount-width 2)) (+ (* 3 cover-insert-total-rad) top-trackswitch-insert-extra-buffer 0.2) trackswitch-insert-inset) (/ height 2)])))
+
+(def trackswitch-insert-buff 0.1)
+
+(def trackswitch-mount-top-offset (- (- 3.0) plate-thickness))
+
+(def trackswitch-mount
+  (difference
+    (union
+      (translate [0 0 (- plate-thickness)] (single-plate' false true))
+      (translate [0 (- (+ (* trackswitch-total-radius 2) (/ mount-width 2) top-trackswitch-insert-buffer)) trackswitch-mount-top-offset] top-trackswitch-insert)
+    )
+    (union
+      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
+      )
+   
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
+      )
+      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
+      )
+  ))
+)
+
+(def trackswitch-mount-cutout
+  (translate [0 0 (/ trackswitch-cutout-height 2)] (cube mount-height mount-height trackswitch-cutout-height))
+)
+
+; visualize trackball, dowells, mount
+(def trackball-debug (debug (union 
+                    (sensor-hole-angle sensor-case-aligned)
+                    (trackswitch-place (union (debug trackswitch-mount) (debug trackswitch-mount-cutout)))
+                    (sensor-hole-angle sensor-case-cutout)
+                    rotated-dowells
+                    (sphere (/ trackball-width 2))
+                    )
+    )
+)
+
+(def trackball-mount
+  (union 
+    (difference
+      (union 
+        (trackswitch-place (union
+          (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+               (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
+          )
+          (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
+               (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
+          )
+        ))
+
+        (trackball-mount-rotate cup)
+        (filler-rotate cup)
+      )
+
+      ; Subtract out the bottom trim clearing a hole for the sensor
+      rotated-bottom-trim
+    )
+  )
+)
+
+(def trackball-cutout
+   (union
+    (union
+      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
+           trackswitch-place
+      )
+      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
+           trackswitch-place
+      )
+    )
+
+    (trackswitch-place trackswitch-mount-cutout)
+
+    ; subtract out room for the axels
+    rotated-dowells
+    (sensor-hole-angle sensor-holder-outer)
+    (sphere (/ trackball-width-plus-bearing 2))
+   )
+  )
+
+(defn trackball-rotate [shape]
+  (->> shape
+    (rotate (deg2rad trackball-y-rotate) [0 1 0])
+    (rotate (deg2rad trackball-x-rotate) [1 0 0])
+    (rotate (deg2rad trackball-z-rotate) [0 0 1])
+    (thumb-place [0 0 0] trackball-thumb-offset))
+)
+
+
 ;;;;;;;;;;
 ;; Case ;;
 ;;;;;;;;;;
@@ -2405,6 +2836,7 @@ need to adjust for difference for thumb-z only"
 (defn trackball-wall [border] (let [
         key-place (if border key-place key-place-shifted)
         trackball-place (if border trackball-place trackball-place-shifted)
+        trackswitch-place (fn [shape] (trackball-place (trackswitch-place shape)))
        ] 
   (union
     (wall-brace' (partial key-place firstcol homerow) -1 0 upper-fat-web-post-tr-lower true trackball-place -1 0 trackball-post-tl false border)
@@ -2449,8 +2881,7 @@ need to adjust for difference for thumb-z only"
           ;(key-wall-brace (inc firstcol) (- lastrow 2) -1 -1 web-post-bl (inc firstcol) (dec lastrow) -1 0 web-post-tl border)
           ;(key-wall-brace (inc firstcol) (dec lastrow) -1 0 web-post-tl (inc firstcol) (dec lastrow) -1 0 web-post-bl border)
       ))) 
-      (union)
-      ;(trackball-wall border)
+      (trackball-wall border)
     )
   )
   )
@@ -2611,25 +3042,6 @@ need to adjust for difference for thumb-z only"
 ;; Screw Inserts ;;
 ;;;;;;;;;;;;;;;;;;;
 
-; Screw insert definition & position
-(defn screw-insert-shape [res rot bottom-radius top-radius height]
-  (let [ shape       (->> (binding [*fn* res]
-                       (cylinder [bottom-radius top-radius] height))
-                     )
-         x          (* 2 top-radius)
-         y          (* 0.75 bottom-radius)
-         z          (+ 0.01 height)
-         cut-shape   (if (= TRIANGLE-RES res)
-                         (rotate (deg2rad 30) [0 0 1]
-                             (difference (rotate (deg2rad -30) [0 0 1] shape)
-                                         (translate [0 y 0] (cube x y z))))
-                         shape
-                     )
-         final-shape (rotate (deg2rad rot) [0 0 1] cut-shape)
-  ]
-  final-shape)
-)
-
 (defn screw-insert [res rot column row bottom-radius top-radius height offset]
   (let [
          orig-position (shift-model-position (key-position column row [0 0 0]))
@@ -2728,22 +3140,9 @@ need to adjust for difference for thumb-z only"
       height
   )
 )
-
-(def top-screw-length 16)               ; M2/M3 screw thread length
-(def top-screw-insert-height 10)        ; M2/M3 screw insert length 3.5, use higher value to cut through angled things
-
 ; (def top-screw-insert-radius (/ 3.0 2)) ; M2 screw insert diameter
 ; (def top-screw-radius (/ 2.1 2))        ; M2 screw diameter
 ; (def top-screw-head-radius (/ 3.6 2))  ; M2 screw head diameter (3.4 plus some clearance)
-
-(def top-screw-insert-radius (/ 4 2)); M3 screw insert diameter
-(def top-screw-radius (/ 2.95 2))       ; M3 screw diameter
-(def top-screw-head-radius (/ 4.6 2)) ; M3 screw head diameter (4.4 plus some clearance)
-
-(def top-screw-clear-length (- top-screw-length top-screw-insert-height))
-(def top-screw-block-height 4)
-(def top-screw-block-wall-thickness 7)
-(def top-screw-insert-wall-thickness 1.3)
 
 (def top-screw (top-screw-insert-round-shapes
                       top-screw-radius
@@ -3113,406 +3512,6 @@ need to adjust for difference for thumb-z only"
                                      )
                                     ) 
                                   ))
-
-;;;;;;;;;;;;;;;;;
-;; Sensor Case ;;
-;;;;;;;;;;;;;;;;;
-
-(defn eps [x] (+ x 0.1))
-
-(def pcb-width-actual 1.6)
-(def pcb-length 28.5)
-(def pcb-height 21.5)
-
-(def lens-thickness 3.4)
-(def lens-clearance 14.5)
-(def pcb-thickness 4.1)
-
-(def pcb-lens-thickness (+ lens-thickness pcb-thickness))
-
-(def case-thickness 2.5)
-(def cable-offset 1.4)
-(def cables-width 20.8)
-(def cables-height 3.35)
-(def lens-width (- pcb-length (* 2 2.7)))
-(def dowel-width 2.5)
-(def dowel-depth 1.9)
-(def dowel-offset (/ 13.5 2))
-(def cable-holder-length lens-width)
-(def cable-holder-depth 2.7)
-(def cable-holder-height 10)
-
-(def sensor-holder-distance 23.85)
-
-(def M2-insert-height 4)
-(def M2-insert-rad (/ 3.53 2))
-(def M2-washer-rad (/ 5.45 2))
-(def M2-screw-rad (/ 2.25 2))
-
-(def cover-insert-wall-thickness 1.2)
-
-
-(def cover-insert-total-rad (+ M2-insert-rad cover-insert-wall-thickness))
-
-(def lens-adapter-width 3.55)
-(def lens-adapter-thickness 1.2)
-
-;TODO rename
-(def total-thickness (+ pcb-thickness (* 2 case-thickness)))
-(def total-height pcb-height)
-(def total-length (+ pcb-length (* 2 case-thickness)))
-
-(def total-cable-holder-length (+ cable-holder-length (* 2 case-thickness)))
-(def total-cable-holder-height (+ cable-holder-height (* 2 case-thickness)))
-(def total-cable-holder-width (+ cable-holder-depth (* 2 case-thickness)))
-
-(def base
-  (union
-    (difference
-      (cube total-length total-thickness total-height)
-
-      ; PCB cutout
-      (translate [0 0 0] (cube pcb-length pcb-thickness total-height))
-
-      ; space for lens dowels
-      (translate [dowel-offset (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
-      (translate [(- dowel-offset) (+ (/ dowel-depth 2) (/ pcb-thickness 2)) 0] (cube dowel-width dowel-depth total-height))
-
-      ; lens cutout
-      (translate [0 (- (+ (/ case-thickness 2) (/ pcb-thickness 2))) 0] (cube lens-width case-thickness total-height))
-
-      ; cables cutout
-      (translate [0 (+ (/ case-thickness 2) (/ pcb-thickness 2)) (+ (- (/ cables-height 2)) (/ total-height 2))] (cube cables-width case-thickness cables-height))
-
-    )
-
-    ; lens adapter
-    (translate [(+ (/ lens-adapter-width 2) (/ lens-width 2)) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
-    (translate [(- (+ (/ lens-adapter-width 2) (/ lens-width 2))) (- (+ (/ (+ lens-thickness lens-adapter-thickness) 2) (/ pcb-thickness 2))) 0] (cube lens-adapter-width (+ lens-thickness lens-adapter-thickness) total-height))
-    (difference
-      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-width lens-adapter-thickness total-height))
-      (translate [0 (- (+ (/ lens-adapter-thickness 2) (/ pcb-thickness 2) lens-thickness)) 0] (cube lens-clearance lens-adapter-thickness total-height))
-
-    )
-
-    ; M2 insert adapter
-    (union 
-      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
-      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
-    )
-  )
-)
-
-(def cable-holder 
-  (difference
-    (cube total-cable-holder-length total-cable-holder-width total-cable-holder-height)
-    (translate [0 0 case-thickness] (cube cable-holder-length cable-holder-depth total-cable-holder-height))
-  )
-)
-
-(def sensor-case (with-fn ROUND-RES (let [
-                       M2-screw-length (+ lens-thickness total-thickness)
-                       M2-screw-offset (+ (- (/ M2-screw-length 2)) (/ pcb-thickness 2) case-thickness)
-                       M2-screw (rotate-x (- (deg2rad 90)) (cylinder M2-screw-rad M2-screw-length))
-                      ] 
-  (difference 
-    (union
-      base
-      ;cable-holder
-    )
-
-    ; M2 screw holes
-    (translate [(- (/ sensor-holder-distance 2)) M2-screw-offset 0] M2-screw)
-    (translate [(/ sensor-holder-distance 2) M2-screw-offset 0] M2-screw)
-
-    ; M2 insert holes (back)
-      (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
-      (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-insert-rad M2-insert-height)))
-
-    ; hole to make room for M2 nut
-      (translate [(- (/ sensor-holder-distance 2)) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
-      (translate [(/ sensor-holder-distance 2) (- (+ (/ M2-insert-height 2) (/ pcb-thickness 2) lens-thickness)) 0] (rotate-x (- (deg2rad 90)) (cylinder M2-washer-rad M2-insert-height)))
-  ))))
-
-(defn bottom-trim-align [shape] (translate (map + bottom-trim-origin [0 0 trim]) shape))
-
-(def lens-adapter-protrude (- (+ lens-thickness lens-adapter-thickness) case-thickness))
-(def M2-insert-protrude (- M2-insert-height case-thickness))
-
-(def sensor-case-cutout-back-clearance 10)
-
-(def sensor-case-cutout-height (+ total-thickness lens-adapter-protrude M2-insert-protrude sensor-case-cutout-back-clearance))
-
-(def sensor-case-cutout (bottom-trim-align (translate [0 0 (- (/ sensor-case-cutout-height 2))] (cube total-length total-height sensor-case-cutout-height))))
-
-(def sensor-case-aligned (bottom-trim-align (translate [0 0 (- (+ (/ total-thickness 2) lens-adapter-protrude))] (rotate-x (deg2rad (- 90)) sensor-case))))
-
-;;;;;;;;;;;;;;;
-;; Trackball ;;
-;;;;;;;;;;;;;;;
-
-(def dowells (union
-              (rotated_dowell 0)
-              (rotated_dowell 120)
-              (rotated_dowell 240))
-  )
-(def vertical-hold 0) ; Millimeters of verticle hold after the curviture of the sphere ends to help hold the ball in
-
-(def cup (
-           difference
-           (union
-            (sphere (/ outer-width 2)) ; Main cup sphere
-            (color BLU (translate [0, 0, (/ vertical-hold 2)] (cylinder (/ outer-width 2) vertical-hold))) ; add a little extra to hold ball in
-           )
-           (sphere (/ trackball-width-plus-bearing 2))
-           (translate [0, 0, (+ (/ outer-width 2) vertical-hold)] (cylinder (/ outer-width 2) outer-width)) ; cut out the upper part of the main cup spher
-           )
-  )
-(def bottom-trim ; trim the bottom off of the cup to get a lower profile
-  (translate bottom-trim-origin (translate [0 0 (/ trim 2)] (cube outer-width outer-width trim)))
-  )
-
-(defn trackball-mount-rotate [thing] (rotate (deg2rad 0) [0 0 1]
-                                     (rotate (deg2rad 0) [1 0 0]
-                                     (rotate (deg2rad 0) [0 1 0]
-                                     thing))))
-
-(def sensor-holder-outer-rad (/ 7 2))
-
-(def sensor-cable-out-clearance 23.5)
-(def sensor-cable-below-clearance 2.00)
-
-(def sensor-case-wall-thickness 2.00)
-(def sensor-case-clearance 0.3)
-
-(def buffer-dist 0.5)
-
-(def trackswitch-cover-clearance 2)
-(def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
-(def trackswitch-cover-mount-cut-gap 0.85)
-(def trackswitch-cover-mount-cut-screw-clearance 10)
-(def M2-head-rad (/ 4.00 2))
-(def M2-head-depth 1.5)
-(def M2-screw-length 12)
-(def M2-short-screw-length 7)
-
-(def trackswitch-cover-mount-cut-depth (+ trackswitch-cover-mount-cut-screw-clearance M2-head-depth))
-(def trackswitch-cover-mount-cut (translate [0 0 (/ trackswitch-cover-mount-cut-depth 2)] (screw-insert-shape ROUND-RES 0 M2-washer-rad M2-washer-rad trackswitch-cover-mount-cut-depth)))
-(def trackswitch-cover-screw-cut (translate [0 0 (- (/ M2-screw-length 2))] (screw-insert-shape ROUND-RES 0 M2-screw-rad M2-screw-rad M2-screw-length)))
-
-(defn sensor-holder-arm-outer' [outer-height outer-radius] (union 
-                                                             (translate [0 0 (- (/ outer-height 2))] (screw-insert-shape ROUND-RES 0 outer-radius outer-radius outer-height))
-                                                             (translate [0 0 trackswitch-cover-mount-cut-gap] trackswitch-cover-mount-cut)
-                                                             (translate [0 0 trackswitch-cover-mount-cut-gap] trackswitch-cover-screw-cut)
-                                                             ))
-
-(defn sensor-holder-arm-inner' [outer-height inner-height inner-radius] (translate [0 0 (- (/ inner-height 2) outer-height)] (screw-insert-shape ROUND-RES 0 inner-radius inner-radius inner-height)))
-
-(def sensor-holder-height 2.0)
-
-(def sensor-cover-insert-height (+ sensor-cable-out-clearance sensor-height))
-(def sensor-cover-insert-top-extra-height 2.90)
-(def sensor-cover-insert-bot-extra-height 6.15)
-(def sensor-cover-insert-top-offset [(+ (/ sensor-width 2) trackswitch-total-radius buffer-dist) (- trackswitch-total-radius (/ sensor-length 3)) 0])
-(def sensor-cover-insert-bot-offset [0 (+ (/ sensor-length 2) trackswitch-total-radius buffer-dist) 0])
-(def sensor-cover-insert-screw-length 8)
-
-(def sensor-holder-arm-outer (sensor-holder-arm-outer' sensor-holder-height sensor-holder-outer-rad))
-(def sensor-holder-arm-inner (sensor-holder-arm-inner' sensor-holder-height sensor-screw-length M2-insert-rad))
-(defn sensor-holder-cover-arm-outer [top] (sensor-holder-arm-outer' (+ sensor-cover-insert-height (if top sensor-cover-insert-top-extra-height sensor-cover-insert-bot-extra-height)) cover-insert-total-rad))
-(defn sensor-holder-cover-arm-inner [top] (sensor-holder-arm-inner' (+ sensor-cover-insert-height (if top sensor-cover-insert-top-extra-height sensor-cover-insert-bot-extra-height)) sensor-cover-insert-screw-length  M2-insert-rad))
-
-(defn sensor-holder-places [outer]
-  (let [
-         arm (if outer sensor-holder-arm-outer sensor-holder-arm-inner)
-       ]
-    (translate (map + bottom-trim-origin [0 0 (+ (/ trim 2))])
-               (rotate (deg2rad 90) [0 0 1]
-                 (union
-                   (translate [0 (- (/ sensor-holder-distance 2)) 0] arm)
-                   (->>
-                    arm
-                    (mirror [0 1 0])
-                    (translate [0 (/ sensor-holder-distance 2) 0])
-                   )
-                 )
-               )
-    )
-  )
-)
- 
-(def sensor-holder-outer (sensor-holder-places true))
-(def sensor-holder-inner (sensor-holder-places false))
-
-(defn sensor-hole-angle [shape] (
-                                  ->> shape
-                                      (rotate (deg2rad sensor-z-rotate) [0 0 1])
-                                      (rotate (deg2rad sensor-x-rotate) [1 0 0])
-                                      (rotate (deg2rad sensor-y-rotate) [0 1 0])
-                                      ))
-(defn dowell-angle [shape] (
-                             ->> shape
-                                 (rotate (deg2rad (+ 17)) [0 0 1])
-                                 ;(rotate (deg2rad -30) [0 1 0])
-                                 ;(rotate (deg2rad 25) [1 0 0])
-                                 ))
-
-(def rotated-dowells
-  (dowell-angle
-   (translate [0 0 (- (/ holder-thickness' 2))] dowells)
-   ))
-
-(def rotated-bottom-trim     (sensor-hole-angle
-                               bottom-trim))
-
-(def sensor-cutout-height (* sensor-height 3))
-(def sensor-cutout     (let [wall-thickness (+ sensor-case-wall-thickness sensor-case-clearance)] (sensor-hole-angle (translate (map + bottom-trim-origin [(/ wall-thickness 2) (- (/ wall-thickness 2)) (- (/ trim 2) (/ sensor-cutout-height 2))])
-                               (cube (+ sensor-length wall-thickness) (+ lens-width wall-thickness) sensor-cutout-height)))))
-
-(defn filler-rotate [p] (
-                         ->> p
-                             (trackball-mount-rotate)
-                             ;                       (rotate (deg2rad 0) [0 1 0])
-                             (rotate (deg2rad 20) [0 0 1])
-                             (rotate (deg2rad 30) [0 1 0])
-                         ))
-
-(def trackswitch-offset-x-rot -3)
-
-; align with the top dowell
-(defn trackswitch-place [p] (->> p
-                               (rotate (deg2rad 90) [1 0 0])
-                               (translate [0 (/ outer-width 2) 0])
-                               (rotate (deg2rad trackswitch-offset-x-rot) [1 0 0])
-                               (rotate (deg2rad 90) [0 0 1])
-                             ))
-
-(def top-trackswitch-insert-height 4.6)
-(def washer-thickness 0.5)
-(def top-trackswitch-insert-screw-head-depth 2.35)
-(def top-trackswitch-insert-screw-head-washer-depth (+ washer-thickness top-trackswitch-insert-screw-head-depth))
-(def top-trackswitch-insert-washer-rad (/ 7.0 2))
-
-(def top-trackswitch-insert-extra-buffer 0.95)
-
-(def trackswitch-insert-inset 1.0)
-(def trackswitch-insert-z-adj 0.30)
-
-(def trackswitch-insert-extra-height 1.85)
-
-(def top-trackswitch-insert-buffer (+ top-trackswitch-insert-extra-buffer trackswitch-insert-inset))
-(def top-trackswitch-insert-thickness (+ (* trackswitch-total-radius 2) 0.2 top-trackswitch-insert-buffer))
-(def top-trackswitch-insert (translate [0 (/ top-trackswitch-insert-thickness 2) (+ (/ top-trackswitch-insert-height 2))] (cube (+ mount-height (* top-trackswitch-insert-extra-buffer 2)) top-trackswitch-insert-thickness top-trackswitch-insert-height)))
-
-(def trackswitch-cutout-height 20)
-
-(def trackswitch-insert-height 6.0)
-
-(def trackswitch-cover-insert-height 26.5)
-
-(defn trackswitch-insert [radius height]
-   (->> (screw-insert-shape ROUND-RES 0 radius radius height)
-        (translate [0 (- (- (/ mount-width 2)) trackswitch-total-radius trackswitch-insert-inset) (/ height 2)])))
-
-(defn trackswitch-cover-insert [radius height]
-   (->> (screw-insert-shape ROUND-RES 0 radius radius height)
-        (translate [0 (- (- (/ mount-width 2)) (+ (* 3 cover-insert-total-rad) top-trackswitch-insert-extra-buffer 0.2) trackswitch-insert-inset) (/ height 2)])))
-
-(def trackswitch-insert-buff 0.1)
-
-(def trackswitch-mount-top-offset (- (- 3.0) plate-thickness))
-
-(def trackswitch-mount
-  (difference
-    (union
-      (translate [0 0 (- plate-thickness)] (single-plate' false true))
-      (translate [0 (- (+ (* trackswitch-total-radius 2) (/ mount-width 2) top-trackswitch-insert-buffer)) trackswitch-mount-top-offset] top-trackswitch-insert)
-    )
-    (union
-      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
-           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
-      )
-      (->> (trackswitch-insert (+ top-screw-radius trackswitch-insert-buff) top-trackswitch-insert-height)
-           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
-      )
-   
-      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
-           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
-      )
-      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
-           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
-      )
-  ))
-)
-
-(def trackswitch-mount-cutout
-  (translate [0 0 (/ trackswitch-cutout-height 2)] (cube mount-height mount-height trackswitch-cutout-height))
-)
-
-; visualize trackball, dowells, mount
-(def trackball-debug (debug (union 
-                    (sensor-hole-angle sensor-case-aligned)
-                    (trackswitch-place (union (debug trackswitch-mount) (debug trackswitch-mount-cutout)))
-                    (sensor-hole-angle sensor-case-cutout)
-                    rotated-dowells
-                    (sphere (/ trackball-width 2))
-                    )
-    )
-)
-
-(def trackball-mount
-  (union 
-    (difference
-      (union 
-        (trackswitch-place (union
-          (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
-               (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
-          )
-          (->> (trackswitch-insert trackswitch-total-radius (+ trackswitch-insert-height trackswitch-insert-extra-height))
-               (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
-          )
-        ))
-
-        (trackball-mount-rotate cup)
-        (filler-rotate cup)
-      )
-
-      ; Subtract out the bottom trim clearing a hole for the sensor
-      rotated-bottom-trim
-    )
-  )
-)
-
-(def trackball-cutout
-   (union
-    (union
-      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
-           (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
-           trackswitch-place
-      )
-      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
-           (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
-           trackswitch-place
-      )
-    )
-
-    (trackswitch-place trackswitch-mount-cutout)
-
-    ; subtract out room for the axels
-    rotated-dowells
-    (sensor-hole-angle sensor-holder-outer)
-    (sphere (/ trackball-width-plus-bearing 2))
-   )
-  )
-
-(defn trackball-rotate [shape]
-  (->> shape
-    (rotate (deg2rad trackball-y-rotate) [0 1 0])
-    (rotate (deg2rad trackball-x-rotate) [1 0 0])
-    (rotate (deg2rad trackball-z-rotate) [0 0 1])
-    (thumb-place [0 0 0] trackball-thumb-offset))
-)
-
 ;;;;;;;;;;;;
 ;; Models ;;
 ;;;;;;;;;;;;
