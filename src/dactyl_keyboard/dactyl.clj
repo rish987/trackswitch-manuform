@@ -1285,6 +1285,7 @@
 (def upper-support-blocker (upper-support-blocker' (- upper-post-offset upper-fat-web-post-bot-lower-z-off fat-post-size)))
 
 (def upper-fat-web-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (+ (- (/ web-thickness 2)) 0)] fat-web-post')))
+(def upper-short-post-top (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (- (/ web-thickness 2)) short-post-thickness)] short-post)))
 (def upper-fat-web-post-bot (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
 (def upper-fat-web-post-bot-out (rotate-x (deg2rad (- 90)) (translate [0 upper-post-offset (- (/ web-thickness 2) 0)] fat-web-post')))
 
@@ -1299,10 +1300,12 @@
 (def fat-web-post-bm (translate [                                 0  (+ (/ mount-height -2) fat-post-adj) 0] fat-web-post))
 (def upper-fat-web-post-tl (translate [(+ (/ mount-width -2) fat-post-adj) (- (/ mount-height  2) 0) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-tl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
+(def upper-short-post-tl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-short-post-top))
 (def upper-fat-web-post-bl (translate [(+ (/ mount-width -2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot))
 (def upper-fat-web-post-bl-lower (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-bot-lower))
 (def upper-fat-web-post-tr (translate [(- (/ mount-width  2) fat-post-adj) (/ mount-height  2) 0] upper-fat-web-post-top))
 (def upper-fat-web-post-tr-lower (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-fat-web-post-top))
+(def upper-short-post-tr-lower (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) 0) 0] upper-short-post-top))
 (def upper-fat-web-post-br (translate [(- (/ mount-width  2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot))
 (def upper-fat-web-post-br-lower (translate [(- (/ mount-width  2) fat-post-adj) (/ mount-height -2) 0] upper-fat-web-post-bot-lower))
 
@@ -2089,6 +2092,12 @@ need to adjust for difference for thumb-z only"
 
 (def v-short-post-back-br (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-br) short-post-back-br)))
 
+(def trackswitch-wall-clearance 2.5)
+(def trackswitch-upper-offset (+ web-thickness mount-height -6.5))
+(def trackswitch-connector-post-tr (translate [(+ trackswitch-wall-clearance) trackswitch-upper-offset (- trackswitch-wall-clearance)] upper-short-post-tr-lower))
+(def trackswitch-connector-post-tl (translate [(- trackswitch-wall-clearance) trackswitch-upper-offset (- trackswitch-wall-clearance)] upper-short-post-tl-lower))
+(def trackswitch-connector-post-br (translate [(+ trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-wall-clearance)] upper-short-post-tr-lower))
+(def trackswitch-connector-post-bl (translate [(- trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-wall-clearance)] upper-short-post-tl-lower))
 
 (defn thumb-connectors [left]
   (union
@@ -2099,8 +2108,8 @@ need to adjust for difference for thumb-z only"
              (thumb-r-place plate-post-br)
          ) (color GRE))
 
-    ;(when (not left)
-    ;  (union
+    (when (not left)
+      (union
     ;    (->> (triangle-hulls
     ;             (trackball-place trackball-post-bl)
     ;             (trackball-place trackball-post-br)
@@ -2134,14 +2143,27 @@ need to adjust for difference for thumb-z only"
     ;             (key-place 0 homerow (translate [0 0 (- upper-case-out)] fat-web-post-bl))
     ;         ) (color GRE))
 
-    ;    (->> (triangle-hulls
-    ;             (trackball-place trackball-post-tl)
-    ;             (key-place 0 homerow (translate [0 0 0] upper-fat-web-post-tr-lower))
-    ;             (trackball-place trackball-post-tr)
-    ;             (key-place 0 homerow (translate [0 0 0] upper-fat-web-post-tl-lower))
-    ;         ) (color GRE))
-    ;  )
-    ;)
+        (->> (triangle-hulls
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-tr))
+                 (key-place 0 homerow (translate [0 0 0] upper-fat-web-post-tr-lower))
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-br))
+                 (key-place 0 homerow (translate [0 0 0] upper-fat-web-post-tl-lower))
+             ) (color GRE))
+
+        (->> (triangle-hulls
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-tr))
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-br))
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-tl))
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-bl))
+             ) (color GRE))
+
+        (->> (triangle-hulls
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-tl))
+                 (trackball-rotate (trackswitch-place trackswitch-connector-post-bl))
+                 (thumb-r-place (translate [0 0 0] fat-web-post-tl))
+             ) (color GRE))
+      )
+    )
 
     (when left (letfn
                  [
@@ -2835,13 +2857,17 @@ need to adjust for difference for thumb-z only"
 
 (defn trackball-wall [border] (let [
         key-place (if border key-place key-place-shifted)
-        trackball-place (if border trackball-place trackball-place-shifted)
+        trackball-place (if border trackball-rotate (fn [shape] (shift-model (trackball-place-shifted shape))))
         trackswitch-place (fn [shape] (trackball-place (trackswitch-place shape)))
+        upper-off trackswitch-upper-offset
+        upper-fat-web-post-tr-lower' (translate [(+ trackswitch-wall-clearance) upper-off (- trackswitch-wall-clearance)] upper-fat-web-post-tr-lower)
+        upper-fat-web-post-tl-lower' (translate [(- trackswitch-wall-clearance) upper-off (- trackswitch-wall-clearance)] upper-fat-web-post-tl-lower)
        ] 
   (union
-    (wall-brace' (partial key-place firstcol homerow) -1 0 upper-fat-web-post-tr-lower true trackball-place -1 0 trackball-post-tl false border)
-    (wall-brace trackball-place -1 0 trackball-post-tl trackball-place -1 0 trackball-post-bl border)
-    (wall-brace trackball-place -1 0 trackball-post-bl (partial thumb-m-place' border) -1 0 fat-web-post-tl border)
+    (wall-brace-upper (partial key-place firstcol homerow) -1 0 upper-fat-web-post-tr-lower trackswitch-place -1 0 upper-fat-web-post-tr-lower' border)
+    (wall-brace-upper trackswitch-place -1 0 upper-fat-web-post-tr-lower' trackswitch-place -1 0 upper-fat-web-post-tl-lower' border)
+    (wall-brace' trackswitch-place 0 0 upper-fat-web-post-tl-lower' true (partial thumb-r-place' border) -1 0 fat-web-post-tl false border)
+    ;(wall-brace trackball-place -1 0 trackball-post-bl (partial thumb-m-place' border) -1 0 fat-web-post-tl border)
 )))
 
 (defn left-wall [left border]
