@@ -1,168 +1,165 @@
-# Compactyl - A Compact Dactyl ManuForm Keyboard
+# Trackswitch Manuform -- A Hyper-Ergonomic Trackball-Enabled Dactyl with a Crazy Mouse Level Shift Mechanism
 
-This is a fork of the [okke fork](https://github.com/okke-formsma/dactyl-manuform-tight) of the [l4u fork](https://github.com/l4u/dactyl-manuform-mini-keyboard) of the [tshort fork](https://github.com/tshort/dactyl-keyboard) of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
+This keyboard is an attempt to make a best-of-both-worlds combination between the
+modular and support-saving design of [dereknheiley's compactyl manuform](https://github.com/dereknheiley/compactyl) (with adjustable wrist rest mounts)
+and the trackball-enabled design of the [noahprince22's tracktyl manuform](https://github.com/noahprince22/tractyl-manuform-keyboard),
+forking the firmware from [Schievel1's dactyl_manuform_r_track](https://github.com/Schievel1/dactyl_manuform_r_track).
 
-## Planned V5.0 Features
-- Add fourth thumb keys
-- Update USB holder for bastardkb pcb mcu holder v1.4 (TODO may fit blackpill version as well)
-- Rotate and adjust lower two keys further away along Y and Z to make compatible with taller keycap profiles on alpha
-- Adjust key heights to return to some of the design ideas I was trying out with [the dactyl hobbitform](https://github.com/dereknheiley/ibnuda.dactyl-keyboard) for small hands
-	- Adjust column heights, ring finger lower on Z, middle and index columns higher on Z
-	- Increase curvature of pinky column to bring bottom alpha and num row closer to finger
-	- Raise numrow slightly along Z axis
-- TODO add ready to print risers with slots to increase palm rest height
-![Compactyl V5.0 preview](images/compactyl-v5.png)
+It also incorporates some novel features:
+- Drawing inspiration from the vertical actuations of [JesusFreke's lalboard](https://github.com/JesusFreke/lalboard), the keys above and below the home row are positioned such that actuating them involves the continuation of a single motion (i.e. extending or curling the fingers) rather than two separate motions (extending then pressing down or curling then pressing down) as is the case with a conventional flat keyboard layout. Less muscle memory + shorter travel distance = quicker and more comfortable typing!
+- I've yeeted keys that I find exceed a certain (low) threshold of difficulty to press on a standard ortholinear layout. These include the (QWERTY) `n` and `b` keys, as well as all the keys outwards from the pinky column.
+- To make up for this lack of keys, the left side of this keyboard features a powerful thumb cluster with five keys (four of which are vertically actuated: one by the base of the thumb (actuated by curling the thumb inwards), two by the tip of the thumb (actuated by extending the thumb upwards), and another by the thumb knuckle (actuated by moving the thumb outwards)) that allow for fast level-shifting.
+- The right side incorporates a trackball mount with a mechanism that allows the trackball to act as a "switch" that can be pressed down to both enable mouse movement and activate the mouse button layer. I refer to this collective assembly as the "trackswitch".
+- Both the trackswitch and trackball sensor have fully parameterized mounts with a mounting mechanism that allow their distance from the trackball to be micro-adjustable.
+- Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
 
-## V4.1 Features
-- Added diode holder under switch for kailh hotswap socket. Holds the diode in an secure way so you can bend the wires around for easier soldering. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
-![Compactyl V4.1 diode holder](images/kailh-hotswap-diode-holder.jpeg)
+<!--
+![Trackswitch Manuform preview](images/trackswitch-manuform.png)
+-->
 
-## V4.0 Features
-- Cleaned up threaded insert holes for two-part case
-- Raised thumb cluster and adjusted thumb cluster angle
-- Added [DES "MT4"](https://github.com/dereknheiley/PseudoMakeMeKeyCapProfiles) rendered keycap preview with per-row profile and custom outer column keycaps
-- Adjust tolerances around usb-holder to slide in more easily
-- Lengthen USB holder for 35mm pro-micro-usb-c controllers
-- Add more room for TRRS jack in USB holder
-- Make vertical USB-holder easier to print with thicker "bottom"
-- NOTE: you will probably have to increase OpenSCAD params:
-	- Turn off rendering at ~10,000,000 
-	- CGAL cache size ~8000mb
-	- PolySet cache size ~8000mb
-![Compactyl V4.0 glamour](images/compactyl-v4.0-glamour.png)
-![Compactyl V4.0 top screw](images/compactyl-v4.0-top-screw.png)
+# Build Guide
 
-## V3.1 Features
-- Added support for tilting outer index and pinky columns only
-- Increased tent angle to 40 deg
-- Adjusted case to remove jank around top index corner
-- Changed to use vertical MCU holder
-- Upsized top plate attachment screws from M2 to M3
-- Modified case walls connecting to thumb
-- Updated rendered thumb caps to rotated SA R1, which I use.
-![Compactyl V3.1 top](images/compactyl-v3.1-back.png)
+## Tools
 
-## V3.0 Features
-- Added option for two part design per keyboard half
-- Made a [watermelon keyboard](https://imgur.com/gallery/GW7DmTZ)
-[![Compactyl V3 Watermelon](images/compactyl-v3.0-watermelon.webp)](https://www.youtube.com/watch?v=ICaaL3d7pfs)
-<!-- ![Compactyl V3 back](images/compactyl-V3-exploded.png) -->
+- 3D printer (I use a modestly upgraded Ender 3)
+- Raspberry Pi with Octoprint (recommended)
+- Soldering Iron with [M2, M3 insert tips](https://www.amazon.com/gp/product/B08B17VQLD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+- Multimeter with continuity beep
+- Hot glue gun
+- Wire cutters
+- Needle-nose pliers
+- Caliper (digital recommended)
+- [0.6mm nozzle](https://www.amazon.com/gp/product/B093SKXHL3/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) (recommended for faster prints)
 
-## V2.1 Features
-- Increased tent angle
-	- Added global thumb angle adjustment
-	- Adjusted case to still accommodate usb-holder with increased tent
-- Reworked gel wrist rest holder to not distort at higher tenting angles
-- Reinforced connection between columns with cutouts for connector / wiring clearance
-- Added option to increase angle of lower two lower keys (inspired by rmtz Naive design)
-- Added rendered option for keycap preview
-- (Experimental) Added optional retention clip to assist with one-piece flexible PCB
-- (Experimental) Added optional solderless socket option. Inspired by [Stingray](https://github.com/stingray127/handwirehotswap), [50an6xy06r6n](https://github.com/50an6xy06r6n/hotswap_pcb_generator) and [rmtz](https://www.reddit.com/r/MechanicalKeyboards/comments/7ueojw/my_na%C3%AFve_attempt_at_making_my_own_keyboard/) solderless sockets.
-- NOTE: you will probably have to increase OpenSCAD params:
-	- Turn off rendering at ~2,000,000 
-	- CGAL cache size ~4000mb
-	- PolySet cache size ~4000mb
-![Compactyl V2 back](images/compactyl-V2.1-back.png)
+## Bill-of-Materials
 
-## V2.0 Features
-- Returned back to one solid piece top case deisgn for easier printing
-- Subtraced space around keycaps to improve clearances
-	- better clearance on top row for middle and ring finger keys
-	- thick ABS caps still not recommended
-- Adjusted stagger and column height deltas
-- Extended bottom plate to connect wrist rest
-	- Wrist rest can be positioned to adjust X, Y, or Z placement (adding or removing shims)
-- Added modified version of cyrstalhands wrist rest holder
-	- slanted, removed case connector tubes, added threaded insert holes
-![Compactyl V2](images/compactyl-V2.png)
-
-## V1.0 Features
-- Hotswap north facing switch plates
-- Increase pinky stagger
-- Adjusted column spacing for better clearance
-- Continuous (vs. recessed) bottom plate with filleted holes
-- Exoskeleton top case design
-- Rendered both 4x6 and 5x6 versions with bottom plate
-- (orig. Tightyl) As small around the keys as possible
-- (orig. Tightyl) Smoother transition between thumb and fingers (less facets)
-- (orig. Tightyl) Thicker walls in steep regions where walls were too thin
-
-![Compactyl v1.0 assembly](images/assembly.png)
-[![Kailh Box White Sound Test](images/compactyl-real-4x6.jpg)](https://www.youtube.com/watch?v=2oHvrcsFb9k)
-![](images/compactyl-real-5x6.jpeg)
-
-## Update USB holder
-- Created ("working" but unpolished) SCAD version of USB holder for modifications
-- Provide better clearance to USB cables plugging into controller
-- Adjust size to better hold Elite-C controller
-- Taper angle to reduce waste material
-- Make holder shape symetrical to case notches so it fits upside down or right side up
-- Add option for square reset button to be held as well
-![](images/elite-c_trrs_holder.png)
-![](images/elite-c_trrs_reset_holder.png)
-![](images/elite-c_trrs_reset_holder_real.jpeg)
-
-## Wiring
-- Uses typical COL2ROW diode direction and pins for dactyl manuform
-- Should be backwards compatible with dactyl-manuform 5x6 firmware from
-	- https://config.qmk.fm/#/handwired/dactyl_manuform/5x6/LAYOUT_5x6
-	- https://github.com/Oh-Keycaps/firmwares#how-to-just-download-our-firmware
-![](images/compactyl_dactyl_manuform_wiring_left.jpeg)
-![](images/compactyl_dactyl_manuform_wiring_right.jpeg)
-![](images/compactyl-real-4x6-wiring.jpeg)
-
-## Tools & Supplies [Full amazon wish list of equipment](https://www.amazon.ca/hz/wishlist/ls/18NL4T59KM4AE?ref_=wl_share)
-- Soldering iron & stand, at least 50 watt
-- No clean lead free solder in 21awg, or 25awg for smaller SMD components [lead solder is easier to flow, but be careful](https://www.wellpcb.com/lead-free-solder-vs-lead-solder.html)
-- Silicone covered 26awg (0.405mm) wire
-- Long tip gluegun, at least 60 watt
-
-## Comparison with original Tightyl
-- Orig. Tightyl (white) had more row curvature, and wider spaceing between columns
-- New Compactyl (blue) uses a flatter row curvature, but increases tent to result in similar keyboard angle
-- New Compactyl (blue) is approximately 4mm taller (plus additional heigh for bottom plate if used) because of space requried by hot swap holders below pinky columns.
-![Tightyl vs. Compactyl v1.0](images/compare.png)
+Part | Price | Comments
+-----|-------|----
+[Arduino micro with headers](https://www.amazon.com/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $23.88 | This is needed only for the right (trackball) half of the keyboard (you can get away with a pro micro on the left half).
+[Pro Micro MCU](https://www.amazon.com/gp/product/B08THVMQ46/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $19.88 | For the left half. BE CAREFUL WITH THESE! They're pretty flimsy and I've broken the USB headers on muliple of them, so it's good to get a few in case something happens.
+[PMW3360 Motion Sensor](https://www.tindie.com/products/jkicklighter/pmw3360-motion-sensor/) | $29.99 | Trackball motion sensor.
+[Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
+[Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try.
+[Trackball](https://www.aliexpress.us/item/3256803106743416.html?spm=a2g0o.productlist.main.7.559e75b6LrrWPq&algo_pvid=5b156845-75aa-4609-92bb-10b4919b35ad&algo_exp_id=5b156845-75aa-4609-92bb-10b4919b35ad-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000025055404434%22%7D&pdp_npi=2%40dis%21USD%2123.46%2111.03%21%21%21%21%21%402102186a16738183211058438d0674%2112000025055404434%21sea&curPageLogUid=fiwnZejyx836) | $11.99
+[Silicone wrist rests](https://www.amazon.com/gp/product/B01LYBFIJA/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $9.99 | Nice and soft and squishy and comfy!
+[PLA 3D Printer Filament (at least TODO grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
+[Keycaps x35](https://www.amazon.com/gp/product/B07SJKMNWC/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $15.55 | If you have a resin printer, printing keycaps is also apparently an option.
+[1N4148 diodes x35](https://www.amazon.com/gp/product/B079KJ91JZ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $5.99 |
+[Hot swap sockets x36](https://www.amazon.com/gp/product/B096WZ6TJ5/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $14.50 | 
+[MicroUSB to USB cable](https://www.amazon.com/gp/product/B01NA9UCVQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.99 | To connect keyboard to computer (make sure the length is enough for your own setup!).
+[TRRS cable](https://www.amazon.com/gp/product/B07FFW8YZR/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $8.99 | This connects both halves of the keyboard, so make sure to get one that is long enough for whatever split you are going to make.
+[Jumper wires](https://www.amazon.com/gp/product/B08151TQHG/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $8.99 |
+[Thin solder wire](https://www.amazon.com/gp/product/B076QG9N13/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $11.59 | 
+[Solid core jumper wire](https://www.amazon.com/gp/product/B07TX6BX47/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $15.99 | 
+[TRRS connectors](https://www.amazon.com/gp/product/B07KY862P6/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $6.99 | 
+[Reset buttons](https://www.amazon.com/gp/product/B07CG6HVY9/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $8.99 | 
+[M2, M3 threaded inserts](https://www.amazon.com/gp/product/B07WH59N6T/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $18.99 | You will only need 22x M3 and 2x M2 inserts for this build, but these are very commonly used in 3D printing projects so it's good to have a complete set. In my particular build I used [these M3 inserts](https://www.amazon.com/gp/product/B08T7M2H4S/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) left over from a HeroMe Gen6 build.
+[M2, M3 screws and washers](https://www.amazon.com/gp/product/B07F74JHBD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $28.99 | Again, good to have a full set for other 3D printer projects.
 
 
-## Generate OpenSCAD and STL models
+Total: $333.89
 
-**Setting up the Clojure environment**
-* [Install the Clojure runtime](https://clojure.org)
-* [Install the Leiningen project manager](http://leiningen.org/)
-* [Install OpenSCAD](http://www.openscad.org/)
+This is a bit of an overestimate, considering that a lot of the listings above come with
+more pieces/material than needed (and you may already have some of these things lying around).
+Personally, I like to have two keyboards (one for at home and another for on-the-go),
+and if you want to build a second keyboard,
+the only items you will need to re-purchase are the keycaps, trackball, Arduino micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
+for an additonal $111.28. Two of these keyboards for less than $222.59 each sounds like a pretty good deal to me!
 
-### Generating a Design
-* Run `lein auto generate`
-* This will regenerate the `things/*.scad` files whenever the .clr file is saved
-* Use OpenSCAD to open a `.scad` file.
-* Make changes to design in `src/dactyl_keyboard/dactyl.clj`, open scad files will auto regenerate, OpenSCAD will rerender.
-* When done, use OpenSCAD to render, then export model STL files which can be printed by 3d printer slicing software.
+## Preliminary Measurements
 
-### Batch (parallel) Processing
-* Edit the path for OpenSCAD in `create-models.sh` if needed
-* Change any other settings for which files you want to render
-* Wait for STL files to appear (this may take a minute or two) 
+The code in this repo is parameterized to the parts I have purchased above,
+however, as any responsible consumer knows, if one already has (or is able to find a better deal on)
+similar-enough alternatives, it is indeed the ethically correct choice to make use of them!
 
-## Tips
+Listed below are the parameters that can be tweaked to accommodate such alternatives,
+with accompanying images of how to take the correct measurements.
 
-* I gave up trying to keep good values for both 4x6 and 5x6 options. So when adjusting the number of rows / cols, or tenting angles, (amoung other larger design changes) you will most likely have to update some magic numbers. I recommend opening the test.scad file and manipulate:
-	* defn column-curvature 
-	* defn centerrow
-	* def centercol
-	* defn column-offset
-	* def keyboard-z-offset
-	* def wrist-rest-z-height-adj
-	* defn usb-holder-offset-coordinates
-	* defn screw-insert-all-shapes
-	* defn top-screw-insert-all-shapes
-	* other magic numbers, collect them all :D
-* When trying things out, 10 seconds of rendering time in OpenSCAD is really annoying. Load one of the test outputs with commented out parts that you aren't changing / don't use.
-* If you're not sure what things are generted by a piece of code, color them in using something like
-`(->> SOMETHING_HERE (color RED))` (see examples in dactyl.clj).
+### `trackball-width`
+
+The diameter of the trackball. When measuring, turn it a bit in the calipers to make sure that you have captured the full diameter.
+
+<!--
+![trackball-width measurement](images/trackball-width.png)
+-->
+
+### `sa-height1`
+
+
+
+<!--
+![sa-height1 measurement](images/sa-height1.png)
+-->
+
+### `sa-height2`
+
+
+
+<!--
+![sa-height2 measurement](images/sa-height2.png)
+-->
+
+
+<!--
+![sa-length measurement](images/sa-length.png)
+-->
+
+
+<!--
+![sa-length2 measurement](images/sa-length2.png)
+-->
+
+
+<!--
+![M3-insert-rad measurement](images/M3-insert-rad.png)
+-->
+
+
+<!--
+![M3-insert-height measurement](images/M3-insert-height.png)
+-->
+
+
+<!-- TODO mention M2 measurements are the same -->
+
+<!--
+![M3-screw-head-depth measurement](images/M3-screw-head-depth.png)
+-->
+
+
+<!--
+![M3-washer-rad measurement](images/M3-washer-rad.png)
+-->
+
+
+<!-- TODO mention M2 measurements are the same -->
+
+<!--
+![ measurement](images/.png)
+-->
+
+
+<!-- TODO (knurled) -->
+
+## Making Adjustments/CAD Generation
+
+<!-- TODO -->
+
+## Slicing and Printing
+
+<!-- TODO -->
+
+## Electronics
+
+<!-- TODO -->
+
+## Assembly
+
+<!-- TODO -->
 
 ## License
 
-Copyright © 2015-2022 Matthew Adereth, Tom Short, Leo Lou, Okke Formsma, Derek Nheiley
+Copyright © 2015-2023 Rishikesh Vaishnav, Matthew Adereth, Noah Prince, Tom Short, Leo Lou, Okke Formsma, Derek Nheiley
 
 The source code for generating the models is distributed under the [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE).
 

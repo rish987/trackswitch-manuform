@@ -232,13 +232,13 @@
 (def thumb-u-z-rot -12)
 (def thumb-u-z-off 3.5)
 (def thumb-u-x-off (- 3))
-(def thumb-u-x-rot (- 40.00))
+(def thumb-u-x-rot (- 30.00))
 (def thumb-u-extra-dist 4.5)
 
-(def thumb-ub-rot 125)
-(def thumb-ub-z-off 2.8)
+(def thumb-ub-rot 120)
+(def thumb-ub-z-off 4.8)
 (def thumb-ub-x-off (- 16.0))
-(def thumb-ub-x-rot (- 27.00))
+(def thumb-ub-x-rot (- 20.00))
 (def thumb-ub-extra-dist 6.5)
 
 (def thumb-urr-rot (- 75))
@@ -249,7 +249,7 @@
 
 (def thumb-ur-rot 0)
 (def thumb-ur-x-rot (- 20.00))
-(def thumb-ur-z-off 0)
+(def thumb-ur-z-off 2)
 (def thumb-ur-x-off 0)
 (def thumb-ur-extra-dist 4.2)
 
@@ -295,8 +295,10 @@
 
 (def dowel-depth-in-shell 0.9)
 (def bearing-protrude (- 3 dowel-depth-in-shell)) ; Radius of the baring minus how deep it's going into the shell
-(def trackball-width 35)
-(def trackball-width-plus-bearing (+ bearing-protrude trackball-width 1)) ; Add one just to give some wiggle
+(def trackball-width 34)
+(def trackball-clearance 1)
+(def trackball-width' (+ trackball-width trackball-clearance))
+(def trackball-width-plus-bearing (+ bearing-protrude trackball-width' 1)) ; Add one just to give some wiggle
 (def holder-thickness' 4.2)
 (def outer-width (+ (* 2 holder-thickness') trackball-width-plus-bearing))
 
@@ -817,12 +819,12 @@
 ;; SA Keycaps ;;
 ;;;;;;;;;;;;;;;;
 
-(def sa-length 18.52)
-(def sa-length1 18.52)
-(def sa-length2 12.05)
+(def sa-length 18.44)
+(def sa-length1 sa-length)
+(def sa-length2 12.06)
 (def sa-height 12.5)
-(def sa-height1 7.15)
-(def sa-height2 14.67)
+(def sa-height1 6.40)
+(def sa-height2 14.42)
 
 (def sa-key-height-from-plate 7.39)
 (def sa-cap-bottom-height (+ sa-key-height-from-plate plate-thickness))
@@ -927,7 +929,7 @@
 )
 
 (defn sa-cap-cutout [keysize] (sa-cap-cutout' keysize sa-length1 sa-length2 sa-length1 sa-length2 sa-height1 sa-height2))
-(defn sa-cap-trackball-cutout [keysize] (sa-cap-cutout' keysize (* sa-length1 3) (* sa-length1 3) sa-length1 sa-length1 sa-height1 (* sa-height2 2)))
+(defn sa-cap-trackball-cutout [keysize] (sa-cap-cutout' keysize (* sa-length1 1.3) (* sa-length1 1.3) sa-length1 sa-length1 sa-height1 (* sa-height2 2)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Placement Functions ;;
@@ -1401,7 +1403,7 @@ need to adjust for difference for thumb-z only"
 (def trackball-y-rotate -55)
 (def trackball-x-rotate 31)
 (def trackball-z-rotate 15)
-(def trackball-thumb-offset [-22.9 14.4 14.7])
+(def trackball-thumb-offset [-25.9 13.4 14.7])
 
 (defn apply-trackball-geometry [translate-fn rotate-x-fn rotate-y-fn rotate-z-fn shape]
   (->> shape
@@ -1504,7 +1506,19 @@ need to adjust for difference for thumb-z only"
     (thumb-layout mirror-internals (single-plate-cut mirror-internals)))
 
 (def top-screw-radius (/ 2.95 2))       ; M3 screw diameter
-(def top-screw-insert-radius (/ 4 2)); M3 screw insert diameter
+
+(def M3-insert-rad (/ 4 2))
+(def M3-insert-height 4.1)
+
+(def M2-insert-height 4)
+(def M2-insert-rad (/ 3.53 2))
+
+(def M3-head-depth 2.35)
+(def M3-washer-rad (/ 7.0 2))
+
+(def M2-head-depth 1.5)
+(def M2-washer-rad (/ 5.45 2))
+
 (def top-screw-head-radius (/ 4.6 2)) ; M3 screw head diameter (4.4 plus some clearance)
 
 ; Screw insert definition & position
@@ -1564,9 +1578,6 @@ need to adjust for difference for thumb-z only"
 
 (def sensor-holder-distance 23.85)
 
-(def M2-insert-height 4)
-(def M2-insert-rad (/ 3.53 2))
-(def M2-washer-rad (/ 5.45 2))
 (def M2-screw-rad (/ 2.25 2))
 
 (def cover-insert-wall-thickness 1.2)
@@ -1663,13 +1674,16 @@ need to adjust for difference for thumb-z only"
 
 (def sensor-case-cutout-height (+ total-thickness lens-adapter-protrude M2-insert-protrude sensor-case-cutout-back-clearance))
 
-(def sensor-case-cutout (bottom-trim-align (translate [0 0 (- (/ sensor-case-cutout-height 2))] (cube total-length total-height sensor-case-cutout-height))))
+(def sensor-case-clearance 2)
+(def sensor-case-cutout (bottom-trim-align (translate [0 0 (- (/ sensor-case-cutout-height 2))] (cube (+ total-length sensor-case-clearance) (+ total-height sensor-case-clearance) sensor-case-cutout-height))))
 
 (def sensor-case-aligned (bottom-trim-align (translate [0 0 (- (+ (/ total-thickness 2) lens-adapter-protrude))] (rotate-x (deg2rad (- 90)) sensor-case))))
 
 ;;;;;;;;;;;;;;;
 ;; Trackball ;;
 ;;;;;;;;;;;;;;;
+
+; credit to https://github.com/noahprince22/tractyl-manuform-keyboard for the original trackball honder parameterization
 
 (def dowells (union
               (rotated_dowell 0)
@@ -1708,12 +1722,11 @@ need to adjust for difference for thumb-z only"
 (def buffer-dist 0.5)
 
 (def trackswitch-cover-clearance 2)
-(def trackswitch-total-radius (+ top-screw-insert-radius top-screw-insert-wall-thickness))
+(def trackswitch-total-radius (+ M3-insert-rad top-screw-insert-wall-thickness))
 (def trackswitch-cover-mount-cut-gap 0.85)
 (def trackswitch-cover-mount-cut-screw-clearance 10)
-(def M2-head-rad (/ 4.00 2))
-(def M2-head-depth 1.5)
 (def M2-screw-length 12)
+(def M2-head-rad (/ 4.00 2))
 (def M2-short-screw-length 7)
 
 (def trackswitch-cover-mount-cut-depth (+ trackswitch-cover-mount-cut-screw-clearance M2-head-depth))
@@ -1805,10 +1818,9 @@ need to adjust for difference for thumb-z only"
                              ))
 
 (def top-trackswitch-insert-height 4.6)
-(def washer-thickness 0.5)
-(def top-trackswitch-insert-screw-head-depth 2.35)
-(def top-trackswitch-insert-screw-head-washer-depth (+ washer-thickness top-trackswitch-insert-screw-head-depth))
-(def top-trackswitch-insert-washer-rad (/ 7.0 2))
+(def M3-washer-thickness 0.5)
+
+(def top-trackswitch-insert-screw-head-washer-depth (+ M3-washer-thickness M3-head-depth))
 
 (def top-trackswitch-insert-extra-buffer 0.95)
 
@@ -1853,17 +1865,17 @@ need to adjust for difference for thumb-z only"
            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
       )
    
-      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+      (->> (trackswitch-insert (+ M3-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- (- 3.0) plate-thickness)])
       )
-      (->> (trackswitch-insert (+ top-trackswitch-insert-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
+      (->> (trackswitch-insert (+ M3-washer-rad trackswitch-insert-buff) top-trackswitch-insert-screw-head-washer-depth)
            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- (- 3.0) plate-thickness)])
       )
   ))
 )
 
 (def trackswitch-mount-cutout
-  (translate [0 0 (/ trackswitch-cutout-height 2)] (cube mount-height mount-height trackswitch-cutout-height))
+  (translate [0 0 (/ trackswitch-cutout-height 2)] (cube (+ mount-height 0) (+ mount-height 2) trackswitch-cutout-height))
 )
 
 ; visualize trackball, dowells, mount
@@ -1872,7 +1884,7 @@ need to adjust for difference for thumb-z only"
                     (trackswitch-place (union (debug trackswitch-mount) (debug trackswitch-mount-cutout)))
                     (sensor-hole-angle sensor-case-cutout)
                     rotated-dowells
-                    (sphere (/ trackball-width 2))
+                    (sphere (/ trackball-width' 2))
                     )
     )
 )
@@ -1903,11 +1915,11 @@ need to adjust for difference for thumb-z only"
 (def trackball-cutout
    (union
     (union
-      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+      (->> (trackswitch-insert M3-insert-rad trackswitch-insert-height)
            (translate [(- (/ mount-height 2) trackswitch-total-radius) 0 (- trackswitch-insert-z-adj)])
            trackswitch-place
       )
-      (->> (trackswitch-insert top-screw-insert-radius trackswitch-insert-height)
+      (->> (trackswitch-insert M3-insert-rad trackswitch-insert-height)
            (translate [(- trackswitch-total-radius (/ mount-height 2)) 0 (- trackswitch-insert-z-adj)])
            trackswitch-place
       )
@@ -2104,14 +2116,15 @@ need to adjust for difference for thumb-z only"
 
 (def v-short-post-back-br (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-br) short-post-back-br)))
 
-(def trackswitch-wall-clearance 2.5)
+(def trackswitch-wall-clearance 5.5)
+(def trackswitch-connector-off 2.5)
 (def trackswitch-upper-offset (+ web-thickness mount-height -6.5))
 (def trackswitch-connector-post-tr (translate [(+ trackswitch-wall-clearance) trackswitch-upper-offset (- trackswitch-wall-clearance)] upper-short-post-tr-lower))
 (def trackswitch-connector-post-tl (translate [(- trackswitch-wall-clearance) trackswitch-upper-offset (- trackswitch-wall-clearance)] upper-short-post-tl-lower))
-(def trackswitch-connector-post-br (translate [(+ trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-wall-clearance)] upper-short-post-tr-lower))
-(def trackswitch-connector-post-bl (translate [(- trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-wall-clearance)] upper-short-post-tl-lower))
+(def trackswitch-connector-post-br (translate [(+ trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-connector-off)] upper-short-post-tr-lower))
+(def trackswitch-connector-post-bl (translate [(- trackswitch-wall-clearance) trackswitch-upper-offset (+ plate-thickness upper-post-offset trackswitch-connector-off)] upper-short-post-tl-lower))
 
-(defn thumb-connectors [left]
+(defn thumb-connectors [left ttest]
   (union
     (->> (triangle-hulls
              (thumb-urr-place fat-web-post-bl)
@@ -2239,17 +2252,19 @@ need to adjust for difference for thumb-z only"
         ;(thumb-r-place pl
         ) (color RED))
 
-      (->> (triangle-hulls
-        (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) short-post-back-br]) short-post-back-br)))
-        (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
-        (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
-        ) (color RED))
+      (when (not ttest) (union
+        (->> (triangle-hulls
+          (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) short-post-back-br]) short-post-back-br)))
+          (thumb-urr-place (union (translate [0 0 -2] short-post-bl) short-post-bl))
+          (thumb-ur-place (union (translate [0 0 -2] short-post-br) short-post-br))
+          ) (color RED))
+        (->> (triangle-hulls
+          (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) fat-web-post-br]) fat-web-post-br)))
+          (key-place 0 homerow (translate [0 0 0] fat-web-post-bl))
+          (thumb-ur-place plate-post-br)
+          ) (color RED))
+      ))
 
-      (->> (triangle-hulls
-        (key-place 1 cornerrow (translate [0 0 0] (hull (translate [0 0 (- v-key-case-extend) fat-web-post-br]) fat-web-post-br)))
-        (key-place 0 homerow (translate [0 0 0] fat-web-post-bl))
-        (thumb-ur-place plate-post-br)
-        ) (color RED))
 
       ;(->> (triangle-hulls
       ;         (key-place (inc firstcol)    cornerrow  short-post-bl)
@@ -2402,13 +2417,14 @@ need to adjust for difference for thumb-z only"
     ;  (thumb-r-place web-post-tl)
     ;  (key-place 1 cornerrow web-post-bl)
     ;  (key-place 1 cornerrow web-post-br)) (color BLU))
+    (when (not ttest)
     (->> (triangle-hulls
       (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-tl) short-post-back-tl)))
       (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-tr) short-post-back-tr)))
       (thumb-urr-place (translate [0 0 -1] short-post-bl))
       (key-place 1 cornerrow (translate [0 0 -0.8] (hull (translate [0 0 (- v-key-case-extend)] short-post-back-br) short-post-back-br)))
       ;(thumb-r-place plate-post-tr)
-      ) (color NBL))
+      ) (color NBL)))
     ;(->> (triangle-hulls
     ;  (thumb-urr-place upper-fat-web-post-tl-lower)
     ;  (key-place 1 cornerrow web-post-br)
@@ -2854,7 +2870,7 @@ need to adjust for difference for thumb-z only"
 
 (defn trackball-wall [border] (let [
         key-place (if border key-place key-place-shifted)
-        trackball-place (if border trackball-rotate (fn [shape] (shift-model (trackball-place-shifted shape))))
+        trackball-place (if border trackball-rotate (fn [shape] (trackball-place-shifted shape)))
         trackswitch-place (fn [shape] (trackball-place (trackswitch-place shape)))
         upper-off trackswitch-upper-offset
         upper-fat-web-post-tr-lower' (translate [(+ trackswitch-wall-clearance) upper-off (- trackswitch-wall-clearance)] upper-fat-web-post-tr-lower)
@@ -2926,7 +2942,7 @@ need to adjust for difference for thumb-z only"
 
 (defn bottom-corner-alpha [shape] (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) shape)))
 
-(defn thumb-wall [left border]
+(defn thumb-wall [left border ttest]
   (let [
         thumb-r-place (partial thumb-r-place' border) 
         thumb-urr-place (partial thumb-urr-place' border) 
@@ -3019,7 +3035,7 @@ need to adjust for difference for thumb-z only"
     ))
 
     (if left 
-      (union 
+      (when (not ttest) (union 
         (->> (wall-brace-upper (partial key-place' firstcol 2)  -1  0 upper-fat-web-post-tr-lower thumb-ur-place  -1  0 upper-fat-web-post-tl-lower border) (color BRO))
 
         (when border (union
@@ -3037,7 +3053,8 @@ need to adjust for difference for thumb-z only"
           ;(key-wall-brace firstcol (- lastrow 2) 0 -1 web-post-br (inc firstcol) (- lastrow 2) -1 -1 web-post-bl border)
           ;(key-wall-brace (inc firstcol) (- lastrow 2) -1 -1 web-post-bl (inc firstcol) (dec lastrow) -1 0 web-post-tl border)
           ;(key-wall-brace (inc firstcol) (dec lastrow) -1 0 web-post-tl (inc firstcol) (dec lastrow) -1 0 web-post-bl border)
-      ))) 
+        ))
+      )) 
       (trackball-wall border)
     )
 
@@ -3052,7 +3069,7 @@ need to adjust for difference for thumb-z only"
     (back-wall false)
     (left-wall false)
     (front-wall false)
-    (thumb-wall left false)
+    (thumb-wall left false false)
   )
 )
 
@@ -3062,7 +3079,7 @@ need to adjust for difference for thumb-z only"
     (back-wall true)
     (left-wall true)
     (front-wall true)
-    (thumb-wall left true)
+    (thumb-wall left true false)
   )
 )
 
@@ -3122,13 +3139,12 @@ need to adjust for difference for thumb-z only"
     (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7     -2.90  screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
-(def screw-insert-height 4.1) ; Hole Depth Y: 4.4
-(def screw-insert-radius (/ 5.0 2)) ; Hole Diameter C: 4.1-4.4
+(def screw-insert-radius M3-insert-rad) ; Hole Diameter C: 4.1-4.4
 
 (defn screw-insert-holes [left] (screw-insert-all-shapes
                           screw-insert-radius 
                           screw-insert-radius 
-                          (* screw-insert-height 1.5)
+                          (* M3-insert-height 1.5)
                           left
                         ))
 
@@ -3136,7 +3152,7 @@ need to adjust for difference for thumb-z only"
 (defn screw-insert-outers [left] (screw-insert-all-shapes
                            (+ screw-insert-radius screw-insert-wall-thickness) 
                            (+ screw-insert-radius screw-insert-wall-thickness) 
-                           screw-insert-height
+                           M3-insert-height
                            left
                          ))
 
@@ -3168,7 +3184,7 @@ need to adjust for difference for thumb-z only"
       height
   )
 )
-; (def top-screw-insert-radius (/ 3.0 2)) ; M2 screw insert diameter
+; (def M3-insert-radius (/ 3.0 2)) ; M2 screw insert diameter
 ; (def top-screw-radius (/ 2.1 2))        ; M2 screw diameter
 ; (def top-screw-head-radius (/ 3.6 2))  ; M2 screw head diameter (3.4 plus some clearance)
 
@@ -3183,8 +3199,8 @@ need to adjust for difference for thumb-z only"
         ; actual threaded insert hole
         (translate [0 0 0]
             (top-screw-insert-round-shapes
-                top-screw-insert-radius
-                top-screw-insert-radius
+                M3-insert-rad
+                M3-insert-rad
                 top-screw-insert-height
             ))
 
@@ -3204,8 +3220,8 @@ need to adjust for difference for thumb-z only"
 (def top-screw-insert-outers 
     (difference
         (top-screw-insert-round-shapes 
-            (+ top-screw-insert-radius top-screw-insert-wall-thickness)
-            (+ top-screw-insert-radius top-screw-insert-wall-thickness)
+            (+ M3-insert-rad top-screw-insert-wall-thickness)
+            (+ M3-insert-rad top-screw-insert-wall-thickness)
             top-screw-insert-height
         )
         top-screw
@@ -3217,8 +3233,8 @@ need to adjust for difference for thumb-z only"
         ; screw head stop
         (translate [0 0 (- top-screw-insert-height)]
           (top-screw-insert-triangle-shapes 
-              (+ top-screw-insert-radius top-screw-block-wall-thickness) 
-              (+ top-screw-insert-radius top-screw-block-wall-thickness) 
+              (+ M3-insert-rad top-screw-block-wall-thickness) 
+              (+ M3-insert-rad top-screw-block-wall-thickness) 
               top-screw-block-height
           )
         )
@@ -3552,7 +3568,7 @@ need to adjust for difference for thumb-z only"
       (if use_flex_pcb_holder flex-pcb-holders)
       (connectors mirror-internals)
       (thumb-layout mirror-internals single-plate-blank)
-      (thumb-connectors mirror-internals)
+      (thumb-connectors mirror-internals false)
     )
   ))
 )
@@ -3683,7 +3699,7 @@ need to adjust for difference for thumb-z only"
   ))
     (when testing (debug (shift-model (trackball-rotate (union
                                                                    ;trackball-cutout
-                                                                   sensor-cutout
+                                                                   ;sensor-cutout
                                                                   )))))
   )
 )
@@ -3697,7 +3713,7 @@ need to adjust for difference for thumb-z only"
             (union
               (case-top-border mirror-internals)
               (color CYA (connectors mirror-internals))
-              (thumb-connectors mirror-internals)
+              (thumb-connectors mirror-internals false)
               (when (not mirror-internals) (trackball-rotate trackball-mount))
             )
             (key-places single-plate-cutout)
@@ -3708,7 +3724,7 @@ need to adjust for difference for thumb-z only"
             caps-cutout
             (thumbcaps-cutout mirror-internals)
             (when (not mirror-internals) (trackball-rotate trackball-cutout))
-            (when (not mirror-internals) (thumb-r-place (sa-cap-trackball-cutout 1)))
+            (when (not mirror-internals) (thumb-r-place (translate [0 0 4] (sa-cap-trackball-cutout 1))))
           )
           (when (not testing) 
             (union (key-places' (single-plate mirror-internals) (not mirror-internals))
@@ -3718,8 +3734,11 @@ need to adjust for difference for thumb-z only"
       )
       (when top-screw-insert-top-plate-bumps top-screw-insert-outers)
     )
-    ; cut away from the bottom of the g-key plate a bit
-    (when (not mirror-internals) (shift-model (trackball-rotate (sphere (/ (- trackball-width-plus-bearing 1) 2)))))
+    ; cut away from the bottom of the g-key plate a bit and make room for the sensor
+    (when (not mirror-internals) (shift-model (trackball-rotate (union 
+                                                     (sphere (/ (- trackball-width-plus-bearing 1) 2))
+                                                     (sensor-hole-angle sensor-case-cutout)
+                                                     ))))
     (when (not testing) (union
       (when top-screw-insert-top-plate-bumps (model-case-walls-right-base mirror-internals))
       (shift-model (union 
@@ -3748,10 +3767,12 @@ need to adjust for difference for thumb-z only"
         (union 
           (difference 
             (union
-              (corner-left-wall true)
-              (corner-front-wall true)
-              (thumb-wall mirror-internals true)
-              (thumb-connectors mirror-internals)
+              (when (not mirror-internals) (union
+                (corner-left-wall true)
+                (corner-front-wall true)
+              ))
+              (thumb-wall mirror-internals true true)
+              (thumb-connectors mirror-internals true)
               (when (not mirror-internals) (trackball-rotate trackball-mount))
               (when testing (union
               ))
@@ -3765,10 +3786,12 @@ need to adjust for difference for thumb-z only"
             (thumb-layout mirror-internals single-plate-cutout)
             (corner-places single-plate-cutout)
           )
-          (when (not testing) 
-            (union (corner-places' (single-plate mirror-internals) (not mirror-internals))
-            (thumb-layout mirror-internals (single-plate mirror-internals)))
-          )
+          (when (not testing) (union
+            (when (not mirror-internals) (union
+              (corner-places' (single-plate mirror-internals) (not mirror-internals))
+            ))
+            (thumb-layout mirror-internals (single-plate mirror-internals))
+          ))
         )
       )
     )
@@ -3878,7 +3901,7 @@ need to adjust for difference for thumb-z only"
 (defn upper-support-blockers-thumb-test [left]
   (shift-model (union
     (thumb-upper-layout left upper-support-blocker)
-    (corner-upper-layout upper-support-blocker)
+    (when (not left) (corner-upper-layout upper-support-blocker))
     )
   )
 )
@@ -3977,10 +4000,11 @@ need to adjust for difference for thumb-z only"
 
                    ;wrist-shape
                    ;(model-bottom-plate true)
+                   ;(model-case-walls-right false)
                    ;(model-switch-plates-right false)
                    ;(hotswap-case-cutout false)
                    ;(shift-model (thumb-upper-layout true upper-support-blocker))
-                   (union (thumb-test false))
+                   (union (thumb-test true))
                    ;(union (sa-cap-cutout 1))
                    ;(debug (sa-cap-trackball-cutout 1))
                    ;caps-cutout
