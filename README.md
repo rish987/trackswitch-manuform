@@ -22,7 +22,7 @@ It also incorporates some novel features:
 ## Tools
 
 - 3D printer (I use a modestly upgraded Ender 3)
-- Raspberry Pi with Octoprint (recommended)
+- Raspberry Pi with [Octoprint](https://octoprint.org/) for remote printing (recommended)
 - Soldering Iron with [M2, M3 insert tips](https://www.amazon.com/gp/product/B08B17VQLD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 - Solder fume extractor
 - Safety goggles
@@ -44,6 +44,8 @@ Part | Price | Comments
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
 [Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with TODO.
 [Trackball](https://www.aliexpress.us/item/3256803106743416.html?spm=a2g0o.productlist.main.7.559e75b6LrrWPq&algo_pvid=5b156845-75aa-4609-92bb-10b4919b35ad&algo_exp_id=5b156845-75aa-4609-92bb-10b4919b35ad-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000025055404434%22%7D&pdp_npi=2%40dis%21USD%2123.46%2111.03%21%21%21%21%21%402102186a16738183211058438d0674%2112000025055404434%21sea&curPageLogUid=fiwnZejyx836) | $11.99
+[Dowel Pins](https://www.amazon.com/gp/product/B07M63KXKS/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.49
+[Miniature Bearings](https://www.amazon.com/gp/product/B00ZHSQX42/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $10.99
 [Silicone wrist rests](https://www.amazon.com/gp/product/B01LYBFIJA/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $9.99 | Nice and soft and squishy and comfy!
 [PLA 3D Printer Filament (at least TODO grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
 [Keycaps x35](https://www.amazon.com/gp/product/B07SJKMNWC/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $15.55 | If you have a resin printer, printing keycaps is also apparently an option.
@@ -60,14 +62,14 @@ Part | Price | Comments
 [M2, M3 screws and washers](https://www.amazon.com/gp/product/B07F74JHBD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $28.99 | Again, good to have a full set for other 3D printer projects.
 
 
-Total: $333.89
+Total: $352.37
 
 This is a bit of an overestimate, considering that a lot of the listings above come with
 more pieces/material than needed (and you may already have some of these things lying around).
 Personally, I like to have two keyboards (one for at home and another for on-the-go/redundancy in case one breaks),
 and if you want to build a second keyboard,
-the only items you will need to re-purchase are the keycaps, trackball, Arduino micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
-for an additonal $111.28. Two of these keyboards for less than $222.59 each sounds like a pretty good deal to me!
+the items you will need to re-purchase are the keycaps, trackball, Arduino micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
+for an additonal $111.28. Two of these keyboards for less than $231.83 each sounds like a pretty good deal to me!
 
 ## Preliminary Measurements
 
@@ -84,6 +86,14 @@ The diameter of the trackball. When measuring, turn it a bit in the calipers to 
 
 <!--
 ![trackball-width measurement](images/trackball-width.png)
+-->
+
+### `dowell-height`
+
+The height of the dowels (apologies for the inconsistent spelling).
+
+<!--
+![dowell-height measurement](images/dowell-height.png)
 -->
 
 ### `sa-height1`
@@ -172,15 +182,77 @@ Repeat the above measurements with the M2 screw/washer.
 
 ### How to Generate the CAD Files
 
+This keyboard is designed using the [OpenSCAD software](https://www.openscad.org/),
+which compiles OpenSCAD code (`.scad` files) into an output `.stl` 3D model file
+that you can then feed into a 3D Printer slicer to output the `.gcode`
+file containing instructions on how to move the print axes/feed the extruder/heat the hotend+bed to actually print the thing.
+However, the OpenSCAD language is fairly niche and doesn't have a lot of user-friendliness support outside of its custom IDE.
+
+For this reason, most iterations of Dactyl Manuforms have been implemented primarily or entirely in
+Clojure and transpiled to OpenSCAD (`.scad`) using the [`scad-clj` package](https://github.com/farrellm/scad-clj)
+(you don't have to install this yourself, `lein auto generate` below should do it for you).
+For this transpilation, you will need an additonal piece of sofware called [leiningen](https://leiningen.org/).
+
+Once everything is installed, run
+```bash
+lein auto generate
+```
+which will populate the `things` directory with various `.scad` files.
+Now, as you modify the `.clj` files, leinegen will automatically run 
+and produce a new `.scad` file after you save any `.clj` file.
+
+The parameterization is split into two files:
+- `src/dactyl_keyboard/dactyl.clj` -- the main file where the keyboard is parameterized
+- `src/usb_holder.clj` -- parameterization of the MCU holders
+
 ### Testing Changes (the `testing` variable)
 
-### Adjusting the Home Row
+At the very top of the file, you will find the `testing` variable.
+Set this to true while you make changes to the overall keyboard layout
+(you can just swap it with the line above to override it).
+This will produce just enough code in the `things/test.scad` file
+for you to have a good enough idea of how the keyboard is going to look
+without including so much detail that it becomes impossible to view in
+the OpenSCAD preview.
 
-### Adjusting the Thumb Position
+To control what actually is output for testing,
+got to the `(when testing (spit "things/test.scad" ...`
+block near the end of the file.
+There, you can just paste in various parts from the
+`(when (not testing) ...` output block right above (you can skip the `cura-fix` wrappers)
+to get the test output of that part.
 
-### Adjusting the Vertical Keys
+Once you're done, be sure to set `testing` to `false` again so that
+the full parts incorporating your recent changes are actually output.
 
-### Changing the Height and Tent Angle
+### Parameters to Tweak
+
+Note that the code is unfortunately a bit messy at the moment, and there
+may be several parameters lying around that I haven't bothered to maintain
+or have silently deprecated. If any parameter isn't explicitly mentioned in this guide,
+it probably means that you shouldn't mess with it
+(unless of course you've read the code and know exactly what that would entail).
+
+Below are the most likely parameters you'll want to tweak in order to get
+this keyboard to exactly fit the shape of your hand:
+
+#### Adjusting Key Offsets
+
+- `column-offset` -- The xyz-offsets of each of the columns (but you should keep the x value at 0).
+
+- `thumb-pos` -- The xyz-offsets of the thumb key.
+
+#### Adjusting the Vertical Keys
+
+#### Adjusting the Above Keys
+
+#### Adjusting the Below Keys
+
+#### Adjusting the Left-of-Index Keys
+
+#### Adjusting the Thumb Cluster Layout
+
+#### Changing the Height and Tent Angle
 
 <!-- TODO -->
 
@@ -277,6 +349,8 @@ This is technically part of the assembly step, but is best to do right now while
 ### Mounting the Trackswitch
 
 ### Mounting the PMW3360
+
+### Mounting the Trackball
 
 ### Keycap Mods
 
