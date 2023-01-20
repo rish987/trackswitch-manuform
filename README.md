@@ -244,17 +244,78 @@ this keyboard to exactly fit the shape of your hand:
 
 #### Adjusting the Vertical Keys
 
+The vertically actuated keys are placed using the function `key-vert-place`,
+which takes a few parameters that can alter its position relative to the
+default (i.e. all-paramters-set-to-zero) positon.
+This default position aligns
+the bottom edge of the top of the vertical switch's keycap
+with
+the top edge of the top of a normal horizontally-placed switch's keycap,
+such that the vertical keyswitch is at a 90 degree angle relative to
+the normal one.
+
+To place the vertical keys, there are various parameters
+whose names follow the pattern of the upper switch's "code"
+with the following suffixes, where the paired animation shows
+how adjusting this parameter will affect the placement of the vertical key.
+
+- `*-rot`
+<!--
+![vert-rot](images/vert-rot.gif)
+-->
+- `*-extra-dist`
+<!--
+![vert-extra-dist](images/vert-extra-dist.gif)
+-->
+- `*-x-off`
+<!--
+![vert-x-off](images/vert-x-off.gif)
+-->
+- `*-x-rot`
+<!--
+![vert-x-rot](images/vert-x-rot.gif)
+-->
+- `*-z-off`
+<!--
+![vert-z-off](images/vert-z-off.gif)
+-->
+- `*-z-rot`
+<!--
+![vert-z-rot](images/vert-z-rot.gif)
+-->
+
 #### Adjusting the Above Keys
+
+See `above-rot`, `above-extra-dist`, `above-x-rot`, `above-z-off`, `above-z-rot`.
 
 #### Adjusting the Below Keys
 
+See `below-rot`, `below-extra-dist`, `below-x-rot`, `below-z-rot`.
+
 #### Adjusting the Left-of-Index Keys
+
+For the vertical key to the left of the RH homerow index key (`h` on the QWERTY layout), see
+`h-rot`, `h-extra-dist`, `h-x-off`, `h-x-rot`, `h-z-off`, `h-z-rot`.
+
+For the vertical key to the upper-left of the RH homerow index key (`y` on the QWERTY layout), see
+`y-rot`, `y-extra-dist`, `y-x-off`, `y-x-rot`, `y-z-off`, `y-z-rot`.
 
 #### Adjusting the Thumb Cluster Layout
 
+See the prefixes in the image below:
+
+<!--
+![thumb-codes](images/thumb-codes.png)
+-->
+
 #### Changing the Height and Tent Angle
 
-<!-- TODO -->
+You can alter the overall height of the keyboard with the `keyboard-z-offset` variable.
+
+Another important aspect of a split keyboard is what's known as the "tent angle",
+which is set with the `tenting-angle` variable.
+This affects the degree to which the halves are "tented" upwards so that your wrists
+can assume a more natural angle than being completely flat.
 
 
 
@@ -266,13 +327,87 @@ this keyboard to exactly fit the shape of your hand:
 
 #### Prototyping
 
+In order to truly know if your parameterizations provide a good fit for your hand,
+you will have to print the switch plates and try it out.
+Unfortunately this keyboard is not at all adjustable once printed (aside from the wrist wrests), 
+so you will likely incur some wasted prints during the process of refining this.
+
+The output contains the
+`things/thumb-test-right.scad`
+and
+`things/thumb-test-left.scad`
+files to allow you to print the thumb clusters by themselves
+so that you can iterate on those with minimal waste.
+
+I plan to soon also add a way to just print the homerow and `thumb-c` switch plates
+in a coherent prototyping part so you can quickly check their relative positions.
+However, if you can't wait for that, your only option
+is to print the entire switch plate.
+
 #### Slicer Settings
 
-#### Orientation
+Printing the switch plates absolutely requires supports.
+I recommend using the "tree supports" provided by Cura Slicer.
+These supports have always worked perfectly for me and
+are particularly easy to remove from the model.
+Be sure to carefully check the generated supports before printing,
+I have noticed that the slicer sometimes attempts to create tree supports in thin air.
+If you observe this, I recommend turning the "Tree Support Branch Diameter Angle" setting
+down to 1.0 degree so the supports are less wide at the base.
+
+I also recommend using a brim when printing. This will come off with the supports,
+so you don't have to worry about it leaving any ugly edges on the model.
+
+Lastly, I have discovered that it is perfectly fine to print this model with
+a 0.6mm nozzle and at 0.28mm layer height. This will substantially cut down your print time
+relative to the default 0.4mm nozzle with 0.2mm layer height.
+You may lose some of the finer details on the plates, but I ended up not making use of them anyways.
+
+Otherwise, I use all of the default Cura settings.
 
 #### Aligning the Support Blockers
 
+Before loading in any models, go to `Preferences -> Configure Cura` and uncheck "Automatically drop models to the build plate".
+
+Now, load in `switch-plates-{left or right}.stl`
+and the corresponding`vert-support-blockers-{left or right}.stl`.
+The support blockers are meant to prevent unnecessary and difficult-to-remove supports
+from being generated in the vertical keys.
+Cura might automatically rotate one of the models, so if this happens,
+rotate it to the same orientation as the other part.
+Now, try to approximately align the support blockers with the switch plates.
+
+You'll notice on the build plate two tiny squares. Try to microadjust now and align so those squares coincide
+(you don't have to be too perfect).
+
+<!--
+![alignment](images/alignment.png)
+-->
+
+Now, select the support blocker model, go to "Per Model Settings" and select "Don't support overlaps".
+Then, select all (ctrl-A), right-click and select "Group Models" so that everything will move together as you do the final orientations.
+
+#### Orientation
+
+When orienting the switch plate, make sure to rotate it so there aren't any sharp corners
+that will be printed as single points in a layer -- that is, all corners should be printed
+as part of a straight line of filament.
+Double-check in the layers preview after slicing that this is really the case!
+Accommodating this requirement will likely result in some additional support material,
+but this is well-worth it to prevent failed corners, or, in the worst case, a failed print.
+
 #### Printing
+
+I highly, highly recommend having an [Octoprint](https://octoprint.org/) setup with a camera for this.
+If you use the 0.6mm nozzle as recommended above the print should take no more than 12 hours.
+You should start the print early in the morning (as soon as you wake up).
+It's probably a good idea to smear your buildplate with glue before printing to help prevent any bed adhesion problems.
+Unless you have good safety precautions [like thermal fuses](https://www.youtube.com/watch?v=tTJfASOHojo)
+installed on your 3D printer,
+don't be tempted to leave your printer running overnight -- if for whatever reason the print fails halfway through,
+diagnose the problem, sigh, and try again the next morning.
+
+In any case, I also recommend having an AI failure detection system like [Gadget](https://octoeverywhere.com/launch) set up.
 
 #### Removing Supports
 
