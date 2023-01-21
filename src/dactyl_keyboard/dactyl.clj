@@ -3124,16 +3124,14 @@ need to adjust for difference for thumb-z only"
 (def screw-insert-bottom-offset 0)
 (defn screw-insert-all-shapes [bottom-radius top-radius height left]
   (union 
-    (->> (screw-insert ROUND-RES 0 2             1 bottom-radius top-radius height [ -8.5   -8.0 screw-insert-bottom-offset]) (color RED)) ; top middle
-    ;(->> (screw-insert ROUND-RES 0 0             1 bottom-radius top-radius height [-3.25  5    screw-insert-bottom-offset]) (color PIN)) ; left FIXME
-    ;(->> (screw-insert ROUND-RES 0 0             3 bottom-radius top-radius height [-13 6    screw-insert-bottom-offset]) (color NBL)) ; trackball
     (if left
       (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-7.5 -24.5 0])) (color BRO)) ; thumb
       (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-38 35.5 0])) (color BRO)) ; thumb
     )
-    (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height [ -3  -10  screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [6.5 -0.5 0])) (color BLA)) ; bottom middle
-    (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7     -2.90  screw-insert-bottom-offset]) (color YEL)) ; bottom right
+    (->> (screw-insert ROUND-RES 0 2 1 bottom-radius top-radius height                         [ -8.5 -8.0  screw-insert-bottom-offset]) (color RED)) ; top middle
+    (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height       [ -3   -10   screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move   [ 6.5  -0.5  0])) (color BLA)) ; bottom middle
+    (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7  -2.90 screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
 (def screw-insert-radius M3-insert-rad) ; Hole Diameter C: 4.1-4.4
@@ -3155,14 +3153,10 @@ need to adjust for difference for thumb-z only"
 
 (defn top-screw-insert-all-shapes [res bottom-radius top-radius height]
   (union 
-    ;(->> (screw-insert-relative-z res  115 3             1 bottom-radius top-radius height [ -8.75  5.75 (+ (- 0) hide-top-screws) ]) (color RED)) ; top middle
-    ;(->> (screw-insert res -114 0             3 bottom-radius top-radius height [ -6   11    (+ 58.75 hide-top-screws)]) (color NBL)) ; left
-    ;(->> (screw-insert res  -15 0       lastrow bottom-radius top-radius height [ 12.5 -2.25 (+ 52 hide-top-screws)]) (color CYA)) ; bottom thumb
-    ; (->> (screw-insert res  -23 3       lastrow bottom-radius top-radius height [ -12.5  -4.5 (+ 49 hide-top-screws)]) (color GRE)) ; bottom middle
-    (->> (screw-insert-relative-z res -119.0 0             1 bottom-radius top-radius height [ -4.0 -13 (+ (- 11.5) hide-top-screws)]) (color PIN)) ; left-top
-    (->> (screw-insert-relative-z-thumb res -18.0             bottom-radius top-radius height [ 9.5 -9.5  (+ (+ 17.5) hide-top-screws)]) (color BRO)) ; thumb
-    (->> (screw-insert-relative-z res  65 4       2 bottom-radius top-radius height       [ 1    11 (+ (+ 1.5)  hide-top-screws)]) (color PUR)) ; top right
-    (->> (screw-insert-relative-z res -22 3       3 bottom-radius top-radius (* height 1) [0 -13.5 (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
+    (->> (screw-insert-relative-z res       -119.0    0       1 bottom-radius top-radius height [ -4.0 -13   (+ (- 11.5) hide-top-screws)]) (color PIN)) ; left-top
+    (->> (screw-insert-relative-z-thumb res -18.0               bottom-radius top-radius height [ 9.5  -9.5  (+ (+ 17.5) hide-top-screws)]) (color BRO)) ; thumb
+    (->> (screw-insert-relative-z res       65        4       2 bottom-radius top-radius height [ 1    11    (+ (+ 1.5)  hide-top-screws)]) (color PUR)) ; top right
+    (->> (screw-insert-relative-z res       -22       3       3 bottom-radius top-radius height [ 0    -13.5 (+ 1.2 hide-top-screws)]) (color GRE)) ; bottom right
 ))
 
 (defn top-screw-insert-round-shapes [bottom-radius top-radius height]

@@ -26,6 +26,7 @@ It also incorporates some novel features:
 - Soldering Iron with [M2, M3 insert tips](https://www.amazon.com/gp/product/B08B17VQLD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 - Solder fume extractor
 - Safety goggles
+- Sharpie pen
 - Multimeter with continuity beep
 - Hot glue gun
 - Heat gun and heat shrink tubing
@@ -33,6 +34,7 @@ It also incorporates some novel features:
 - Needle-nose pliers
 - Caliper (digital recommended)
 - [0.6mm nozzle](https://www.amazon.com/gp/product/B093SKXHL3/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) (recommended for faster prints)
+- [Blu-Tac](https://www.amazon.com/gp/product/B001FGLX72/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 
 ## Bill-of-Materials
 
@@ -198,7 +200,7 @@ Once everything is installed, run
 lein auto generate
 ```
 which will populate the `things` directory with various `.scad` files.
-Now, as you modify the `.clj` files, leinegen will automatically run 
+Now, as you modify the `.clj` files, leiningen will automatically run 
 and produce a new `.scad` file after you save any `.clj` file.
 
 The parameterization is split into two files:
@@ -308,6 +310,18 @@ See the prefixes in the image below:
 ![thumb-codes](images/thumb-codes.png)
 -->
 
+#### Repositioning the Screw Insert Mounts
+
+This keyboard features four screw insert mounts on the switch plates to connect the case walls to the switch plates and
+five screw insert mounts on the walls to connect the case walls to the base.
+These are manually positioned, so if you change the layout of the keys, you'll probably have to reposition these as well.
+
+For the wall insert mounts, parameterized in `screw-insert-all-shapes`, make sure they have enough overlap with the case walls.
+For the switch plates insert mounts, parameterized in `top-screw-insert-all-shapes`, make sure they're high enough so that they have good purchase with the rest of the part,
+but not so high that they cut a hole through the top.
+You'll also have to check the corresponding adapters below them on the case walls part to make sure that they
+have the correct rotation relative to the case walls and also have enough purchase onto them.
+
 #### Changing the Height and Tent Angle
 
 You can alter the overall height of the keyboard with the `keyboard-z-offset` variable.
@@ -341,7 +355,7 @@ so that you can iterate on those with minimal waste.
 
 I plan to soon also add a way to just print the homerow and `thumb-c` switch plates
 in a coherent prototyping part so you can quickly check their relative positions.
-However, if you can't wait for that, your only option
+However, if you can't wait for that, your only option for now
 is to print the entire switch plate.
 
 #### Slicer Settings
@@ -367,7 +381,7 @@ Otherwise, I use all of the default Cura settings.
 
 #### Aligning the Support Blockers
 
-Before loading in any models, go to `Preferences -> Configure Cura` and uncheck "Automatically drop models to the build plate".
+Firstly, go to `Preferences -> Configure Cura` and uncheck "Automatically drop models to the build plate".
 
 Now, load in `switch-plates-{left or right}.stl`
 and the corresponding`vert-support-blockers-{left or right}.stl`.
@@ -384,14 +398,14 @@ You'll notice on the build plate two tiny squares. Try to microadjust now and al
 ![alignment](images/alignment.png)
 -->
 
-Now, select the support blocker model, go to "Per Model Settings" and select "Don't support overlaps".
+Now, select the support blocker model, go to "Per Model Settings" and click "Don't support overlaps".
 Then, select all (ctrl-A), right-click and select "Group Models" so that everything will move together as you do the final orientations.
 
 #### Orientation
 
 When orienting the switch plate, make sure to rotate it so there aren't any sharp corners
 that will be printed as single points in a layer -- that is, all corners should be printed
-as part of a straight line of filament.
+as part of a line of filament.
 Double-check in the layers preview after slicing that this is really the case!
 Accommodating this requirement will likely result in some additional support material,
 but this is well-worth it to prevent failed corners, or, in the worst case, a failed print.
@@ -414,17 +428,52 @@ In any case, I also recommend having an AI failure detection system like [Gadget
 The first step to removing supports is to PUT YOUR SAFETY GLASSES ON.
 After you have them on, put your hand on your face to make sure they're really there.
 
+While the support blockers should have prevented the supports behind the vertical keys
+from getting too crazy, there is still probably a bit of tree support back there.
+Use a pair of needle-nose pliers to press into the holes of the switch plates in each of the vertical keys
+to break those supports away (you should hear a satisfying crunch as you do this).
+
+The keyboard has four insert adapters that can easily break of during the process of removing supports.
+To avoid this, you may want to try to carefully cut away the supports from around them.
+Use a hefty pair of wire cutters to do this -- NOT the ones supplied with your 3D printer!!!
+
+Using your pliers, go all around and gently loosen up the supports from the part by grabbing it and wiggling it around.
+Then, once everything feels loose enough, pull the supports out, being careful not to injure yourself once they finally come out from behind the vertical keys.
+There may still be some support residues left behind the vertical keys after you do this, so be sure to check and pull them out if so.
+
 ### Case Walls
+
+You can use the same slicing settings to print the walls. You will need supports because of the MCU holder cutout.
 
 ### MCU Holders
 
+You can actually print these without supports!
+
+<!-- TODO fix pro-micro holder so this is really the case -->
+
 ### Trackswitch Mount
+
+This one need supports, I recommend orienting it as follows:
+
+<!--
+![Trackswitch Mount Orientation](images/trackswitch-mount-orient.png)
+-->
 
 ### PMW3360 Mount
 
+No supports needed! Orient it as follows:
+
+<!--
+![PMW3360 Mount Orientation](images/pmw3360-mount-orient.png)
+-->
+
 ### Bottom Plates
 
+No supports needed, be sure to rotate these so that the flat side is on the bottom.
+
 ### Wrist Rest Holders
+
+You will need supports for these.
 
 
 
@@ -434,46 +483,222 @@ After you have them on, put your hand on your face to make sure they're really t
 
 ## Electronics
 
+As you may have guessed, the electronics for this keyboard consist of two main components:
+the key matrix (of which the trackswitch is just an extension) and the PMW3360 trackball sensor.
+Each half of the keyboard has its own MCU to connect to the matrix and trackball sensor (in the right half),
+and these are connected together via a TRRS cable to transmit power and data between the two halves.
+Additionally, you can (and should) add a reset button each MCU to allow for easy firmware flashing
+whenever you want to change the keyboard layout.
+
+The firmware treats the right half as the "main" half of the keyboard in that
+that is the half that you plug into your computer via USB.
+You'll only ever have to plug in the left half when you do a firmware flash.
+
+You can see the PMW3360 as simply a plug-and-play device (whose functioning is far beyond the scope of this guide)
+that requires no special care beyond making sure that you insert all of the pins correctly.
+See [noahprince22's explanation](https://github.com/noahprince22/tractyl-manuform-keyboard/blob/master/README.md#soldering)
+for an intuitive understanding of how the electronics of the key matrix works.
+
 ### Right Side
+
+The right side uses a full Arduino Micro so that
+we have all of the pins that we'll need for the trackball sensor.
+See the wiring diagram below:
+
+<!--
+![Right Side Wiring](images/right-wiring.png)
+-->
 
 ### Left Side
 
+On the left side, we can get away with the cheaper Pro Micro:
+
+<!--
+![Left Side Wiring](images/left-wiring.png)
+-->
+
 ### Hotswap Layout
 
-Lay out the hotswap sockets in the approximate shape of the keyboard.
+Given the crazy angles of the keys, this keyboard is easiest to solder before inserting the hotswap sockets into the keyboard.
+So, for each half, start by laying out the hotswap sockets in the approximate shape of the keyboard,
+using Blu-Tac to hold them in place.
+Reference your printed switch plates to make sure that you leave
+more than enough distance between them so that they can reach the keys that they need to reach.
+This will undoubtedly result in spaghetti wiring underneath your keyboard, but hey, I like spaghetti, don't you?
+
+Importantly, make sure that the hotswaps are *rotated correctly* to fit into their intended keyswitch mount.
+One subtle difference between the two halves is that in the right half, the "`h`" key is rotated upside down
+to make room for the trackball.
+If you aren't sure, take a look at how I've oriented them in the pictures below.
+
+Left half:
+<!--
+![Hotswap Layout Left](images/hotswap-left.png)
+-->
+
+Right half:
+<!--
+![Hotswap Layout Right](images/hotswap-right.png)
+-->
 
 ### Pre-cutting the Row and Column Lines
 
-#### MCU Probes
+This step involves pre-cutting the solid core wires that connect
+the rows and columns of your keyboard (as shown in the diagrams above)
+in such a way that we preserve the wire's insulation between the spanned keys.
+
+For each row and column, start by cutting a length of wire that is a good 40-50 mm longer than the total length of each row/column in question.
+Mark the start of this extra length with a Sharpie.
+Note that some columns will have to reach their respective thumb keys (and the trackswitch key in the right half), and so will require a good amount of extra length for that.
+Use Blu-Tac to keep the wires next to their rows/columns after cutting them:
+
+<!--
+![Cut Row/Column Lines](images/cut-lines.png)
+-->
+
+#### MCU Probe Tails
+
+The extra length we included at the end of each line was
+to provide a "probe tail" to which we can attach a probe from the MCU for reading the matrix.
+
+Strip away about half of the extra length from the end of the line and 
+use wire cutters to make a cut into the insulation at the place you marked with the Sharpie.
+Use a pair of pliers to pull the insulation to the end,
+leaving just enough so that you can use your pliers to make a small hook
+(which is where you will solder a probe from the MCU). You should end up with this:
+<!--
+![Probe Tails](images/probe-tails.png)
+-->
 
 #### Alignment, marking, and cutting
 
+Now is the time to make the cuts that will allow the lines to connect to the hotswap sockets.
+For each row/column line, starting by aligning the bottom of the insulation above the probe tail.
+Now, make a mark with your Sharpie about 5mm above/to the side of the hot swap contact:
+<!--
+![Line Marking](images/line-marking.png)
+-->
+
+Make a cut here with your wire cutters and pull the insulation down, leaving about that much room between
+this insulation segment and the previous one:
+<!--
+![Line Segment Space](images/line-segment-space.png)
+-->
+
+Move the bottom of the insulation above the segment you just cut up to the swap contact,
+and repeat this process for the next socket.
+Continue until the very last one, cut off any excess, and make another hook at this end.
+At the end you should have something like this:
+<!--
+![Line Segments Cut](images/line-segments-cut.png)
+-->
+
+#### Preparing the diodes
+
+If you bought a diode set like the one listed above,
+they come neatly packaged in strips that allow you to
+bend and cut multiple at once.
+Using some straight edge like the edge of a table,
+make a hook with the wire on the *black* side of the diode.
+on the other side, cut again, leaving a few millimiters of wire.
+Your cut diodes should end up looking like this:
+<!--
+![Cut Diodes](images/cut-diodes.png)
+-->
+
+Don't throw away the small wire segments still attached to the strip!
+We're going to use them as probes on the sockets to attach the column lines to.
+Hook them on the strip side and cut them
+so you have about a millimeter of extra length below the hook:
+<!--
+![Cut Column Probes](images/cut-column-probes.png)
+-->
+
 ### Soldering
+
+Take out your solder iron and solder wire. It's time to get serious about making this keyboard.
 
 WARNING: Be sure to solder in a well-ventilated area with a fume extractor and safety goggles ON!
 
 #### Pre-solder the sockets
 
-#### Preparing the diodes
+Go to each hotswap socket and fill each rectangular contact with solder.
+It's much easier to solder the diodes/column probes correctly into place without having to simultaneously
+feed in solder with your third hand.
 
 #### Pre-solder the diodes and column probes
 
+Solder the diodes and column probes *vertically* into place on each hotswap socket.
+It's important to do it vertically because if you make them jut out the sides
+it will conflict with the walls of the switch plates in a few places.
+You will end up with:
+<!--
+![Soldered diodes](images/soldered-diodes.png)
+-->
+
 #### Solder the Row and Column Lines
+
+For each of your row/column lines, twist the hook of each diode/column probe
+around the corresponding exposed bit on the line to hold in in place.
+Now, go around with your solder iron and solder everything up!
+This should result in:
+<!--
+![Soldered diodes](images/soldered-diodes.png)
+-->
 
 #### Solder the MCU Probes
 
+On each row/column probe, slide on a length of heat shrink tubing to cover both the hook on the end and
+the male end of a jumper wire.
+Using male-female-end jumper wires, solder the male ends into the hooks that you made at the end of each row/column probe,
+and use your heat gun to insulate this connection with the heat shrink tubing, leaving you with:
+<!--
+![Soldered probes](images/soldered-probes.png)
+-->
+
 #### Solder the PMW3360 Sensor
+
+Using male-female-end jumper wires, solder the male ends into the PMW3360 ports shown above. 
+Cut off the excess now jutting out of the other end of the sensor so that the lens is able to fit without conflict:
+<!--
+![Soldered PMW3360](images/soldered-pmw3360.png)
+-->
 
 #### Install the Reset Button (MCU Assembly)
 
+Cut two female-female-end jumper wires in half, strip away the insulation from the cut ends and solder them to
+the reset button such that a connection is made between them when the button is pressed
+(you probably want to use a multimeter do double-check this):
+<!--
+![Soldered Reset](images/soldered-reset.png)
+-->
+
+Repeat for the reset button on the other side.
+
 #### Install the TRRS Connector (MCU Assembly)
+
+Cut three female-female-end jumper wire in half, strip away the insulation from the cut ends and solder them onto
+the TRRS jack probes (it doesn't really matter which ones you use, as long as you're consistent on both sides:
+<!--
+![Soldered TRRS](images/soldered-trrs.png)
+-->
 
 #### Inserting the Inserts
 
 This is technically part of the assembly step, but is best to do right now while you have your solder iron out.
+Take out your M2 and M3 inserts, wait for your solder iron to cool down, and replace the solder probe with
+the M3 insert probe.
+Insert the inserts into the mounts on the bottom switch plates,
+the bottom of the case walls, and the trackswitch mounts
+Wait for your solder iron to cool down again, and replace the solder probe with
+the M2 insert probe, and insert two M2 insert into the back of the PMW3360 mount.
+The parts with all of the inserts inserted should look like this:
+<!--
+![Inserted Inserts](images/inserted-inserts.png)
+-->
 
-
-
+(You can see a bit of a print failure on the trackswitch mount that I was lucky enough to be able to get around, leaving the insert half-exposed;
+you can likely avoid this if you heed my advice above about orienting the switch plate in the slicer such that no corners are printed as single points).
 
 <!-- TODO -->
 
