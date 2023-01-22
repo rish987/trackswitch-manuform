@@ -33,6 +33,7 @@ It also incorporates some novel features:
 - Wire cutters
 - Needle-nose pliers
 - Caliper (digital recommended)
+- Keyswitch/Keycap puller
 - [0.6mm nozzle](https://www.amazon.com/gp/product/B093SKXHL3/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) (recommended for faster prints)
 - [Blu-Tac](https://www.amazon.com/gp/product/B001FGLX72/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 
@@ -668,7 +669,7 @@ Cut off the excess now jutting out of the other end of the sensor so that the le
 
 Cut two female-female-end jumper wires in half, strip away the insulation from the cut ends and solder them to
 the reset button such that a connection is made between them when the button is pressed
-(you probably want to use a multimeter do double-check this):
+(you probably want to use a multimeter to double-check this):
 <!--
 ![Soldered Reset](images/soldered-reset.png)
 -->
@@ -682,6 +683,10 @@ the TRRS jack probes (it doesn't really matter which ones you use, as long as yo
 <!--
 ![Soldered TRRS](images/soldered-trrs.png)
 -->
+
+#### Check Everything
+
+Go around and gently jiggle all of the soldered joints, checking that everything is solid before proceeding to the assembly.
 
 #### Inserting the Inserts
 
@@ -700,17 +705,53 @@ The parts with all of the inserts inserted should look like this:
 (You can see a bit of a print failure on the trackswitch mount that I was lucky enough to be able to get around, leaving the insert half-exposed;
 you can likely avoid this if you heed my advice above about orienting the switch plate in the slicer such that no corners are printed as single points).
 
-<!-- TODO -->
-
 ## Assembly
+
+Congrats on making it this far!
+The final step is of course to put the electronics and keyswitches together with the
+printed parts, and to set up trackball and trackswitch assembly.
+Get your hot glue gun and M2/M3 screws+washers ready.
 
 ### Inserting the Hot-Swap Sockets
 
+The first step is to insert the hot swap sockets you have pre-wired into the switch plates.
+Be forewarned, this is probably the most annoying part of the assembly,
+though certainly doable with enough patience.
+
+The way that I do this for each key consists of three steps:
+1. Use a pair of pliers to press the hotswap socket into its designated cutout behind the plate.
+For the vertical keys in particular, this may take a bit of wiggling, but as long as you've oriented the socket correctly and have cleared away all of the support residue behind the vertical keys, you should have absolute faith in your ability to complete this irksome task! Be careful not to put too much pressure on the soldered joints.
+2. Continuing to press the plier against the socket, take a keyswitch and plug it in.
+I have found it particularly easy to bend the pins on the switch while doing this (fortunately though this can be easily rectified with some pliers), so go slowly and take it out and try again if you're not sure. Now, the keyswitch should hold the socket in place so you can move the pliers away.
+3. Use your hot glue gun to put a good amount of glue behind to socket to fix it in place.
+After it's dry, plug the switch in and out a few times to make sure it stays
+(if it doesn't, which probably means you didn't use enough glue or didn't place it correctly, use your pliers to pull out the hot glue and try again).
+
+After all is said and done, you will have something like this:
+<!--
+![Spaghetti](images/spaghetti.png)
+-->
+
 ### Mounting the Trackswitch
+
+Your mounted trackswitch should like this (again, forgive the semi-print-failure I mentioned earlier):
+<!--
+![Mounted Trackswitch](images/trackswitch.png)
+-->
 
 ### Mounting the PMW3360
 
+Your mounted PMW3360 should like this:
+<!--
+![Mounted PMW3360](images/PMW3360.png)
+-->
+
 ### Mounting the Trackball
+
+Your mounted Trackball should like this:
+<!--
+![Mounted Trackball](images/trackball.png)
+-->
 
 ### Keycap Mods
 
@@ -718,9 +759,23 @@ you can likely avoid this if you heed my advice above about orienting the switch
 
 ### Installing the MCU Assembly
 
+The completed MCU assembly should like this for the Arduino Micro (right half):
+<!--
+![Arduino Micro Assembly](images/arduino-micro-assembly.png)
+-->
+and like this for the Pro Micro (left half):
+<!--
+![Pro Micro Assembly](images/pro-micro-assembly.png)
+-->
+
 ### Installing the Base Plate
 
 ### Mounting the Wrist Rests
+
+Here's a close-up of what the wrist wrest will look like once installed (some oozing of the hot glue is expected).
+<!--
+![Wrist Rest](images/wrist-rest.png)
+-->
 
 <!-- TODO -->
 
