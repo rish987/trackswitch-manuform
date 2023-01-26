@@ -7,7 +7,7 @@
             [scad-clj.model :refer :all]))
 
 (def testing true)
-(def testing false)
+;(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -1088,7 +1088,7 @@
       (if (= row 1) 
         (if (= column 0) 
           (->> 
-               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (y-extra-dist column) (y-x-off column) (y-z-off column) (y-z-rot column) (y-x-rot column) (y-rot column) shape)
+               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn y-extra-dist y-x-off y-z-off y-z-rot y-x-rot y-rot shape)
                (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
           )
           (->> 
@@ -3125,12 +3125,12 @@ need to adjust for difference for thumb-z only"
 (defn screw-insert-all-shapes [bottom-radius top-radius height left]
   (union 
     (if left
-      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-7.5 -24.5 0])) (color BRO)) ; thumb
-      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-38 35.5 0])) (color BRO)) ; thumb
+      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-7.5 -24.5 0])) (color BRO)) ; thumb left
+      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-20 35.5 0])) (color BRO)) ; thumb right
     )
     (->> (screw-insert ROUND-RES 0 2 1 bottom-radius top-radius height                         [ -8.5 -8.0  screw-insert-bottom-offset]) (color RED)) ; top middle
     (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height       [ -3   -10   screw-insert-bottom-offset]) (color PUR)) ; top right
-    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move   [ 6.5  -0.5  0])) (color BLA)) ; bottom middle
+    (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move   [ 2.5  -0.5  0])) (color BLA)) ; bottom middle
     (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7  -2.90 screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
 
@@ -3666,6 +3666,7 @@ need to adjust for difference for thumb-z only"
   (difference
     (union (model-case-walls-right-base mirror-internals))
     (when (not mirror-internals) (shift-model (trackball-rotate (union trackball-cutout sensor-cutout))))
+    (translate [0 0 -50] (cube 500 500 100))
     (when (not testing) (union
       (when recess-bottom-plate
         (union
@@ -3977,7 +3978,9 @@ need to adjust for difference for thumb-z only"
               ;usb-holder
               ;model-bottom-plate
             ;)
-            (union ;(union (model-case-walls-right false))
+            (union (union (model-case-walls-right false))
+                   ;(model-switch-plates-right false)
+
                    ;(union (sa-cap-cutout 1) (debug (single-plate true)))
                    ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))
                    ;sensor-case-aligned
@@ -3990,7 +3993,6 @@ need to adjust for difference for thumb-z only"
                    ;wrist-shape
                    ;(model-bottom-plate true)
                    ;(model-case-walls-right false)
-                   (model-switch-plates-right false)
                    ;(hotswap-case-cutout false)
                    ;(shift-model (thumb-vert-layout true vert-support-blocker))
                    ;(union (thumb-test true))

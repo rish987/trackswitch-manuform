@@ -853,7 +853,7 @@ Now is the time to connect the switch plates to the case walls.
 Note that the code for cutting away at the walls using the plates to ensure a good fit
 may result in some strange geometry, such as very thin tapering walls and odd small protrusions.
 If you do encounter these, it should be okay to chip away at them with an X-Acto knife (AND SAFETY GOGGLES ON -- 
-in case you didn't know, you should ALWAYS wear safety goggle when using an X-Acto knife in any context, that blade certainly can break!).
+in case you didn't know, you should ALWAYS wear safety goggles when using an X-Acto knife in any context, that blade certainly can break!).
 
 Put the plates on top of the walls, and press them together to make sure you can get a good fit with minimal gap between them
 (some gap is unavoidable).
