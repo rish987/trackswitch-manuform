@@ -27,9 +27,10 @@ It also incorporates some novel features:
 - Solder fume extractor
 - Safety goggles
 - Sharpie pen
-- Multimeter with continuity beep
+- Multimeter with continuity beep and alligator clips
 - Hot glue gun
 - Heat gun and heat shrink tubing
+- PTFE tape (also known as "plumbers' tape")
 - Wire cutters
 - Needle-nose pliers
 - Caliper (digital recommended)
@@ -322,6 +323,10 @@ For the switch plates insert mounts, parameterized in `top-screw-insert-all-shap
 but not so high that they cut a hole through the top.
 You'll also have to check the corresponding adapters below them on the case walls part to make sure that they
 have the correct rotation relative to the case walls and also have enough purchase onto them.
+
+#### Repositioning the MCU Holder Cutout
+
+TODO
 
 #### Changing the Height and Tent Angle
 
@@ -650,8 +655,8 @@ This should result in:
 #### Solder the MCU Probes
 
 On each row/column probe, slide on a length of heat shrink tubing to cover both the hook on the end and
-the male end of a jumper wire.
-Using male-female-end jumper wires, solder the male ends into the hooks that you made at the end of each row/column probe,
+the plug end of a jumper wire.
+Using plug-socket-end jumper wires, solder the plug ends into the hooks that you made at the end of each row/column probe,
 and use your heat gun to insulate this connection with the heat shrink tubing, leaving you with:
 <!--
 ![Soldered probes](images/soldered-probes.png)
@@ -659,7 +664,7 @@ and use your heat gun to insulate this connection with the heat shrink tubing, l
 
 #### Solder the PMW3360 Sensor
 
-Using male-female-end jumper wires, solder the male ends into the PMW3360 ports shown above. 
+Using plug-socket-end jumper wires, solder the plug ends into the PMW3360 ports shown above. 
 Cut off the excess now jutting out of the other end of the sensor so that the lens is able to fit without conflict:
 <!--
 ![Soldered PMW3360](images/soldered-pmw3360.png)
@@ -667,7 +672,7 @@ Cut off the excess now jutting out of the other end of the sensor so that the le
 
 #### Install the Reset Button (MCU Assembly)
 
-Cut two female-female-end jumper wires in half, strip away the insulation from the cut ends and solder them to
+Cut two socket-socket-end jumper wires in half, strip away the insulation from the cut ends and solder them to
 the reset button such that a connection is made between them when the button is pressed
 (you probably want to use a multimeter to double-check this):
 <!--
@@ -678,7 +683,7 @@ Repeat for the reset button on the other side.
 
 #### Install the TRRS Connector (MCU Assembly)
 
-Cut three female-female-end jumper wire in half, strip away the insulation from the cut ends and solder them onto
+Cut three socket-socket-end jumper wire in half, strip away the insulation from the cut ends and solder them onto
 the TRRS jack probes (it doesn't really matter which ones you use, as long as you're consistent on both sides:
 <!--
 ![Soldered TRRS](images/soldered-trrs.png)
@@ -693,10 +698,10 @@ Go around and gently jiggle all of the soldered joints, checking that everything
 This is technically part of the assembly step, but is best to do right now while you have your solder iron out.
 Take out your M2 and M3 inserts, wait for your solder iron to cool down, and replace the solder probe with
 the M3 insert probe.
-Insert the inserts into the mounts on the bottom switch plates,
-the bottom of the case walls, and the trackswitch mounts
-Wait for your solder iron to cool down again, and replace the solder probe with
-the M2 insert probe, and insert two M2 insert into the back of the PMW3360 mount.
+Insert the inserts into the four mounts on the bottom of each of the switch plates,
+the bottom of the case walls, the trackswitch mounts on the right switch plates, and the bottom of the wrist rest holders.
+Wait for your solder iron to cool down again, and replace the solder end with
+the M2 insert end, and insert two M2 insert into the back of the PMW3360 mount.
 The parts with all of the inserts inserted should look like this:
 <!--
 ![Inserted Inserts](images/inserted-inserts.png)
@@ -710,7 +715,7 @@ you can likely avoid this if you heed my advice above about orienting the switch
 Congrats on making it this far!
 The final step is of course to put the electronics and keyswitches together with the
 printed parts, and to set up trackball and trackswitch assembly.
-Get your hot glue gun and M2/M3 screws+washers ready.
+Get your hot glue gun and M2/M3 screws+nuts+washers ready.
 
 ### Inserting the Hot-Swap Sockets
 
@@ -732,7 +737,62 @@ After all is said and done, you will have something like this:
 ![Spaghetti](images/spaghetti.png)
 -->
 
+And promise me, no matter how much it looks like spaghetti, you will not try to eat it!
+
+### Mounting the Trackball
+
+Get out the right switch plates, the trackball, and the small dowels and bearings (3 of each).
+Insert each of the dowels into bearings such that the bearings are halfway down the dowels.
+Inside the trackball mount on the switch plates, you'll notice three cutouts
+where these are to be inserted.
+This should be a very tight fit so you will probably have to use some pliers to help you snap them in.
+If you're really having no luck with the pliers, you can use a solder iron to heat up the dowels
+and gently and slowly press them in.
+
+Now, insert the trackball and spin it around a bit to make sure the motion is smooth.
+Since the bearings should be peeking through the case, you can also visually check to make
+sure they are actually spinning as you move the trackball.
+Your mounted trackball should look like this:
+<!--
+![Mounted Trackball](images/trackball.png)
+-->
+
 ### Mounting the Trackswitch
+
+Take out your multimeter, two plug-socket-end jumper cables, the trackball, the trackswitch mount, the M3 screws (12mm long), nuts, and washers (two of each), and the PTFE tape.
+Wrap the M3 screw with a generous few layers of PTFE tape.
+This tape will keep the trackswitch mount steady once it is screwed in.
+Put the washers on the screws and insert them into the trackswitch mount.
+The washers should fit snugly into the cutouts on the top of the mount.
+Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle,
+but not so tight that you aren't able to turn them (along with the nuts).
+
+Screw both screws into the corresponding inserts on the right switch plates just enough so that the mount takes hold.
+Take the trackswitch keyswitch you have chosen, remove the trackball, and insert it into the trackswitch mount (through the square hole on the trackball mount).
+Plug in the socket ends of your jumper wires and clip the alligator clips of your multimeter onto the plug ends.
+Turn on your multimeter and put it into continuity beep mode.
+
+Now, take an M3 allen wrench, and with the trackball pressed down,
+proceed to make equal and incremental tightenings of both screws until you hear a beep.
+As soon as you do hear a beep, spin the trackball around a bit to make sure that it is consistent
+(both imperfections on the surface of the trackball and movement of the actuator within the switch
+housing can make this inconsistent).
+If it isn't, make microadjustments until it is.
+
+Orient your switch plates approximately how they will be once mounted.
+When you release the trackball, it should lift up and the beep should stop.
+Whether or not this happens depends on two factors: the actuation force of the keyswitch used and the pitch of the plates.
+The pitch of the plates should be far enough forward such that gravity, along with the force of the spring in the keyswitch,
+is able to pull the trackball out (so yes, this mechanism depends on gravity in order to work properly;
+my sincerest apologies to the astronaut and sloth communities).
+
+If this doesn't happen, then you either have it pitched too far back or your keyswitch doesn't have a high enough actuation force.
+If you find that the beep doesn't stop, it means that you went too far in the previous step -- unfortunately, since loosening tends to
+also loosen the nuts keeping the trackswitch mount steady, in this case you'll probably have to take the whole assembly out,
+re-tighten the nuts, and start from the beginning.
+
+For some extra assurance that the nuts and screws won't come loose, as a final step I recommend smearing
+all of them with a good amount of hot glue.
 
 Your mounted trackswitch should like this (again, forgive the semi-print-failure I mentioned earlier):
 <!--
@@ -741,23 +801,80 @@ Your mounted trackswitch should like this (again, forgive the semi-print-failure
 
 ### Mounting the PMW3360
 
+Take out the PMW3360 sensor, the PMW3360 mount, and the M2 screws (20mm long), nuts, and washers (two of each).
+Gently press the PMW3360 sensor into the mount, oriented such that the protruding jumper ends are on the same side as their cutout on mount.
+The mount should hold both the sensor and the lens securely together.
+
+Wrap the M2 screw with a generous few layers of PTFE tape.
+Put the washers over the screws and insert the screws into the trackball mount (the washer should be on the inside).
+Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle,
+but not so tight that you aren't able to turn them (along with the nuts).
+
+Insert the screws into the hole in the front of the mount, then the holes in the PCB,
+then screw them into the inserts in the back of the mounts.
+Continue to screw them in incrementally in equal amounts until the front of the mount is about 6 mm
+away from the back of the trackball mount.
+This will certainly place the sensor too far from the trackball to register,
+but you will make the final adjustments after you have flashed the arduinos
+(so you can test in real-time whether or not the movement is being picked up).
+
 Your mounted PMW3360 should like this:
 <!--
 ![Mounted PMW3360](images/PMW3360.png)
 -->
 
-### Mounting the Trackball
+### Keycap Mods
 
-Your mounted Trackball should like this:
+This keyboard places the switches very tightly together to minimize travel distance.
+As such, while moving your finger from one keycap to the next,
+you may experience some incidental contact between your finger and
+edges of the keycaps that are a bit uncomfortable to touch.
+
+This should become less frequent as you become more accustomed to the keyboard layout,
+but in the meantime it is nice to smooth down those areas with a file.
+While filing, I recommend using a vice grip to hold the keycap firmly in place and keep your fingers away from the file
+(unless, of course, it was your intention all along for this build to double as a manicure).
+
+Additionally, on the right side, the top left corner of the `thumb-c` keycap
+tends to conflict with the trackball when it is in the inactive (pushed-out) position.
+For this reason, I like to cut away at that corner and file it down in order to make room as follows:
 <!--
-![Mounted Trackball](images/trackball.png)
+![Cut Right `thumb-c` Keycap](images/cut-right-thumb-c.png)
 -->
 
-### Keycap Mods
+Based on my experience using this keyboard, I've color-coded the edges that you will probably want to file down in the image below:
+<!--
+![Edges to File](images/edges-to-file.png)
+-->
 
 ### Installing the Switch Plates
 
+Now is the time to connect the switch plates to the case walls. 
+Note that the code for cutting away at the walls using the plates to ensure a good fit
+may result in some strange geometry, such as very thin tapering walls and odd small protrusions.
+If you do encounter these, it should be okay to chip away at them with an X-Acto knife (AND SAFETY GOGGLES ON -- 
+in case you didn't know, you should ALWAYS wear safety goggle when using an X-Acto knife in any context, that blade certainly can break!).
+
+Put the plates on top of the walls, and press them together to make sure you can get a good fit with minimal gap between them
+(some gap is unavoidable).
+Insert the M3 (12mm long) screws to hold it in place,
+making sure you are pressing the parts together as you do so so that the gap doesn't re-form.
+
 ### Installing the MCU Assembly
+
+Take out your glue gun, the two MCU holders, the Arduino Micro and Pro Micro, the TRRS adapters, and the reset buttons.
+
+Place the Arduino Micro on its mount, being careful not to break the very thin dowels that are meant to
+insert into the mount holes on each corner of the arduino (though if you do break them, it's probably not a big deal).
+Smear hot glue on each of the four corners to hold the arduino in place (be careful not to obtstruct any of the pins with glue).
+
+Place a line of hot glue on the strip in the Pro Micro holder, and install the Pro Micro.
+On each holder, install a TRRS adapter (first insert the round end into the hole and then press the back in against the tapered back wall),
+using a bit of glue to keep it in place, and install the reset button above the MCU using hot glue as well (enough so that the button doesn't pop out from behind when pressed).
+
+Plug in the arduinos according to the wiring diagram above.
+If you find that any of the plugs ends are loose on the arduino pins,
+you can use some hot glue to prevent them from being shaken off.
 
 The completed MCU assembly should like this for the Arduino Micro (right half):
 <!--
@@ -768,17 +885,32 @@ and like this for the Pro Micro (left half):
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
 -->
 
+For each side, slide the whole MCU assembly into its corresponding spot in the case walls.
+
 ### Installing the Base Plate
+
+Screw in the base plates using M3 screws (12mm long), making sure that the countersunk side is on the bottom
+(though given the shape of the keyboards it should be pretty hard to mess this up).
+Since there's still a bit more adjustment to do on the right side (the PMW3360 sensor distance), 
+and you (presumably) haven't yet tested the keyboard to make sure everything is working,
+I recommend that you just install two or three screws on each side for now
+(as you may have to take it apart again for repairs or for further adjusment).
 
 ### Mounting the Wrist Rests
 
-Here's a close-up of what the wrist wrest will look like once installed (some oozing of the hot glue is expected).
+Get out your glue gun, the (oh-so-squishy) wrist rests, and the printed mounts.
+
+To attach a wrist rest to a mount, line a bead of hot glue all around the inner edge of the mount
+and press in the wrist rest (some oozing of the hot glue is expected, so be sure to keep your fingers away from the edge!).
+Hold it there until the glue has cooled down and solidified.
+
+Screw in the wrist rests onto the base plates, using whatever holes make for the best distance from your hands.
+I like to use them to support the base of my palms, but of course this is up to your own personal preference.
+
+Here's a close-up of what the wrist wrest will look like once installed:
 <!--
 ![Wrist Rest](images/wrist-rest.png)
 -->
-
-<!-- TODO -->
-
 
 
 
@@ -794,7 +926,7 @@ Here's a close-up of what the wrist wrest will look like once installed (some oo
 
 ### Flashing the MCUs
 
-
+### Final Adjustments to the PMW3360 Distance
 
 <!-- TODO -->
 
