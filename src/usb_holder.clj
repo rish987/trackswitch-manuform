@@ -21,7 +21,7 @@
 (def ardumicro-mountholes-hdist 15.00)
 (def ardumicro-mountholes-rad 0.5)
 (def ardumicro-mountholes-height 4)
-(def ardumicro-extra-height 5.9)
+(def ardumicro-extra-height 3.9)
 (defn fb-wall-adj [length] (+ length wall-thickness))
 (defn lr-wall-adj[length] (+ length (* 2 wall-thickness)))
 
@@ -32,7 +32,7 @@
 (def promicro-width (+ 17.75 clearance))
 
 (def promicro-mountstrip-width 7.50)
-(def promicro-mountstrip-thickness 1.5)
+(def promicro-mountstrip-thickness ardumicro-extra-height)
 
 (defn mcwidth [promicro] (if promicro promicro-width ardumicro-width))
 (defn mclength [promicro] (if promicro promicro-length ardumicro-length))
@@ -65,10 +65,12 @@
 (def mount-insert-depth 1.7)
 (defn mount-width [promicro] (+ (mcwidth promicro) trrs-width (* wall-thickness 2) (* mount-insert-depth 2)))
 
+(def reset-buf (/ mount-insert-thickness 2))
+
 (def reset-height (+ 12.8 clearance))
-(def reset-ardumicro-tare (+ (* 2 mount-insert-thickness) reset-height ardumicro-height))
-(def reset-protrude 1)
 (def reset-width (+ 12.8 clearance))
+(def reset-ardumicro-tare (+ (* 2 reset-buf) reset-height ardumicro-height))
+(def reset-protrude 1)
 (def reset-rad (+ (/ 6.75 2) clearance))
 
 (def total-height (+ reset-ardumicro-tare ardumicro-extra-height))
@@ -131,7 +133,7 @@
 
 (defn trrs-hole-place [promicro shape] (translate [(- (/ trrs-width 2)) (+ (fb-wall-adj (mclength promicro))) (- trrs-rad reset-ardumicro-tare)] shape))
 
-(defn reset-place [promicro shape] (translate [(/ (lr-wall-adj (mcwidth promicro)) 2) (+ (fb-wall-adj (mclength promicro))) (- (+ mount-insert-depth (/ reset-height 2)))] shape))
+(defn reset-place [promicro shape] (translate [(/ (lr-wall-adj (mcwidth promicro)) 2) (+ (fb-wall-adj (mclength promicro))) (- (+ reset-buf (/ reset-height 2)))] shape))
 
 (defn reset-cutout [promicro] (let [insert-thickness (- mount-thickness reset-protrude)] (reset-place promicro (union 
   (translate [0 (/ insert-thickness 2) 0] (cube reset-width insert-thickness reset-height))

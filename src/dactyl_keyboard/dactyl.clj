@@ -7,7 +7,7 @@
             [scad-clj.model :refer :all]))
 
 (def testing true)
-;(def testing false)
+(def testing false)
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -21,8 +21,8 @@
 (defn rotate-z [angle shape]
   (rotate angle [0 0 1] shape))
 
-(def usb-holder-z-rotate 7)
-(def usb-holder-offset [-11.5 -0.4 0])
+(def usb-holder-z-rotate 8)
+(def usb-holder-offset [-13.5 -1 0])
 
 (defn rotate-around-x [angle position]
   (mmul
@@ -3129,7 +3129,7 @@ need to adjust for difference for thumb-z only"
       (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-20 35.5 0])) (color BRO)) ; thumb right
     )
     (->> (screw-insert ROUND-RES 0 2 1 bottom-radius top-radius height                         [ -8.5 -8.0  screw-insert-bottom-offset]) (color RED)) ; top middle
-    (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height       [ -3   -10   screw-insert-bottom-offset]) (color PUR)) ; top right
+    (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height       [ -9   -10   screw-insert-bottom-offset]) (color PUR)) ; top right
     (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move   [ 2.5  -0.5  0])) (color BLA)) ; bottom middle
     (->> (screw-insert ROUND-RES 0 (dec lastcol) (- lastrow 1) bottom-radius top-radius height [ 1.7  -2.90 screw-insert-bottom-offset]) (color YEL)) ; bottom right
 )) 
@@ -3980,6 +3980,8 @@ need to adjust for difference for thumb-z only"
             ;)
             (union (union (model-case-walls-right false))
                    ;(model-switch-plates-right false)
+                   ;(usb-holder false)
+                   ;(usb-holder true)
 
                    ;(union (sa-cap-cutout 1) (debug (single-plate true)))
                    ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))

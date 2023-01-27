@@ -13,6 +13,8 @@ It also incorporates some novel features:
 - Both the trackswitch and trackball sensor have fully parameterized mounts with mounting mechanisms that allow their distance from the trackball to be micro-adjustable.
 - Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
 
+Coupling this keyboard with a pair of [chair-mounted mini-tables](github.com) (TODO fix link) makes for an extremely
+ergonomic setup, with typing comfort the likes of which you have probably never experienced before:
 <!--
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
 -->
@@ -178,7 +180,23 @@ Repeat the above measurements with the M2 screw/washer.
 ![ measurement](images/.png)
 -->
 
+### (`src/usb_holder.clj`) `reset-height`, `reset-width`
 
+Measure the height and width of your reset button.
+
+<!--
+![reset-height measurement](images/reset-height.png)
+-->
+
+(leave the added `clearance`).
+
+### (`src/usb_holder.clj`) `reset-protrude`
+
+Measure the depth of your reset button:
+
+<!--
+![reset-protrude measurement](images/reset-protrude.png)
+-->
 
 
 
@@ -326,7 +344,22 @@ have the correct rotation relative to the case walls and also have enough purcha
 
 #### Repositioning the MCU Holder Cutout
 
-TODO
+If you change the possiton of the above-home-row keys, you'll probably also have to
+change the positon of the MCU holder cutout.
+When rendering the case walls with `testing` set to `true`,
+it will also render a ghost of the MCU holder to help you position it properly.
+
+Tweak the variables `usb-holder-z-rotate` (which rotates the holder about its front right edge)
+and `usb-holder-offset` to position it such that it is flush with the wall of the case
+as you see below:
+<!--
+![MCU Holder Alignment](images/mcu-holder-align.png)
+-->
+
+Note that the top left corner of the MCU holder may come close to the top edge
+of the case and even cut through it.
+If it is too close, there should be no harm in letting the cutout cut into the inner case wall a little bit
+to get it further from that edge.
 
 #### Changing the Height and Tent Angle
 
@@ -455,7 +488,9 @@ You can use the same slicing settings to print the walls. You will need supports
 
 You can actually print these without supports!
 
-<!-- TODO fix pro-micro holder so this is really the case -->
+<!--
+![MCU Holders](images/mcu-holders.png)
+-->
 
 ### Trackswitch Mount
 
@@ -916,7 +951,67 @@ Here's a close-up of what the wrist wrest will look like once installed:
 
 ## Firmware
 
+It's finally time to install the brains of your keyboard
+that teaches it how to respond to your keypresses,
+a.k.a. the firmware.
+Use a TRRS cable to connect both halves of the keyboard, and
+get your USB-to-microUSB cable and plug
+it into your computer.
+
 ### Installing Software (QMK, AVRDude)
+
+I use Linux (specifically Raspbian), and have written this 
+part of the manual assuming that you do as well.
+If you specifically happen to use Gentoo Linux,
+see [Schievel1's installation guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#preparing-the-qmk-firmware).
+
+Start by installing the `qmk` program (which is a set of utilities for compiling the QMK keyboard firmware)
+by following [these installation instructions](https://docs.qmk.fm/#/getting_started_build_tools).
+
+Next, install [AVRDude](https://www.nongnu.org/avrdude/) this is the software that you will use to actually
+upload the compiled firmware to your micro controller.
+In my case the installation was a simple case of running `sudo apt-get install avrdude`,
+but this may be different depending on your OS.
+
+Clone the firmware repository, change to the relevant branch, and load the submodules:
+```shell
+git clone https://github.com/rish987/qmk_firmware_dm_r_track.git
+cd qmk_firmware_dm_r_track/
+git checkout tractyl-manuform-trackswitch
+make git-submodule
+```
+
+Now, run the following commands to test that the compilation pipeline is working:
+```shell
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
+```
+
+Which should yield an output like this:
+```
+Ψ Compiling keymap with make --jobs=1 handwired/tractyl_manuform/5x6_right/arduinomicro:default
+
+QMK Firmware 0.16.9
+avr-gcc (GCC) 5.4.0
+Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Size before:
+   text    data     bss     dec     hex filename
+      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex
+
+Copying handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex to qmk_firmware folder        [OK]
+Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex                 [WARNINGS]
+
+ * The firmware size is approaching the maximum - 28442/28672 (99%, 230 bytes free)
+```
+Note that this firmare uses up almost all of the space on the MCU,
+so you have to be very careful and selective about any features you want to add to it.
+
+It will leave the compiled `.hex` file in the root dir, which you can delete:
+```
+rm handwired_dactyl_manuform_5x6_default.hex
+```
 
 ### Tweaking the Key Layout
 
