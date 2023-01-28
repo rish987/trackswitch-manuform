@@ -1585,7 +1585,7 @@ need to adjust for difference for thumb-z only"
 (def lens-adapter-width 3.55)
 (def lens-adapter-thickness 1.2)
 
-;TODO rename
+;TODO rename or move to separate file
 (def total-thickness (+ pcb-thickness (* 2 case-thickness)))
 (def total-height pcb-height)
 (def total-length (+ pcb-length (* 2 case-thickness)))
@@ -1627,6 +1627,9 @@ need to adjust for difference for thumb-z only"
     (union 
       (translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
       (translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) 0] (rotate-x (- (deg2rad 90)) (cylinder cover-insert-total-rad M2-insert-height)))
+
+      ;(translate [(- (/ sensor-holder-distance 2)) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) (- (/ total-height 4))] (cube (* 2 cover-insert-total-rad) M2-insert-height (/ total-height 2)))
+      ;(translate [(/ sensor-holder-distance 2) (+ (/ M2-insert-height 2) (/ pcb-thickness 2)) (- (/ total-height 4))] (cube (* 2 cover-insert-total-rad) M2-insert-height (/ total-height 2)))
     )
   )
 )
@@ -2867,7 +2870,7 @@ need to adjust for difference for thumb-z only"
 
 (defn trackball-wall [border] (let [
         key-place (if border key-place key-place-shifted)
-        trackball-place (if border trackball-rotate (fn [shape] (trackball-place-shifted shape)))
+        trackball-place (if border trackball-rotate (fn [shape] (shift-model (trackball-rotate shape))))
         trackswitch-place (fn [shape] (trackball-place (trackswitch-place shape)))
         vert-off trackswitch-vert-offset
         vert-fat-web-post-tr-lower' (translate [(+ trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] vert-fat-web-post-tr-lower)
@@ -3126,7 +3129,7 @@ need to adjust for difference for thumb-z only"
   (union 
     (if left
       (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-7.5 -24.5 0])) (color BRO)) ; thumb left
-      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-20 35.5 0])) (color BRO)) ; thumb right
+      (->> (screw-insert-thumb ROUND-RES 0 bottom-radius top-radius height (map + thumb-c-move [-47 36.5 0])) (color BRO)) ; thumb right
     )
     (->> (screw-insert ROUND-RES 0 2 1 bottom-radius top-radius height                         [ -8.5 -8.0  screw-insert-bottom-offset]) (color RED)) ; top middle
     (->> (screw-insert ROUND-RES 0 (dec lastcol)       1 bottom-radius top-radius height       [ -9   -10   screw-insert-bottom-offset]) (color PUR)) ; top right

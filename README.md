@@ -954,6 +954,11 @@ Here's a close-up of what the wrist wrest will look like once installed:
 It's finally time to install the brains of your keyboard
 that teaches it how to respond to your keypresses,
 a.k.a. the firmware.
+The [firmware that I use](https://github.com/rish987/dactyl_manuform_r_track) is forked 
+from [Schievel1's firmware](https://github.com/Schievel1/dactyl_manuform_r_track)
+and hence, much of the instructions that follow are adapted from
+[Schievel1's build guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#flashing-the-firmware).
+
 Use a TRRS cable to connect both halves of the keyboard, and
 get your USB-to-microUSB cable and plug
 it into your computer.
@@ -1005,7 +1010,7 @@ Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.
 
  * The firmware size is approaching the maximum - 28442/28672 (99%, 230 bytes free)
 ```
-Note that this firmare uses up almost all of the space on the MCU,
+Note that this firmare uses up almost all of the space on the MCU (as attested in the warning message),
 so you have to be very careful and selective about any features you want to add to it.
 
 It will leave the compiled `.hex` file in the root dir, which you can delete:
@@ -1014,6 +1019,109 @@ rm handwired_dactyl_manuform_5x6_default.hex
 ```
 
 ### Tweaking the Key Layout
+
+If you want to change which key does what,
+you should edit the file `keymaps/handwired/tractyl_manuform/5x6_right/keymaps/default/keymap.c`.
+In there you'll find my own preferred key layout:
+
+```c
+enum custom_layers {
+    _QWERTY,
+    _LOWER,
+    _RAISE,
+    _ARROW,
+};
+
+#define RAISE MO(_RAISE)
+#define LOWER MO(_LOWER)
+#define ARROW MO(_ARROW)
+
+#define ESCCTL  RCTL_T(KC_ESC)
+#define BSPCCTL  RCTL_T(KC_BSPC)
+
+const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  [_QWERTY] = LAYOUT_5x6_right(
+     KC_Q   ,KC_W   ,KC_E   ,KC_R   ,KC_T  ,                         KC_Y   ,KC_U   ,KC_I   ,KC_O   , KC_P   ,
+     KC_A   ,KC_S   ,KC_D   ,KC_F   ,KC_G  ,                         KC_H   ,KC_J   ,KC_K   ,KC_L   , KC_N   ,
+     BSPCCTL,KC_X   ,KC_C   ,KC_V   ,                                        KC_M   ,KC_B   ,KC_Z   , ESCCTL ,
+     RAISE  ,ARROW  ,KC_SPC ,_______,LOWER ,                         TRKSWCH,        KC_RSFT,KC_ENT
+  ),
+  [_LOWER] = LAYOUT_5x6_right(
+     KC_EXLM,KC_AT  ,KC_HASH,KC_DLR ,KC_PERC,                        KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,
+     KC_1   ,KC_2   ,KC_3   ,KC_4   ,KC_5   ,                        KC_6   ,KC_7   ,KC_8   ,KC_9   ,KC_0   ,
+     _______,_______,KC_PLUS,KC_EQL ,                                        _______,KC_COMM,KC_DOT ,_______,
+     _______,_______,_______,_______,_______,                        _______,        _______,        _______
+  ),
+  [_RAISE] = LAYOUT_5x6_right(
+     KC_QUES,_______,KC_PLUS,KC_EQL ,KC_PIPE,                       KC_TILD,_______,KC_TAB  ,_______,KC_COLN,
+     KC_SLSH,KC_LCBR,KC_UNDS,KC_RCBR,KC_BSLS,                       KC_GRV ,KC_DQT ,KC_COMM ,KC_DOT ,KC_SCLN,
+     _______,KC_LBRC,KC_MINS,KC_RBRC,                                       KC_QUOT,KC_LT   ,KC_GT  ,_______,
+     _______,_______,_______,_______,_______,                        _______,        _______,_______
+  ),
+  [_MOUSE] = LAYOUT_5x6_right(
+     _______,_______,_______,_______,_______,                        _______,_______,_______,_______,_______,
+     _______,_______,_______,_______,_______,                        _______,KC_BTN1,KC_BTN2,MLOCK  ,_______,
+     _______,_______,_______,_______,                                        _______,_______,DRGSCRL,TRKPNT ,
+     _______,_______,KC_LSFT,_______,_______,                        _______,        _______,        _______ 
+  ),
+  [_ARROW] = LAYOUT_5x6_right(
+     KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,                        KC_F6  ,KC_F7  ,KC_F8  ,KC_F9  ,KC_F10 ,
+     _______,_______,_______,_______,_______,                        KC_LEFT,KC_DOWN,KC_UP  ,KC_RGHT,_______,
+     _______,_______,_______,_______,                                        _______,KC_F11 ,KC_F12 ,_______,
+     _______,_______,_______,_______,_______,                        _______,        KC_RGUI,        KC_RALT 
+  ),
+};
+```
+You'll see a total of five layers, consisting of
+the normal layer (`_QWERTY`, the default layer that is active without shifting),
+the "number" (`_LOWER`),
+"symbol" (`_RAISE`), and
+"arrow" (`_ARROW`) layers (all activated with the vertical thumb keys),
+and the 
+"mouse" layer (`_MOUSE`, activated by the trackswitch).
+Each layer has the keys laid out in the approximate shape of the keyboard.
+Many of the key codes are self-explanatory, but [here's the full reference on the QMK docs](https://github.com/qmk/qmk_firmware/blob/master/docs/keycodes.md),
+and you may also find the [QMK configurator](https://config.qmk.fm/#/handwired/dactyl_manuform/5x6/LAYOUT_5x6) handy,
+where you can hover over a key in the online UI to see its keycode (this isn't exactly the layout we're using and it lacks
+the special keycodes we will need, so don't try to actually use this tool to generate your keymap).
+
+There are a few things to note about the way that I've chosen to do things.
+
+Firstly, notice that the two keys below the pinkies on both halves serve a double-purpose.
+When you hold them and press another key, they function just like pressing the control key,
+but when you tap them, they act like a different key: backspace on the left side and escape on the right side
+(the left side also displaces the `z` key to the right side below-ring, which was a calculated tradeoff).
+You can read more about this functionality, called "mod-tap", on [the QMK docs](https://github.com/qmk/qmk_firmware/blob/master/docs/mod_tap.md).
+I've found this feature to be absolutely indispensable on a keyboard with a limited number of keys such as this one.
+You may be tempted to use it with normal keys (like the letter keys) as well,
+but in my experience at least, this was a mistake -- if you do this, it can be very hard to make sure you aren't pressing down one key while continuing to press down the previous one during normal typing, which would result in sending the wrong keycode.
+For that reason, I have found it best to use with keys that you don't expect to normally type in rapid succession with other keys,
+like escape, backspace, enter, tab, etc.
+
+On the bottom of the left side of each layer, you'll find the thumb keys,
+in the order of:
+```
+thumb-l, thumb-u, thumb-c, thumb-ur, thumb-b
+```
+In my experience,
+`thumb-l` and `thumb-b` are the most easy keys to press (you just have to move your thumb in and out),
+followed by `thumb-u` and `thumb-ur`, which are a bit more out of the way 
+(in fact, you'll notice that I ended up not using `thumb-ur` at all,
+but it's there if you want to use it for something).
+Correspondingly, I keep the symbol and numbers layers handy (pun intended) at `thumb-l` and `thumb-b`, respectively.
+And reserve `thumb-u` for the less-frequently-used arrow and function keys.
+
+In the number and symbol layers, I like to use [shifted symbols](https://github.com/qmk/qmk_firmware/blob/master/docs/keycodes.md#us-ansi-shifted-symbols-idus-ansi-shifted-symbols)
+(which are the shifted versions of other keys) so that I don't have to press three keys at once to get to them.
+I've placed them (approximately) above their corresponding un-shifted keys
+to somewhat ease the transition from a normal keyboard,
+but in the future I will probably place them more in terms of actual frequency of use.
+
+On the mouse layer, you will notice that the main four keys
+you will press while using the mouse (`KC_BTN1`, `KC_BTN2`, `DRGSCRL`, `TRKPNT`, explained in the next section)
+are aligned such that the index and middle are on the homerow, but the ring and pinky are on the row below the homerow.
+This is to adjust for the way you will reposition your hand while using the trackball,
+as you will find that you have to rotate your hand clockwise a little bit to operate it most comfortably.
 
 ### Tweaking the Mouse Behavior
 
