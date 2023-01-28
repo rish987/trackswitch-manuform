@@ -176,10 +176,6 @@ Outer radius of the M3 washer.
 
 Repeat the above measurements with the M2 screw/washer.
 
-<!--
-![ measurement](images/.png)
--->
-
 ### (`src/usb_holder.clj`) `reset-height`, `reset-width`
 
 Measure the height and width of your reset button.
@@ -192,12 +188,13 @@ Measure the height and width of your reset button.
 
 ### (`src/usb_holder.clj`) `reset-protrude`
 
-Measure the depth of your reset button:
+Measure the protrusion of the reset button from the highest point on the base (that will press against the case when mounted):
 
 <!--
 ![reset-protrude measurement](images/reset-protrude.png)
 -->
 
+Add a bit to this if you want the button to be more recessed in the case.
 
 
 ## Making Adjustments/CAD Generation
@@ -230,7 +227,7 @@ The parameterization is split into two files:
 ### Testing Changes (the `testing` variable)
 
 At the very top of the file, you will find the `testing` variable.
-Set this to true while you make changes to the overall keyboard layout
+Set this to `true` while you make changes to the overall keyboard layout
 (you can just swap it with the line above to override it).
 This will produce just enough code in the `things/test.scad` file
 for you to have a good enough idea of how the keyboard is going to look
@@ -329,6 +326,12 @@ See the prefixes in the image below:
 <!--
 ![thumb-codes](images/thumb-codes.png)
 -->
+
+The mnemonic is that
+`thumb-u` stands for "thumb upper",
+`thumb-uo` stands for "thumb upper-out",
+`thumb-i` stands for "thumb in" (as in moving your thumb inwards), and
+`thumb-o` stands for "thumb out" (as in moving your thumb outwards).
 
 #### Repositioning the Screw Insert Mounts
 
@@ -511,6 +514,8 @@ No supports needed! Orient it as follows:
 ### Bottom Plates
 
 No supports needed, be sure to rotate these so that the flat side is on the bottom.
+I was able to squeeze both of them on the build plate to print at once,
+but it's probably a good idea to print them on at a time.
 
 ### Wrist Rest Holders
 
@@ -519,8 +524,6 @@ You will need supports for these.
 
 
 
-
-<!-- TODO -->
 
 ## Electronics
 
@@ -586,11 +589,13 @@ Right half:
 
 This step involves pre-cutting the solid core wires that connect
 the rows and columns of your keyboard (as shown in the diagrams above)
-in such a way that we preserve the wire's insulation between the spanned keys.
+in such a way that we preserve the wire's insulation between the sockets.
 
 For each row and column, start by cutting a length of wire that is a good 40-50 mm longer than the total length of each row/column in question.
 Mark the start of this extra length with a Sharpie.
-Note that some columns will have to reach their respective thumb keys (and the trackswitch key in the right half), and so will require a good amount of extra length for that.
+Note that some columns will have to reach their respective thumb keys
+(and the third row will have to reach the trackswitch key in the right half),
+and so will require a good amount of extra length for that.
 Use Blu-Tac to keep the wires next to their rows/columns after cutting them:
 
 <!--
@@ -604,9 +609,10 @@ to provide a "probe tail" to which we can attach a probe from the MCU for readin
 
 Strip away about half of the extra length from the end of the line and 
 use wire cutters to make a cut into the insulation at the place you marked with the Sharpie.
-Use a pair of pliers to pull the insulation to the end,
-leaving just enough so that you can use your pliers to make a small hook
-(which is where you will solder a probe from the MCU). You should end up with this:
+Use your pliers to make a small hook at the end of the wire
+(which is where you will solder a probe from the MCU),
+and use a pair of pliers to pull the insulation to the end.
+You should end up with this:
 <!--
 ![Probe Tails](images/probe-tails.png)
 -->
@@ -614,8 +620,9 @@ leaving just enough so that you can use your pliers to make a small hook
 #### Alignment, marking, and cutting
 
 Now is the time to make the cuts that will allow the lines to connect to the hotswap sockets.
-For each row/column line, starting by aligning the bottom of the insulation above the probe tail.
-Now, make a mark with your Sharpie about 5mm above/to the side of the hot swap contact:
+For each row/column line, starting by aligning the bottom of the insulation above the probe tail
+with the hot swap contact.
+Now, make a mark with your Sharpie about 5mm above/to the side of the next hot swap contact:
 <!--
 ![Line Marking](images/line-marking.png)
 -->
@@ -705,7 +712,7 @@ Cut off the excess now jutting out of the other end of the sensor so that the le
 ![Soldered PMW3360](images/soldered-pmw3360.png)
 -->
 
-#### Install the Reset Button (MCU Assembly)
+#### Solder the Reset Button (MCU Assembly)
 
 Cut two socket-socket-end jumper wires in half, strip away the insulation from the cut ends and solder them to
 the reset button such that a connection is made between them when the button is pressed
@@ -716,10 +723,10 @@ the reset button such that a connection is made between them when the button is 
 
 Repeat for the reset button on the other side.
 
-#### Install the TRRS Connector (MCU Assembly)
+#### Solder the TRRS Connector (MCU Assembly)
 
-Cut three socket-socket-end jumper wire in half, strip away the insulation from the cut ends and solder them onto
-the TRRS jack probes (it doesn't really matter which ones you use, as long as you're consistent on both sides:
+Cut three socket-socket-end jumper wires in half, strip away the insulation from the cut ends and solder them onto
+the TRRS jack probes (it doesn't really matter which ones you use, as long as you're consistent on both sides):
 <!--
 ![Soldered TRRS](images/soldered-trrs.png)
 -->
@@ -763,7 +770,7 @@ The way that I do this for each key consists of three steps:
 For the vertical keys in particular, this may take a bit of wiggling, but as long as you've oriented the socket correctly and have cleared away all of the support residue behind the vertical keys, you should have absolute faith in your ability to complete this irksome task! Be careful not to put too much pressure on the soldered joints.
 2. Continuing to press the plier against the socket, take a keyswitch and plug it in.
 I have found it particularly easy to bend the pins on the switch while doing this (fortunately though this can be easily rectified with some pliers), so go slowly and take it out and try again if you're not sure. Now, the keyswitch should hold the socket in place so you can move the pliers away.
-3. Use your hot glue gun to put a good amount of glue behind to socket to fix it in place.
+3. Use your hot glue gun to put a good amount of glue behind the socket to fix it in place.
 After it's dry, plug the switch in and out a few times to make sure it stays
 (if it doesn't, which probably means you didn't use enough glue or didn't place it correctly, use your pliers to pull out the hot glue and try again).
 
@@ -842,7 +849,8 @@ The mount should hold both the sensor and the lens securely together.
 
 Wrap the M2 screw with a generous few layers of PTFE tape.
 Put the washers over the screws and insert the screws into the trackball mount (the washer should be on the inside).
-Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle,
+Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle
+(optionally, you may use washers on this side as well if it helps),
 but not so tight that you aren't able to turn them (along with the nuts).
 
 Insert the screws into the hole in the front of the mount, then the holes in the PCB,
@@ -918,6 +926,14 @@ The completed MCU assembly should like this for the Arduino Micro (right half):
 and like this for the Pro Micro (left half):
 <!--
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
+-->
+
+I have found that on the right side, there is actually quite a tight fit between the arduino micro and the trackball sensor.
+This would not be an issue if it weren't for the height of the jumper cable plug/socket housings,
+so if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
+I recommending bending the pins like this to give just enough clearance between the MCU and PMW3360 connectors:
+<!--
+![Bent Pins](images/bent-pins.png)
 -->
 
 For each side, slide the whole MCU assembly into its corresponding spot in the case walls.
@@ -1124,6 +1140,8 @@ This is to adjust for the way you will reposition your hand while using the trac
 as you will find that you have to rotate your hand clockwise a little bit to operate it most comfortably.
 
 ### Tweaking the Mouse Behavior
+
+
 
 #### Special Mouse Keys
 

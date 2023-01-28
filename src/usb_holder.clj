@@ -173,6 +173,8 @@
 (defn usb-holder-space-shift [promicro shape] (translate [0 (- (+ (fb-wall-adj (mclength promicro)) mount-thickness)) 0] shape))
 (defn usb-holder [promicro] (usb-holder-shift promicro (union (difference (union (mount promicro) (trrs-holder promicro) (microcontroller-holder promicro)) (angle-cutout promicro)) (if promicro promicro-mountstrip ardumicro-mountholes))))
 
+(defn usb-holder-mirrored [promicro] (translate [(mount-width promicro) 0 0] (mirror [-1 0 0] (usb-holder promicro))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; USB Controller Holder Cutout ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
