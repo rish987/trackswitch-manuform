@@ -55,7 +55,7 @@ Part | Price | Comments
 [Silicone wrist rests](https://www.amazon.com/gp/product/B01LYBFIJA/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $9.99 | Nice and soft and squishy and comfy!
 [PLA 3D Printer Filament (at least TODO grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
 [Keycaps x35](https://www.amazon.com/gp/product/B07SJKMNWC/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $15.55 | If you have a resin printer, printing keycaps is also apparently an option.
-[1N4148 diodes x35](https://www.amazon.com/gp/product/B079KJ91JZ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $5.99 |
+[1N4148 diodes x36](https://www.amazon.com/gp/product/B079KJ91JZ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $5.99 |
 [Hot swap sockets x36](https://www.amazon.com/gp/product/B096WZ6TJ5/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $14.50 | 
 [MicroUSB to USB cable](https://www.amazon.com/gp/product/B01NA9UCVQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.99 | To connect keyboard to computer (make sure the length is enough for your own setup!).
 [TRRS cable](https://www.amazon.com/gp/product/B07FFW8YZR/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $8.99 | This connects both halves of the keyboard, so make sure to get one that is long enough for whatever split you are going to make.
@@ -514,8 +514,8 @@ No supports needed! Orient it as follows:
 ### Bottom Plates
 
 No supports needed, be sure to rotate these so that the flat side is on the bottom.
-I was able to squeeze both of them on the build plate to print at once,
-but it's probably a good idea to print them on at a time.
+I was able to squeeze both of them on the build plate (of an Ender 3) to print at once,
+but it's probably a better idea to print them one at a time.
 
 ### Wrist Rest Holders
 
@@ -564,6 +564,7 @@ On the left side, we can get away with the cheaper Pro Micro:
 ### Hotswap Layout
 
 Given the crazy angles of the keys, this keyboard is easiest to solder before inserting the hotswap sockets into the keyboard.
+(The plates actually have holes for holding the diodes that we're not going to use; I just left them in since they make the keyboard a bit lighter).
 So, for each half, start by laying out the hotswap sockets in the approximate shape of the keyboard,
 using Blu-Tac to hold them in place.
 Reference your printed switch plates to make sure that you leave
@@ -608,10 +609,10 @@ The extra length we included at the end of each line was
 to provide a "probe tail" to which we can attach a probe from the MCU for reading the matrix.
 
 Strip away about half of the extra length from the end of the line and 
-use wire cutters to make a cut into the insulation at the place you marked with the Sharpie.
+use wire strippers to make a cut into the insulation at the place you marked with the Sharpie.
 Use your pliers to make a small hook at the end of the wire
 (which is where you will solder a probe from the MCU),
-and use a pair of pliers to pull the insulation to the end.
+and use the wire strippers to pull the insulation to the end.
 You should end up with this:
 <!--
 ![Probe Tails](images/probe-tails.png)
@@ -627,14 +628,16 @@ Now, make a mark with your Sharpie about 5mm above/to the side of the next hot s
 ![Line Marking](images/line-marking.png)
 -->
 
-Make a cut here with your wire cutters and pull the insulation down, leaving about that much room between
+Make a cut here with your wire strippers and pull the insulation down, leaving about that much room between
 this insulation segment and the previous one:
 <!--
 ![Line Segment Space](images/line-segment-space.png)
 -->
 
-Move the bottom of the insulation above the segment you just cut up to the swap contact,
+Move the top of the insulation below the segment you just cut up to the swap contact,
 and repeat this process for the next socket.
+To save time from switching between your marker and wire strippers,
+you can instead make all of the marks before doing all of the cuts.
 Continue until the very last one, cut off any excess, and make another hook at this end.
 At the end you should have something like this:
 <!--
@@ -646,9 +649,11 @@ At the end you should have something like this:
 If you bought a diode set like the one listed above,
 they come neatly packaged in strips that allow you to
 bend and cut multiple at once.
-Using some straight edge like the edge of a table,
+Count out 36 diodes and separate cut them off from the rest of the strip.
+Using some straight edge like the edge of a table to make the initial bend,
 make a hook with the wire on the *black* side of the diode.
-on the other side, cut again, leaving a few millimiters of wire.
+Make a cut so that you will have enough wire to be able to wrap the hook around the lines.
+On the other side, cut again, leaving a few millimiters of wire.
 Your cut diodes should end up looking like this:
 <!--
 ![Cut Diodes](images/cut-diodes.png)
@@ -661,6 +666,11 @@ so you have about a millimeter of extra length below the hook:
 <!--
 ![Cut Column Probes](images/cut-column-probes.png)
 -->
+
+Now, I recommend getting two wads of Blu-Tac out
+and using them to stick all of the diodes and column probes vertically into.
+This will make it easy to pick them up with pliers for the soldering step
+(I will spare you from a photograph of this since the sight of it evokes visceral disgust).
 
 ### Soldering
 
@@ -691,7 +701,7 @@ around the corresponding exposed bit on the line to hold in in place.
 Now, go around with your solder iron and solder everything up!
 This should result in:
 <!--
-![Soldered diodes](images/soldered-diodes.png)
+![Soldered lines](images/soldered-lines.png)
 -->
 
 #### Solder the MCU Probes
@@ -703,6 +713,9 @@ and use your heat gun to insulate this connection with the heat shrink tubing, l
 <!--
 ![Soldered probes](images/soldered-probes.png)
 -->
+
+(I actually crimped my own jumpers without a plug end, so you will probably have more of a bulge underneath
+your heatshrink tube from the plug housing).
 
 #### Solder the PMW3360 Sensor
 
@@ -766,14 +779,16 @@ Be forewarned, this is probably the most annoying part of the assembly,
 though certainly doable with enough patience.
 
 The way that I do this for each key consists of three steps:
-1. Use a pair of pliers to press the hotswap socket into its designated cutout behind the plate.
-For the vertical keys in particular, this may take a bit of wiggling, but as long as you've oriented the socket correctly and have cleared away all of the support residue behind the vertical keys, you should have absolute faith in your ability to complete this irksome task! Be careful not to put too much pressure on the soldered joints.
+1. Use a pair of pliers to press the hotswap socket into its designated cutout behind the plate, being careful not to put too much pressure on the soldered joints.
+For the vertical keys in particular, this may take a bit of wiggling, but as long as you've oriented the socket correctly and have cleared away all of the support residue behind the vertical keys, you should have absolute faith in your ability to complete this irksome task!
 2. Continuing to press the plier against the socket, take a keyswitch and plug it in.
 I have found it particularly easy to bend the pins on the switch while doing this (fortunately though this can be easily rectified with some pliers), so go slowly and take it out and try again if you're not sure. Now, the keyswitch should hold the socket in place so you can move the pliers away.
 3. Use your hot glue gun to put a good amount of glue behind the socket to fix it in place.
 After it's dry, plug the switch in and out a few times to make sure it stays
 (if it doesn't, which probably means you didn't use enough glue or didn't place it correctly, use your pliers to pull out the hot glue and try again).
 
+On the right side, leave the trackswitch socket dangling for now,
+you will install that after the trackswitch has been moutned.
 After all is said and done, you will have something like this:
 <!--
 ![Spaghetti](images/spaghetti.png)
@@ -835,6 +850,7 @@ re-tighten the nuts, and start from the beginning.
 
 For some extra assurance that the nuts and screws won't come loose, as a final step I recommend smearing
 all of them with a good amount of hot glue.
+Finally, install the trackswitch socket that was left dangling earlier.
 
 Your mounted trackswitch should like this (again, forgive the semi-print-failure I mentioned earlier):
 <!--

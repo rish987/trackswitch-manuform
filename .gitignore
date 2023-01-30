@@ -4,6 +4,7 @@
 .repl-*
 .nrepl-*
 
+/things/animation/
 .lein-*
 *.gcode
 *.scad

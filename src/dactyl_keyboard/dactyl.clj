@@ -1,13 +1,36 @@
 (ns dactyl-keyboard.dactyl
   (:refer-clojure :exclude [use import])
   (:require [clojure.core.matrix :refer [array matrix mmul]]
-            [clojure.string :as str]
+            [clojure.string :refer [join]]
             [scad-clj.scad :refer :all]
             [usb_holder :refer [usb-holder usb-holder-mirrored usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
-
 (def testing true)
-(def testing false)
+;(def testing false)
+
+; for animation
+;(defmethod write-expr :t [depth [form {:keys [min max]}]]
+;  (list "((" min ") + $t * ((" max ") - (" min ")))"))
+;(defn t [min max]
+;  `(:animate  {:min ~min :max ~max}))
+
+(defmethod write-expr :vpr [depth [form {:keys [rot]}]]
+  (list (indent depth) "$vpr = [" (nth rot 0) "," (nth rot 1) "," (nth rot 2) "];\n"))
+(defn vpr [rot]
+  `(:vpr {:rot ~rot}))
+
+(defmethod write-expr :vpt [depth [form {:keys [trans]}]]
+  (list (indent depth) "$vpt = [" (nth trans 0) "," (nth trans 1) "," (nth trans 2) "];\n"))
+(defn vpt [trans]
+  `(:vpt {:trans ~trans}))
+
+(defmethod write-expr :vpd [depth [form {:keys [d]}]]
+  (list (indent depth) "$vpd = " d ";\n"))
+(defn vpd [d]
+  `(:vpd {:d ~d}))
+
+(defn get-t [t min max]
+  (+ min (* t (- max min))))
 
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
@@ -3905,202 +3928,109 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-(when (not testing)
-  (spit "things/switch-plates-right.scad"
-        (write-scad (cura-fix (model-switch-plates-right false))))
-  (spit "things/vert-support-blockers-right.scad"
-        (write-scad (cura-fix (shift-model (vert-layout false vert-support-blocker)))))
-  (spit "things/case-walls-right.scad"
-        (write-scad (model-case-walls-right false)))
-  (spit "things/thumb-test-right.scad"
-        (write-scad (cura-fix (thumb-test false))))
-  (spit "things/vert-support-blockers-thumb-test-right.scad"
-        (write-scad (cura-fix (vert-support-blockers-thumb-test false))))
+;(key-vert-place' translate rotate-x rotate-y rotate-z extra-dist x-off z-off z-init-rot x-rot z-rot (sa-cap-cutout 1))
 
-  (spit "things/switch-plates-left.scad"
-        (write-scad (cura-fix (mirror [-1 0 0] (model-switch-plates-right true)))))
-  (spit "things/vert-support-blockers-left.scad"
-        (write-scad (cura-fix (mirror [-1 0 0] (shift-model (vert-layout true vert-support-blocker))))))
-  (spit "things/case-walls-left.scad"
-        (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
-  (spit "things/thumb-test-left.scad"
-        (write-scad (cura-fix (mirror [-1 0 0] (thumb-test true)))))
-  (spit "things/vert-support-blockers-thumb-test-left.scad"
-        (write-scad (cura-fix (mirror [-1 0 0] (vert-support-blockers-thumb-test true)))))
+(defn animate-x-rot [t] (union
+  (union (sa-cap-cutout 1))
+  (key-vert-place' translate rotate-x rotate-y rotate-z 0 0 0 0 t 0 (sa-cap-cutout 1))
+))
 
-  (spit "things/ardumicro-holder.scad"
-        (write-scad (usb-holder false)))
-  (spit "things/promicro-holder.scad"
-        (write-scad (usb-holder true)))
+(defn write-scad-text [rot trans dist text-size text shape]
+  (let [text (->> text
+                  (translate [0 (- text-size) (- (/ text-size 2))]) ;de-centering
+                  (translate [-25 25 0]) ;text offset from focal center
+                  (translate [0 0 dist]) ;camera disance
+                  (rotate-x (deg2rad (nth rot 0)))
+                  (rotate-y (deg2rad (nth rot 1)))
+                  (rotate-z (deg2rad (nth rot 2)))
+                  (translate trans) ;focal origin offest
+             )]
+  (write-scad (vpr rot) (vpt trans) (vpd dist) text shape)))
 
-  (spit "things/bottom-plate-right.scad"
-        (write-scad (model-bottom-plate false)))
-  (spit "things/wrist-rest-right-holes.scad"
-        (write-scad model-wrist-rest-right-holes))
+(def text-size 4)
+(defn text-col [value] (if (= 0 value) GRE (if (> 0 value) BLU RED)))
 
-  (spit "things/bottom-plate-left.scad"
-        (write-scad (mirror [-1 0 0] (model-bottom-plate true))))
-  (spit "things/wrist-rest-left-holes.scad"
-        (write-scad (mirror [-1 0 0] model-wrist-rest-right-holes)))
-
-  (spit "things/sensor-case.scad"
-        (write-scad sensor-case))
-
-  (spit "things/trackswitch-mount.scad"
-        (write-scad trackswitch-mount))
+(defn animate [steps step param] (let [t (/ step steps)]
+    (case param
+      "x-rot"
+      (spit (str "things/animation/" param "/" step ".scad")
+        (let [rot [70 0 40] trans [-2 5 19] dist 140 t (get-t t -30 30)]
+          (write-scad-text rot trans dist text-size (color (text-col t) (text (str param " = " t) :size text-size))
+             (animate-x-rot t)))
+      )
+    )
+  )
 )
 
-;; (spit "things/switch-plate-cutouts.scad"
-;;       (write-scad (model-switch-plate-cutouts false)))
-;
-;
-;(spit "things/right.scad"
-;      (write-scad (model-right false)))
-;(spit "things/left.scad"
-;      (write-scad (mirror [-1 0 0] (model-right true))))
-;
-;(spit "things/bottom-plate-right.scad"
-;      (write-scad model-bottom-plate))
-;(spit "things/bottom-plate-left.scad"
-;      (write-scad (mirror [-1 0 0] model-bottom-plate)))
-;
-;; (spit "things/wrist-rest-right-base.scad"
-;;       (write-scad wrist-rest-right-base))
-;(spit "things/wrist-rest-right-holes.scad"
-;  (if adjustable-wrist-rest-holder-plate
-;    (write-scad model-wrist-rest-right-holes)
-;    (write-scad wrist-rest-right)
-;  )
-;)
-
-;(spit "things/trackswitch-mount.scad"
-;      (write-scad
-;        trackswitch-mount))
-
-(when testing (spit "things/test.scad"
+(defn spit-all []
+  (when testing 
+    (spit "things/test.scad"
       (write-scad
-            ;PRO TIP, commend out everything but caps & thumbcaps to play with geometry of keyboard, it's MUCH faster
-            ;(debug
-            ;;(color BLU
-              ;usb-holder
-              ;model-bottom-plate
-            ;)
-            (union 
-                   ;(model-switch-plates-right false)
-                   ;(union (mirror [-1 0 0] (model-switch-plates-right true)))
+        (union 
+          ;(model-switch-plates-right false)
+          ;(union (mirror [-1 0 0] (model-switch-plates-right true)))
 
-                   ;(union (model-case-walls-right false))
-                   (union (mirror [-1 0 0] (model-case-walls-right true)))
+          ;(union (model-case-walls-right false))
+          ;(union (mirror [-1 0 0] (model-case-walls-right true)))
 
-                   ;(usb-holder false)
-                   ;(usb-holder true)
+          ;(usb-holder false)
+          ;(usb-holder-mirrored true)
 
-                   ;(union (sa-cap-cutout 1) (debug (single-plate true)))
-                   ;(shift-model (key-place 1 3 (single-plate-extra-cutout' (+ web-thickness (- v-key-case-extend v-key-case-wall-thickness)))))
-                   ;sensor-case-aligned
-                   ;(debug sensor-case-cutout)
+          ;sensor-case
+          ;trackswitch-mount
+        )
+      )
+    )
+  )
+  (when (not testing)
+      (spit "things/switch-plates-right.scad"
+            (write-scad (cura-fix (model-switch-plates-right false))))
+      (spit "things/vert-support-blockers-right.scad"
+            (write-scad (cura-fix (shift-model (vert-layout false vert-support-blocker)))))
+      (spit "things/case-walls-right.scad"
+            (write-scad (model-case-walls-right false)))
+      (spit "things/thumb-test-right.scad"
+            (write-scad (cura-fix (thumb-test false))))
+      (spit "things/vert-support-blockers-thumb-test-right.scad"
+            (write-scad (cura-fix (vert-support-blockers-thumb-test false))))
 
-                   ;trackswitch-mount
-                   ;(debug trackswitch-mount-cutout)
-                   ;trackball-mount
+      (spit "things/switch-plates-left.scad"
+            (write-scad (cura-fix (mirror [-1 0 0] (model-switch-plates-right true)))))
+      (spit "things/vert-support-blockers-left.scad"
+            (write-scad (cura-fix (mirror [-1 0 0] (shift-model (vert-layout true vert-support-blocker))))))
+      (spit "things/case-walls-left.scad"
+            (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
+      (spit "things/thumb-test-left.scad"
+            (write-scad (cura-fix (mirror [-1 0 0] (thumb-test true)))))
+      (spit "things/vert-support-blockers-thumb-test-left.scad"
+            (write-scad (cura-fix (mirror [-1 0 0] (vert-support-blockers-thumb-test true)))))
 
-                   ;wrist-shape
-                   ;(model-bottom-plate true)
-                   ;(model-case-walls-right false)
-                   ;(hotswap-case-cutout false)
-                   ;(shift-model (thumb-vert-layout true vert-support-blocker))
-                   ;(union (thumb-test true))
-                   ;(union (sa-cap-cutout 1))
-                   ;(debug (sa-cap-trackball-cutout 1))
-                   ;caps-cutout
-                   ;(thumbcaps-cutout true)
-                   ;(thumbcaps-cutout true)
-                   ;(difference
-                   ;  (union (single-plate true) (vert-key-case id))
-                   ;  (union single-plate-cutout)
-                   ;  (union vert-behind-cutout)
-                   ;)
-                   ;(union (sa-cap-cutout 1))
+      (spit "things/ardumicro-holder.scad"
+            (write-scad (usb-holder false)))
+      (spit "things/promicro-holder.scad"
+            (write-scad (usb-holder true)))
 
-                   ;(union short-post-bl-lower)
-                   ;(union short-post-back-bl-lower)
-                   ;(debug vert-fat-web-post-bl-lower)
-                   ;(debug vert-fat-web-post-tl-lower)
-                   ;(debug vert-fat-web-post-br-lower)
-                   ;(debug vert-fat-web-post-tr-lower)
-                   ;(union (translate [0 0 (+ vert-post-offset)] vert-fat-web-post-tl-lower))
+      (spit "things/bottom-plate-right.scad"
+            (write-scad (model-bottom-plate false)))
+      (spit "things/wrist-rest-right-holes.scad"
+            (write-scad model-wrist-rest-right-holes))
 
-                   ;(debug (union vert-behind-cutout))
-                   ;(union (union vert-support-blocker))
-                   ;(translate [0 0 0] short-post-back-br)
-                   ;(translate [0 0 (- v-key-case-extend)] short-post-back-br)
-                   ;(union short-post-bl)
-                   ;(union short-post-back-bl)
-                   ;(debug (single-plate false))
-                   ;(key-places (single-plate false))
-                   ;(thumbcaps-cutout true)
+      (spit "things/bottom-plate-left.scad"
+            (write-scad (mirror [-1 0 0] (model-bottom-plate true))))
+      (spit "things/wrist-rest-left-holes.scad"
+            (write-scad (mirror [-1 0 0] model-wrist-rest-right-holes)))
 
-                   ;(single-plate true)
-                   ;fat-web-post-br
-                   ;(color BLA single-plate-extra-cutout)
-                   ;(color GRE vert-fat-web-post-bl-lower)
-                   ;(color GRE vert-fat-web-post-br-lower)
-                   ;(color GRE vert-fat-web-post-tl-lower)
-                   ;(color GRE vert-fat-web-post-tr-lower)
-                   ;(color WHI vert-behind-cutout)
-                   ;(debug (single-plate false))
-            )
-			;(union usb-holder usb-holder-cutout usb-holder-space)
-			;(union (usb-holder true))
-            ;(model-switch-plates-right true)
-            ; (union plate-post-br short-post-bl)
-            ; (debug (single-plate false))
+      (spit "things/sensor-case.scad"
+            (write-scad sensor-case))
 
-            ;(model-right false)
-			;(translate [0 0 (- plate-thickness)] (single-plate false))
-			;(color YEL (shift-model (translate thumborigin (cylinder 10 30))))
-            ;(sa-cap-cutout 1)
-            ;(union
-            ;  (single-plate false)
-            ;  vert-fat-web-post-tl
-            ;  vert-fat-web-post-tr
-            ;  ;vert-fat-web-post-bl
-            ;  vert-fat-web-post-bl-lower
-            ;  ;vert-fat-web-post-br
-            ;  vert-fat-web-post-br-lower
-            ;)
-            ;(key-vert-place (single-plate false))
-			;(translate [0 0 0] (thumb-test false))
-            ;sensor-case
-			;trackswitch-mount
-            ;(union
-            ;  top-screw-insert-holes
-            ;  (debug top-screw-insert-outers)
-            ;  (debug top-screw-block-outers)
-            ;)
-            ; (color ORA (model-exo-plates-right false))
+      (spit "things/trackswitch-mount.scad"
+            (write-scad trackswitch-mount))
+  )
+)
 
-            ; (debug top-screw)
-            ;caps
-            ; (debug caps-cutout)
-            ;thumbcaps
-            ; (debug (import "../things/v4caps.stl"))
-            ; (debug thumbcaps-cutout)
-            ; (debug key-space-below)
-            ; (debug thumb-space-below)
-            ; (if use_hotswap_holder(debug (thumb-space-hotswap false)))
-            ; (debug top-screw-block-outers)
+(spit-all)
 
-            ;(debug pcb-holder)
-            ; (debug pcb-holder-space)
+(defn parse-int [s]
+     (Integer. (re-find  #"\d+" s )))
 
-            ;(debug usb-holder)
-            ; (debug usb-holder-cutout)
-
-            ; (translate [0 0 (- (/ bottom-plate-thickness 2))]
-                ; (debug model-bottom-plate)
-                ; (translate [8 -100 (- (/ bottom-plate-thickness 2))] 
-                    ; (color BRO model-wrist-rest-right-holes)
-                ; 
-            ; )
-      )))
+(defn -main [steps step param] (animate (parse-int steps) (parse-int step) param))
