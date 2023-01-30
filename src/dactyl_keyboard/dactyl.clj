@@ -3956,7 +3956,7 @@ need to adjust for difference for thumb-z only"
       (spit (str "things/animation/" param "/scad/" step ".scad")
         (let [rot [70 0 40] trans [-2 5 19] dist 140 t (get-t t -30 30)]
           (write-scad-text rot trans dist text-size (color (text-col t)
-             (text (str param " = " (format "%f.2" (double t))) :size text-size))
+             (text (str param " = " (format "%.2f" (double t))) :size text-size))
              (animate-x-rot t)))
       )
     )
