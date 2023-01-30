@@ -29,9 +29,6 @@
 (defn vpd [d]
   `(:vpd {:d ~d}))
 
-(defn get-t [t min max]
-  (+ min (* t (- max min))))
-
 (defn deg2rad [degrees]
   (* (/ degrees 180) pi))
 
@@ -3886,34 +3883,88 @@ need to adjust for difference for thumb-z only"
     ;(if use_hotswap_holder (key-places (hotswap-case-cutout mirror-internals)))
   ))
 
-;;;;;;;;;;;;;
-;; Outputs ;;
-;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;; Animation ;;
+;;;;;;;;;;;;;;;
 
-;(spit "things/single-plate.scad"
-;      (write-scad (single-plate false)))
-;
-;; (spit "things/left-wall.scad"
-;;       (write-scad (left-wall false)))
-;
-;; (spit "things/thumb-connectors.scad"
-;;     (write-scad 
-;;         (difference 
-;;             (union (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) (single-plate false)))
-;;                    (thumb-wall true)
-;;                    thumb-connectors
-;;                    (thumb-layout (single-plate false))
-;;                    ; thumbcaps
-;;             )
-;;             (key-place 0 cornerrow (translate (wall-locate1 -1 0 false) (hotswap-case-cutout false)))
-;;             ; caps-cutout
-;;             thumbcaps-cutout
-;;             (thumb-key-cutouts false)
-;;             (if (not (or use_hotswap_holder use_solderless))
-;;                 thumb-space-below)
-;;             (if use_hotswap_holder (thumb-layout (hotswap-case-cutout false)))
-;;         )))
-;
+(defn write-scad-text [rot trans dist text-size text & block]
+  (let [text (->> text
+                  (translate [0 (- text-size) (- (/ text-size 2))]) ;de-centering
+                  (translate [-25 25 0]) ;text offset from focal center
+                  (translate [0 0 dist]) ;camera disance
+                  (rotate-x (deg2rad (nth rot 0)))
+                  (rotate-y (deg2rad (nth rot 1)))
+                  (rotate-z (deg2rad (nth rot 2)))
+                  (translate trans) ;focal origin offest
+             )]
+  (write-scad (vpr rot) (vpt trans) (vpd dist) text block)))
+
+(defn get-x [t min max]
+  (+ min (* t (- max min))))
+(def text-size 4)
+(defn text-col [value] (if (= 0 value) GRE (if (> value 0) BLU RED)))
+(defn animate-param-text [x param]
+  (color (text-col x) (text (str param " = " (format "%.2f" (double x))) :size text-size))
+)
+(defn animate-param [t param animate-fn]
+  (let [ 
+         res (animate-fn t)
+         data (first res)
+         shape (second res)
+         rot (nth data 0)
+         trans (nth data 1)
+         dist (nth data 2)
+         x (nth data 3)
+       ]
+    (write-scad-text rot trans dist text-size 
+      (animate-param-text x param) shape
+    )
+  )
+)
+
+;(key-vert-place' translate rotate-x rotate-y rotate-z extra-dist x-off z-off z-init-rot x-rot z-rot (sa-cap-cutout 1))
+
+(defn animate-x-rot [t] (let [x-rot (get-x t -30 0)]
+  [
+    [
+      [70 0 40], ;rot
+      [-2 5 19], ;trans
+      140, ;dist
+      x-rot ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 x-rot 0 (sa-cap-cutout 1))
+    )
+  ]
+))
+
+(defn animate-z-rot [t] (let [z-rot (get-x t -180 180)]
+  [
+    [
+      [27 0 0], ;rot
+      [0 0 17], ;trans
+      240, ;dist
+      z-rot ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 0 z-rot (sa-cap-cutout 1))
+    )
+  ]
+))
+
+(defn animate [steps step param] (let
+  [t (/ step steps)
+   animate-fn (case param
+      "x-rot" animate-x-rot
+      "z-rot" animate-z-rot
+   )
+  ]
+  (spit (str "things/animation/" param "/scad/" step ".scad")
+         (animate-param t param animate-fn))
+  )
+)
 
 (defn cura-fix [shape] (union
   (translate [0 0 0.005] (cube 1 1 0.01)) ; make sure cura doesn't change the height when loaded and provide an alignment reference
@@ -3928,40 +3979,14 @@ need to adjust for difference for thumb-z only"
   )
 )
 
-;(key-vert-place' translate rotate-x rotate-y rotate-z extra-dist x-off z-off z-init-rot x-rot z-rot (sa-cap-cutout 1))
+(defn parse-int [s]
+     (Integer. (re-find  #"\d+" s )))
 
-(defn animate-x-rot [t] (union
-  (union (sa-cap-cutout 1))
-  (key-vert-place' translate rotate-x rotate-y rotate-z 0 0 0 0 t 0 (sa-cap-cutout 1))
-))
+(defn -main [steps step param] (animate (parse-int steps) (parse-int step) param))
 
-(defn write-scad-text [rot trans dist text-size text shape]
-  (let [text (->> text
-                  (translate [0 (- text-size) (- (/ text-size 2))]) ;de-centering
-                  (translate [-25 25 0]) ;text offset from focal center
-                  (translate [0 0 dist]) ;camera disance
-                  (rotate-x (deg2rad (nth rot 0)))
-                  (rotate-y (deg2rad (nth rot 1)))
-                  (rotate-z (deg2rad (nth rot 2)))
-                  (translate trans) ;focal origin offest
-             )]
-  (write-scad (vpr rot) (vpt trans) (vpd dist) text shape)))
-
-(def text-size 4)
-(defn text-col [value] (if (= 0 value) GRE (if (> value 0) BLU RED)))
-
-(defn animate [steps step param] (let [t (/ step steps)]
-    (case param
-      "x-rot"
-      (spit (str "things/animation/" param "/scad/" step ".scad")
-        (let [rot [70 0 40] trans [-2 5 19] dist 140 t (get-t t -30 30)]
-          (write-scad-text rot trans dist text-size (color (text-col t)
-             (text (str param " = " (format "%.2f" (double t))) :size text-size))
-             (animate-x-rot t)))
-      )
-    )
-  )
-)
+;;;;;;;;;;;;;
+;; Outputs ;;
+;;;;;;;;;;;;;
 
 (defn spit-all []
   (when testing 
@@ -4030,8 +4055,3 @@ need to adjust for difference for thumb-z only"
 )
 
 (spit-all)
-
-(defn parse-int [s]
-     (Integer. (re-find  #"\d+" s )))
-
-(defn -main [steps step param] (animate (parse-int steps) (parse-int step) param))

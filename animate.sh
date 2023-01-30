@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+trap "exit" INT
+
 operation="$1"
 param="$2"
 steps=50
