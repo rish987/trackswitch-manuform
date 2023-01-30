@@ -50,13 +50,13 @@ if [ "$operation" == "all" ]; then
     operations="$all_operations"
 fi
 
-all_params="x-rot"
+all_params="x-rot z-rot"
 params="$param"
 if [ "$param" == "all" ]; then
     params="$all_params"
 fi
 
-for param in $all_params; do
+for param in $params; do
     mkdir -p "$(scad_dir $param)"
     mkdir -p "$(png_dir $param)"
 done
