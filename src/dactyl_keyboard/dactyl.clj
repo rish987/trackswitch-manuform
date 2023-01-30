@@ -3948,14 +3948,14 @@ need to adjust for difference for thumb-z only"
   (write-scad (vpr rot) (vpt trans) (vpd dist) text shape)))
 
 (def text-size 4)
-(defn text-col [value] (if (= 0 value) GRE (if (> 0 value) BLU RED)))
+(defn text-col [value] (if (= 0 value) GRE (if (> value 0) BLU RED)))
 
 (defn animate [steps step param] (let [t (/ step steps)]
     (case param
       "x-rot"
       (spit (str "things/animation/" param "/" step ".scad")
         (let [rot [70 0 40] trans [-2 5 19] dist 140 t (get-t t -30 30)]
-          (write-scad-text rot trans dist text-size (color (text-col t) (text (str param " = " t) :size text-size))
+          (write-scad-text rot trans dist text-size (color (text-col t) (text (str param " = " (format ".2%f" (double t))) :size text-size))
              (animate-x-rot t)))
       )
     )

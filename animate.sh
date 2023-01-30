@@ -38,31 +38,39 @@ function gif {
         all_pngs="$all_pngs $(png_dir $1)/$step.png"
     done
     out="$(animation_dir $param)/$param.gif"
-    convert -delay 100 -loop 0 $all_pngs "$out"
-    convert "$out" -coalesce -duplicate 1,-2-1 -quiet -layers OptimizePlus -loop 0 "$out"
+    convert -delay 10 -loop 0 $all_pngs "$out"
+    convert "$out" -delay 10 -coalesce -duplicate 1,-2-1 -quiet -layers OptimizePlus -loop 0 "$out"
 }
 
-all_params="x-rot"
-for param in $all_params; do
-    mkdir -p "$(scad_dir $param)"
-    mkdir -p "$(png_dir $param)"
-done
+all_operations="generate render gif"
+operations="$operation"
+if [ "$operation" == "all" ]; then
+    operations="$all_operations"
+fi
 
+all_params="x-rot"
 params="$param"
 if [ "$param" == "all" ]; then
     params="$all_params"
 fi
 
+for param in $all_params; do
+    mkdir -p "$(scad_dir $param)"
+    mkdir -p "$(png_dir $param)"
+done
+
 for param in $params; do
-    case $operation in
-        "generate")
-            generate $param
-            ;;
-        "render")
-            render $param
-            ;;
-        "gif")
-            gif $param
-            ;;
-    esac
+    for operation in $operations; do
+        case $operation in
+            "generate")
+                generate $param
+                ;;
+            "render")
+                render $param
+                ;;
+            "gif")
+                gif $param
+                ;;
+        esac
+    done
 done
