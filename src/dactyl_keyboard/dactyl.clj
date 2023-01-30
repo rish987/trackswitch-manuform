@@ -3924,6 +3924,51 @@ need to adjust for difference for thumb-z only"
 
 ;(key-vert-place' translate rotate-x rotate-y rotate-z extra-dist x-off z-off z-init-rot x-rot z-rot (sa-cap-cutout 1))
 
+(defn animate-z-rot [t] (let [z-rot (get-x t -180 180)]
+  [
+    [
+      [27 0 0], ;rot
+      [0 0 17], ;trans
+      240, ;dist
+      z-rot ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 15 z-rot (sa-cap-cutout 1))
+    )
+  ]
+))
+
+(defn animate-extra-dist [t] (let [extra-dist (get-x t 0 6)]
+  [
+    [
+      [70 0 40], ;rot
+      [-2 5 19], ;trans
+      140, ;dist
+      extra-dist ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z extra-dist 0 0 0 15 0 (sa-cap-cutout 1))
+    )
+  ]
+))
+
+(defn animate-x-off [t] (let [x-off (get-x t -3 3)]
+  [
+    [
+      [70 0 40], ;rot
+      [-2 5 19], ;trans
+      140, ;dist
+      x-off ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 x-off 0 0 15 0 (sa-cap-cutout 1))
+    )
+  ]
+))
+
 (defn animate-x-rot [t] (let [x-rot (get-x t -30 0)]
   [
     [
@@ -3939,17 +3984,32 @@ need to adjust for difference for thumb-z only"
   ]
 ))
 
-(defn animate-z-rot [t] (let [z-rot (get-x t -180 180)]
+(defn animate-z-off [t] (let [z-off (get-x t -1 3)]
   [
     [
-      [27 0 0], ;rot
-      [0 0 17], ;trans
-      240, ;dist
+      [70 0 40], ;rot
+      [-2 5 19], ;trans
+      140, ;dist
+      z-off ;x
+    ],
+    (union
+      (sa-cap-cutout 1)
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 z-off 0 15 0 (sa-cap-cutout 1))
+    )
+  ]
+))
+
+(defn animate-init-z-rot [t] (let [z-rot (get-x t -30 30)]
+  [
+    [
+      [70 0 40], ;rot
+      [-2 5 19], ;trans
+      140, ;dist
       z-rot ;x
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 0 z-rot (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 z-rot 15 0 (sa-cap-cutout 1))
     )
   ]
 ))
@@ -3957,8 +4017,12 @@ need to adjust for difference for thumb-z only"
 (defn animate [steps step param] (let
   [t (/ step steps)
    animate-fn (case param
-      "x-rot" animate-x-rot
       "z-rot" animate-z-rot
+      "extra-dist" animate-extra-dist
+      "x-off" animate-x-off
+      "x-rot" animate-x-rot
+      "z-off" animate-z-off
+      "init-z-rot" animate-init-z-rot
    )
   ]
   (spit (str "things/animation/" param "/scad/" step ".scad")

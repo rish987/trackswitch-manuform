@@ -280,27 +280,27 @@ how adjusting this parameter will affect the placement of the vertical key.
 
 - `*-rot`
 <!--
-![vert-rot](images/vert-rot.gif)
+![vert-rot](images/vert/z-rot.gif)
 -->
 - `*-extra-dist`
 <!--
-![vert-extra-dist](images/vert-extra-dist.gif)
+![vert-extra-dist](images/vert/extra-dist.gif)
 -->
 - `*-x-off`
 <!--
-![vert-x-off](images/vert-x-off.gif)
+![vert-x-off](images/vert/x-off.gif)
 -->
 - `*-x-rot`
 <!--
-![vert-x-rot](images/vert-x-rot.gif)
+![vert-x-rot](images/vert/x-rot.gif)
 -->
 - `*-z-off`
 <!--
-![vert-z-off](images/vert-z-off.gif)
+![vert-z-off](images/vert/z-off.gif)
 -->
 - `*-z-rot`
 <!--
-![vert-z-rot](images/vert-z-rot.gif)
+![vert-init-z-rot](images/vert/init-z-rot.gif)
 -->
 
 #### Adjusting the Above Keys

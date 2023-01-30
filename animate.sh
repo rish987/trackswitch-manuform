@@ -62,6 +62,7 @@ for param in $params; do
 done
 
 for param in $params; do
+    echo "--- $param ---"
     for operation in $operations; do
         case $operation in
             "generate")
