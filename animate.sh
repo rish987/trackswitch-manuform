@@ -50,7 +50,7 @@ if [ "$operation" == "all" ]; then
     operations="$all_operations"
 fi
 
-all_params="x-rot z-rot"
+all_params="z-rot extra-dist x-off x-rot z-off init-z-rot"
 params="$param"
 if [ "$param" == "all" ]; then
     params="$all_params"

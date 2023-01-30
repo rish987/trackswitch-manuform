@@ -3887,11 +3887,23 @@ need to adjust for difference for thumb-z only"
 ;; Animation ;;
 ;;;;;;;;;;;;;;;
 
-(defn write-scad-text [rot trans dist text-size text & block]
+(def text-size' 4)
+(defn text-mul [dist] (/ dist 140)) ; to adjust for othographic perspective
+(defn text-size [dist] (* text-size' (text-mul dist)))
+(defn text-off [dist] 
+  (map + 
+    [0 (- (text-size dist)) (- (/ (text-size dist) 2))] ;de-centering
+    (map *
+      [-25 25 0] ;text offset from focal center
+      [(text-mul dist) (text-mul dist) (text-mul dist)]
+    )
+    [0 0 dist] ;move to camera so it is not obstructed by part
+  )
+)
+
+(defn write-scad-text [rot trans dist text & block]
   (let [text (->> text
-                  (translate [0 (- text-size) (- (/ text-size 2))]) ;de-centering
-                  (translate [-25 25 0]) ;text offset from focal center
-                  (translate [0 0 dist]) ;camera disance
+                  (translate (text-off dist))
                   (rotate-x (deg2rad (nth rot 0)))
                   (rotate-y (deg2rad (nth rot 1)))
                   (rotate-z (deg2rad (nth rot 2)))
@@ -3901,10 +3913,9 @@ need to adjust for difference for thumb-z only"
 
 (defn get-x [t min max]
   (+ min (* t (- max min))))
-(def text-size 4)
 (defn text-col [value] (if (= 0 value) GRE (if (> value 0) BLU RED)))
-(defn animate-param-text [x param]
-  (color (text-col x) (text (str param " = " (format "%.2f" (double x))) :size text-size))
+(defn animate-param-text [x param dist]
+  (color (text-col x) (text (str param " = " (format "%.2f" (double x))) :size (text-size dist)))
 )
 (defn animate-param [t param animate-fn]
   (let [ 
@@ -3916,8 +3927,8 @@ need to adjust for difference for thumb-z only"
          dist (nth data 2)
          x (nth data 3)
        ]
-    (write-scad-text rot trans dist text-size 
-      (animate-param-text x param) shape
+    (write-scad-text rot trans dist
+      (animate-param-text x param dist) shape
     )
   )
 )
@@ -3929,12 +3940,12 @@ need to adjust for difference for thumb-z only"
     [
       [27 0 0], ;rot
       [0 0 17], ;trans
-      240, ;dist
+      200, ;dist
       z-rot ;x
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 15 z-rot (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 0 -15 z-rot (sa-cap-cutout 1))
     )
   ]
 ))
@@ -3949,7 +3960,7 @@ need to adjust for difference for thumb-z only"
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z extra-dist 0 0 0 15 0 (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z extra-dist 0 0 0 -15 0 (sa-cap-cutout 1))
     )
   ]
 ))
@@ -3964,7 +3975,7 @@ need to adjust for difference for thumb-z only"
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z 3 x-off 0 0 15 0 (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 x-off 0 0 -15 0 (sa-cap-cutout 1))
     )
   ]
 ))
@@ -3994,7 +4005,7 @@ need to adjust for difference for thumb-z only"
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 z-off 0 15 0 (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 z-off 0 -15 0 (sa-cap-cutout 1))
     )
   ]
 ))
@@ -4009,7 +4020,7 @@ need to adjust for difference for thumb-z only"
     ],
     (union
       (sa-cap-cutout 1)
-      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 z-rot 15 0 (sa-cap-cutout 1))
+      (key-vert-place' translate rotate-x rotate-y rotate-z 3 0 0 z-rot -15 0 (sa-cap-cutout 1))
     )
   ]
 ))
