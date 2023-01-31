@@ -278,30 +278,29 @@ whose names follow the pattern of the upper switch's "code"
 with the following suffixes, where the paired animation shows
 how adjusting this parameter will affect the placement of the vertical key.
 
-- `*-rot`
-<!--
-![vert-rot](images/vert/z-rot.gif)
--->
-- `*-extra-dist`
-<!--
-![vert-extra-dist](images/vert/extra-dist.gif)
--->
-- `*-x-off`
-<!--
-![vert-x-off](images/vert/x-off.gif)
--->
-- `*-x-rot`
-<!--
-![vert-x-rot](images/vert/x-rot.gif)
--->
-- `*-z-off`
-<!--
-![vert-z-off](images/vert/z-off.gif)
--->
 - `*-z-rot`
-<!--
+
+![vert-rot](images/vert/z-rot.gif)
+
+- `*-extra-dist`
+
+![vert-extra-dist](images/vert/extra-dist.gif)
+
+- `*-x-off`
+
+![vert-x-off](images/vert/x-off.gif)
+
+- `*-x-rot`
+
+![vert-x-rot](images/vert/x-rot.gif)
+
+- `*-z-off`
+
+![vert-z-off](images/vert/z-off.gif)
+
+- `*-init-z-rot`
+
 ![vert-init-z-rot](images/vert/init-z-rot.gif)
--->
 
 #### Adjusting the Above Keys
 
@@ -706,6 +705,7 @@ This should result in:
 
 #### Solder the MCU Probes
 
+Go around to each of the probe tails and fill the hooks that you made at the end with solder.
 On each row/column probe, slide on a length of heat shrink tubing to cover both the hook on the end and
 the plug end of a jumper wire.
 Using plug-socket-end jumper wires, solder the plug ends into the hooks that you made at the end of each row/column probe,
@@ -716,6 +716,7 @@ and use your heat gun to insulate this connection with the heat shrink tubing, l
 
 (I actually crimped my own jumpers without a plug end, so you will probably have more of a bulge underneath
 your heatshrink tube from the plug housing).
+You can now pull the wires off of the table and roll off all of the Blu-Tac.
 
 #### Solder the PMW3360 Sensor
 
@@ -743,6 +744,8 @@ the TRRS jack probes (it doesn't really matter which ones you use, as long as yo
 <!--
 ![Soldered TRRS](images/soldered-trrs.png)
 -->
+(You can see that I have already inserted these into the MCU holder but this isn't actually necessary,
+you can just use Blu-Tac to hold them in place while soldering like I did for the reset buttons above).
 
 #### Check Everything
 
@@ -783,7 +786,7 @@ The way that I do this for each key consists of three steps:
 For the vertical keys in particular, this may take a bit of wiggling, but as long as you've oriented the socket correctly and have cleared away all of the support residue behind the vertical keys, you should have absolute faith in your ability to complete this irksome task!
 2. Continuing to press the plier against the socket, take a keyswitch and plug it in.
 I have found it particularly easy to bend the pins on the switch while doing this (fortunately though this can be easily rectified with some pliers), so go slowly and take it out and try again if you're not sure. Now, the keyswitch should hold the socket in place so you can move the pliers away.
-3. Use your hot glue gun to put a good amount of glue behind the socket to fix it in place.
+3. Use your hot glue gun to put a good amount of glue behind the socket to fix it in place (if you're really sure, go ahead and flood the area).
 After it's dry, plug the switch in and out a few times to make sure it stays
 (if it doesn't, which probably means you didn't use enough glue or didn't place it correctly, use your pliers to pull out the hot glue and try again).
 
@@ -794,7 +797,7 @@ After all is said and done, you will have something like this:
 ![Spaghetti](images/spaghetti.png)
 -->
 
-And promise me, no matter how much it looks like spaghetti, you will not try to eat it!
+And promise me, no matter how much it looks like spaghetti, that you will not try to eat it!
 
 ### Mounting the Trackball
 

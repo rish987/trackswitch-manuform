@@ -155,7 +155,7 @@
                   (>= column 5) [0 -12.5  6  ] ;;pinky outer
                   :else [0 0 0]))
 
-(defn below-rot [column] (cond
+(defn below-z-rot [column] (cond
                   (= column 1)  180 ;;index
                   (= column 2)  180 ;;middle
                   (= column 3)  180 ;;ring
@@ -176,14 +176,14 @@
                   (= column 4)  (- 47) ;;pinky -- keep this lower or else it will get in the way when actuating "s"
                   :else 0))
 
-(defn below-z-rot [column] (cond
+(defn below-init-z-rot [column] (cond
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
                   (= column 4)  0 ;;pinky
                   :else 0))
 
-(defn above-rot [column] (cond
+(defn above-z-rot [column] (cond
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
@@ -218,57 +218,57 @@
                   (= column 4)  0 ;;pinky
                   :else 0))
 
-(defn above-z-rot [column] (cond
+(defn above-init-z-rot [column] (cond
                   (= column 1)  0 ;;index
                   (= column 2)  0 ;;middle
                   (= column 3)  0 ;;ring
                   (= column 4)  0 ;;pinky
                   :else 0))
 
-(def y-rot 32)
+(def y-z-rot 32)
 (def y-extra-dist 6.6)
 (def y-x-off -7.6)
 (def y-x-rot -37)
 (def y-z-off 2.7)
-(def y-z-rot -21.9)
+(def y-init-z-rot -21.9)
 
-(def h-rot 100)
+(def h-z-rot 100)
 (def h-extra-dist 4.35)
 (def h-x-off -0.35)
 (def h-x-rot (- 43))
 (def h-z-off -2.5)
-(def h-z-rot (+ 0 (+ 8.5)))
+(def h-init-z-rot (+ 0 (+ 8.5)))
 
-(def p-rot (- 100))
+(def p-z-rot (- 100))
 (def p-extra-dist 3.9)
 (def p-x-off 0.7)
 (def p-x-rot (- 20))
 (def p-z-off 6.26)
-(def p-z-rot (+ 0 (- 18)))
+(def p-init-z-rot (+ 0 (- 18)))
 
 (def v-key-case-extend 1.5)
 (def v-key-case-wall-thickness 0.3)
 
-(def thumb-uo-rot 50)
-(def thumb-uo-z-rot -12)
-(def thumb-uo-z-off 3.5)
+(def thumb-uo-z-rot 50)
+(def thumb-uo-extra-dist 4.5)
 (def thumb-uo-x-off (- 3))
 (def thumb-uo-x-rot (- 30.00))
-(def thumb-uo-extra-dist 4.5)
+(def thumb-uo-z-off 3.5)
+(def thumb-uo-init-z-rot -12)
 
-(def thumb-o-rot 120)
+(def thumb-o-z-rot 120)
 (def thumb-o-z-off 4.8)
 (def thumb-o-x-off (- 16.0))
 (def thumb-o-x-rot (- 20.00))
 (def thumb-o-extra-dist 6.5)
 
-(def thumb-i-rot (- 75))
+(def thumb-i-z-rot (- 75))
 (def thumb-i-x-rot (- 40))
 (def thumb-i-extra-dist 5.2)
 (def thumb-i-x-off 6)
 (def thumb-i-z-off 0)
 
-(def thumb-u-rot 0)
+(def thumb-u-z-rot 0)
 (def thumb-u-x-rot (- 20.00))
 (def thumb-u-z-off 2)
 (def thumb-u-x-off 0)
@@ -344,11 +344,11 @@
 (def bottom-trim-origin [0 0 (- (/ outer-width 2))])
 
 (def mount-x-rotate -56)
-(def mount-y-rotate -20)
+(def mount-y-z-rotate -20)
 (def mount-z-rotate 10)
 
 (def sensor-x-rotate 0)
-(def sensor-y-rotate 0)
+(def sensor-y-z-rotate 0)
 (def sensor-z-rotate 0)
 
 (def tb-mount-length 18)
@@ -1096,29 +1096,29 @@
     (if (= row homerow)
       (if (= column 0)
         (->> 
-             (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn h-extra-dist h-x-off h-z-off h-z-rot h-x-rot h-rot shape)
+             (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn h-extra-dist h-x-off h-z-off h-init-z-rot h-x-rot h-z-rot shape)
              (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
         )
         ; column 5
         (->> 
-             (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn p-extra-dist p-x-off p-z-off p-z-rot p-x-rot p-rot shape)
+             (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn p-extra-dist p-x-off p-z-off p-init-z-rot p-x-rot p-z-rot shape)
              (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 4 homerow)
         )
       )
       (if (= row 1) 
         (if (= column 0) 
           (->> 
-               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn y-extra-dist y-x-off y-z-off y-z-rot y-x-rot y-rot shape)
+               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn y-extra-dist y-x-off y-z-off y-init-z-rot y-x-rot y-z-rot shape)
                (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn 1 homerow)
           )
           (->> 
-               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) (above-x-off column) (above-z-off column) (above-z-rot column) (above-x-rot column) (above-rot column) shape)
+               (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (above-extra-dist column) (above-x-off column) (above-z-off column) (above-init-z-rot column) (above-x-rot column) (above-z-rot column) shape)
                (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
           )
         )
         (when (= row 3)
           (->> 
-              (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-z-rot column) (below-x-rot column) (below-rot column) shape)
+              (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-init-z-rot column) (below-x-rot column) (below-z-rot column) shape)
               (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
           )
         )
@@ -1419,7 +1419,7 @@ need to adjust for difference for thumb-z only"
 
 (defn thumb-place-shifted [rot move shape] (shift-model (thumb-place rot move shape)))
 
-(def trackball-y-rotate -55)
+(def trackball-y-z-rotate -55)
 (def trackball-x-rotate 31)
 (def trackball-z-rotate 15)
 (def trackball-thumb-offset [-25.9 13.4 14.7])
@@ -1430,8 +1430,8 @@ need to adjust for difference for thumb-z only"
     (translate-fn [0 0 (- tb-mount-offset)])
     (rotate-z-fn (deg2rad mount-z-rotate))
     (rotate-x-fn (deg2rad mount-x-rotate))
-    (rotate-y-fn (deg2rad mount-y-rotate))
-    (rotate-y-fn (deg2rad trackball-y-rotate))
+    (rotate-y-fn (deg2rad mount-y-z-rotate))
+    (rotate-y-fn (deg2rad trackball-y-z-rotate))
     (rotate-x-fn (deg2rad trackball-x-rotate))
     (rotate-z-fn (deg2rad trackball-z-rotate))
     (thumb-place [0 0 0] trackball-thumb-offset)
@@ -1450,10 +1450,10 @@ need to adjust for difference for thumb-z only"
 (defn trackball-pos [row col] (and (= row real-lastrow) (= col firstcol)))
 (defn skip-pos [left row col] (and left (trackball-pos row col)))
 
-(defn thumb-u-uplace [shape] (key-vert-place thumb-u-extra-dist thumb-u-x-off thumb-u-z-off thumb-u-x-rot thumb-u-rot shape))
-(defn thumb-uo-uplace [shape] (key-vert-place-zrot thumb-uo-extra-dist thumb-uo-x-off thumb-uo-z-off thumb-uo-z-rot thumb-uo-x-rot thumb-uo-rot shape))
-(defn thumb-o-uplace [shape] (key-vert-place thumb-o-extra-dist thumb-o-x-off thumb-o-z-off thumb-o-x-rot thumb-o-rot shape))
-(defn thumb-i-uplace [shape] (key-vert-place thumb-i-extra-dist thumb-i-x-off thumb-i-z-off thumb-i-x-rot thumb-i-rot shape))
+(defn thumb-u-uplace [shape] (key-vert-place thumb-u-extra-dist thumb-u-x-off thumb-u-z-off thumb-u-x-rot thumb-u-z-rot shape))
+(defn thumb-uo-uplace [shape] (key-vert-place-zrot thumb-uo-extra-dist thumb-uo-x-off thumb-uo-z-off thumb-uo-init-z-rot thumb-uo-x-rot thumb-uo-z-rot shape))
+(defn thumb-o-uplace [shape] (key-vert-place thumb-o-extra-dist thumb-o-x-off thumb-o-z-off thumb-o-x-rot thumb-o-z-rot shape))
+(defn thumb-i-uplace [shape] (key-vert-place thumb-i-extra-dist thumb-i-x-off thumb-i-z-off thumb-i-x-rot thumb-i-z-rot shape))
 
 ; convexer
 (defn thumb-d-place [shape] (thumb-place thumb-d-rot thumb-d-move shape)) ; right
@@ -1798,7 +1798,7 @@ need to adjust for difference for thumb-z only"
                                   ->> shape
                                       (rotate (deg2rad sensor-z-rotate) [0 0 1])
                                       (rotate (deg2rad sensor-x-rotate) [1 0 0])
-                                      (rotate (deg2rad sensor-y-rotate) [0 1 0])
+                                      (rotate (deg2rad sensor-y-z-rotate) [0 1 0])
                                       ))
 (defn dowell-angle [shape] (
                              ->> shape
@@ -1956,7 +1956,7 @@ need to adjust for difference for thumb-z only"
 
 (defn trackball-rotate [shape]
   (->> shape
-    (rotate (deg2rad trackball-y-rotate) [0 1 0])
+    (rotate (deg2rad trackball-y-z-rotate) [0 1 0])
     (rotate (deg2rad trackball-x-rotate) [1 0 0])
     (rotate (deg2rad trackball-z-rotate) [0 0 1])
     (thumb-place [0 0 0] trackball-thumb-offset))
