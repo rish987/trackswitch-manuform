@@ -13,7 +13,7 @@ It also incorporates some novel features:
 - Both the trackswitch and trackball sensor have fully parameterized mounts with mounting mechanisms that allow their distance from the trackball to be micro-adjustable.
 - Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
 
-Coupling this keyboard with a pair of [chair-mounted mini-tables](github.com) (TODO fix link) makes for an extremely
+Coupling this keyboard with a pair of [chair-mounted mini-tables](https://github.com/rish987/chair-mounted-mini-tables) (TODO fix link) makes for an extremely
 ergonomic setup, with typing comfort the likes of which you have probably never experienced before:
 
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
