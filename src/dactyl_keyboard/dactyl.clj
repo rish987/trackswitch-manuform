@@ -4078,8 +4078,11 @@ need to adjust for difference for thumb-z only"
           ;(model-switch-plates-right false)
           ;(union (mirror [-1 0 0] (model-switch-plates-right true)))
 
-          ;(union (model-case-walls-right false))
+          (union (model-case-walls-right false))
           ;(union (mirror [-1 0 0] (model-case-walls-right true)))
+
+          ;(union (thumb-test false))
+          ;(union (mirror [-1 0 0] (thumb-test true)))
 
           ;(usb-holder false)
           ;(usb-holder-mirrored true)

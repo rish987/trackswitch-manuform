@@ -15,9 +15,8 @@ It also incorporates some novel features:
 
 Coupling this keyboard with a pair of [chair-mounted mini-tables](github.com) (TODO fix link) makes for an extremely
 ergonomic setup, with typing comfort the likes of which you have probably never experienced before:
-<!--
+
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
--->
 
 # Build Guide
 
@@ -44,7 +43,7 @@ ergonomic setup, with typing comfort the likes of which you have probably never 
 
 Part | Price | Comments
 -----|-------|----
-[Arduino micro with headers](https://www.amazon.com/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $23.88 | This is needed only for the right (trackball) half of the keyboard (you can get away with a pro micro on the left half).
+[Arduino micro without headers](https://www.amazon.com/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $23.88 | This is needed only for the right (trackball) half of the keyboard (you can get away with a pro micro on the left half). I like to get the version without headers and solder my own headers on the top to reduce its overall height.
 [Pro Micro MCU](https://www.amazon.com/gp/product/B08THVMQ46/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $19.88 | For the left half. BE CAREFUL WITH THESE! They're pretty flimsy and I've broken the USB headers on muliple of them, so it's good to get a few in case something happens.
 [PMW3360 Motion Sensor](https://www.tindie.com/products/jkicklighter/pmw3360-motion-sensor/) | $29.99 | Trackball motion sensor.
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
@@ -90,49 +89,37 @@ with accompanying images of how to take the correct measurements.
 
 The diameter of the trackball. When measuring, turn it a bit in the calipers to make sure that you have captured the full diameter.
 
-<!--
-![trackball-width measurement](images/trackball-width.png)
--->
+![trackball-width measurement](images/measurements/trackball-width.png)
 
 ### `dowell-height`
 
 The height of the dowels (apologies for the inconsistent spelling).
 
-<!--
 ![dowell-height measurement](images/dowell-height.png)
--->
 
 ### `sa-height1`
 
 Distance from the bottom of the keyswitch brims (where they contact the case) to the bottom of the keycap.
 
-<!--
-![sa-height1 measurement](images/sa-height1.png)
--->
+![sa-height1 measurement](images/measurements/sa-height1.png)
 
 ### `sa-height2`
 
 Distance from the bottom of the keyswitch brims (where they contact the case) to the top of the keycap.
 
-<!--
-![sa-height2 measurement](images/sa-height2.png)
--->
+![sa-height2 measurement](images/measurements/sa-height2.png)
 
 ### `sa-length`
 
 Width/length of the keycap base (assuming a square keycap).
 
-<!--
-![sa-length measurement](images/sa-length.png)
--->
+![sa-length measurement](images/measurements/sa-length.png)
 
 ### `sa-length2`
 
 Width/length of the keycap top (assuming a square keycap).
 
-<!--
-![sa-length2 measurement](images/sa-length2.png)
--->
+![sa-length2 measurement](images/measurements/sa-length2.png)
 
 ### `M3-insert-rad`
 
@@ -140,17 +127,13 @@ Radius of the M3 brass insert. If your insert has one flat half and one knurled 
 use the radius of the flat half. Otherwise, go a little smaller than the actual radius
 (so it will be able to insert properly and not just slide through).
 
-<!--
-![M3-insert-rad measurement](images/M3-insert-rad.png)
--->
+![M3-insert-rad measurement](images/measurements/M3-insert-rad.png)
 
 ### `M3-insert-height`
 
 Height of the M3 brass insert, you may want to add a bit of buffer to this.
 
-<!--
-![M3-insert-height measurement](images/M3-insert-height.png)
--->
+![M3-insert-height measurement](images/measurements/M3-insert-height.png)
 
 ### `M2-insert-rad`, `M2-insert-height`
 
@@ -160,17 +143,13 @@ Repeat the above measurements with the M2 insert.
 
 Height of the head of the M3 screw.
 
-<!--
-![M3-screw-head-depth measurement](images/M3-screw-head-depth.png)
--->
+![M3-screw-head-depth measurement](images/measurements/M3-screw-head-depth.png)
 
 ### `M3-washer-rad`
 
 Outer radius of the M3 washer.
 
-<!--
-![M3-washer-rad measurement](images/M3-washer-rad.png)
--->
+![M3-washer-rad measurement](images/measurements/M3-washer-rad.png)
 
 ### `M2-screw-head-depth`, `M2-washer-rad`
 
@@ -180,9 +159,7 @@ Repeat the above measurements with the M2 screw/washer.
 
 Measure the height and width of your reset button.
 
-<!--
-![reset-height measurement](images/reset-height.png)
--->
+![reset-height measurement](images/measurements/reset-height.png)
 
 (leave the added `clearance`).
 
@@ -190,9 +167,7 @@ Measure the height and width of your reset button.
 
 Measure the protrusion of the reset button from the highest point on the base (that will press against the case when mounted):
 
-<!--
-![reset-protrude measurement](images/reset-protrude.png)
--->
+![reset-protrude measurement](images/measurements/reset-protrude.png)
 
 Add a bit to this if you want the button to be more recessed in the case.
 
@@ -322,15 +297,14 @@ For the vertical key to the upper-left of the RH homerow index key (`y` on the Q
 
 See the prefixes in the image below:
 
-<!--
 ![thumb-codes](images/thumb-codes.png)
--->
 
 The mnemonic is that
 `thumb-u` stands for "thumb upper",
 `thumb-uo` stands for "thumb upper-out",
-`thumb-i` stands for "thumb in" (as in moving your thumb inwards), and
-`thumb-o` stands for "thumb out" (as in moving your thumb outwards).
+`thumb-i` stands for "thumb in" (as in moving your thumb inwards),
+`thumb-o` stands for "thumb out" (as in moving your thumb outwards), and
+`thumb-d` stands for "thumb out" (as in pressing your thumb down).
 
 #### Repositioning the Screw Insert Mounts
 
@@ -354,9 +328,8 @@ it will also render a ghost of the MCU holder to help you position it properly.
 Tweak the variables `usb-holder-z-rotate` (which rotates the holder about its front right edge)
 and `usb-holder-offset` to position it such that it is flush with the wall of the case
 as you see below:
-<!--
+
 ![MCU Holder Alignment](images/mcu-holder-align.png)
--->
 
 Note that the top left corner of the MCU holder may come close to the top edge
 of the case and even cut through it.
@@ -437,9 +410,7 @@ Now, try to approximately align the support blockers with the switch plates.
 You'll notice on the build plate two tiny squares. Try to microadjust now and align so those squares coincide
 (you don't have to be too perfect).
 
-<!--
 ![alignment](images/alignment.png)
--->
 
 Now, select the support blocker model, go to "Per Model Settings" and click "Don't support overlaps".
 Then, select all (ctrl-A), right-click and select "Group Models" so that everything will move together as you do the final orientations.
@@ -492,25 +463,19 @@ You can use the same slicing settings to print the walls. You will need supports
 
 You can actually print these without supports!
 
-<!--
 ![MCU Holders](images/mcu-holders.png)
--->
 
 ### Trackswitch Mount
 
 This one need supports, I recommend orienting it as follows:
 
-<!--
 ![Trackswitch Mount Orientation](images/trackswitch-mount-orient.png)
--->
 
-### PMW3360 Mount
+### PMW3360 Sensor Case
 
 No supports needed! Orient it as follows:
 
-<!--
 ![PMW3360 Mount Orientation](images/pmw3360-mount-orient.png)
--->
 
 ### Bottom Plates
 
@@ -550,17 +515,13 @@ The right side uses a full Arduino Micro so that
 we have all of the pins that we'll need for the trackball sensor.
 See the wiring diagram below:
 
-<!--
 ![Right Side Wiring](images/right-wiring.png)
--->
 
 ### Left Side
 
 On the left side, we can get away with the cheaper Pro Micro:
 
-<!--
 ![Left Side Wiring](images/left-wiring.png)
--->
 
 ### Hotswap Layout
 
@@ -578,14 +539,12 @@ to make room for the trackball.
 If you aren't sure, take a look at how I've oriented them in the pictures below.
 
 Left half:
-<!--
+
 ![Hotswap Layout Left](images/hotswap-left.png)
--->
 
 Right half:
-<!--
+
 ![Hotswap Layout Right](images/hotswap-right.png)
--->
 
 ### Pre-cutting the Row and Column Lines
 
@@ -600,9 +559,7 @@ Note that some columns will have to reach their respective thumb keys
 and so will require a good amount of extra length for that.
 Use Blu-Tac to keep the wires next to their rows/columns after cutting them:
 
-<!--
 ![Cut Row/Column Lines](images/cut-lines.png)
--->
 
 #### MCU Probe Tails
 
@@ -615,9 +572,8 @@ Use your pliers to make a small hook at the end of the wire
 (which is where you will solder a probe from the MCU),
 and use the wire strippers to pull the insulation to the end.
 You should end up with this:
-<!--
+
 ![Probe Tails](images/probe-tails.png)
--->
 
 #### Alignment, marking, and cutting
 
@@ -625,15 +581,13 @@ Now is the time to make the cuts that will allow the lines to connect to the hot
 For each row/column line, starting by aligning the bottom of the insulation above the probe tail
 with the hot swap contact.
 Now, make a mark with your Sharpie about 5mm above/to the side of the next hot swap contact:
-<!--
+
 ![Line Marking](images/line-marking.png)
--->
 
 Make a cut here with your wire strippers and pull the insulation down, leaving about that much room between
 this insulation segment and the previous one:
-<!--
+
 ![Line Segment Space](images/line-segment-space.png)
--->
 
 Move the top of the insulation below the segment you just cut up to the swap contact,
 and repeat this process for the next socket.
@@ -641,9 +595,8 @@ To save time from switching between your marker and wire strippers,
 you can instead make all of the marks before doing all of the cuts.
 Continue until the very last one, cut off any excess, and make another hook at this end.
 At the end you should have something like this:
-<!--
+
 ![Line Segments Cut](images/line-segments-cut.png)
--->
 
 #### Preparing the diodes
 
@@ -656,17 +609,15 @@ make a hook with the wire on the *black* side of the diode.
 Make a cut so that you will have enough wire to be able to wrap the hook around the lines.
 On the other side, cut again, leaving a few millimiters of wire.
 Your cut diodes should end up looking like this:
-<!--
+
 ![Cut Diodes](images/cut-diodes.png)
--->
 
 Don't throw away the small wire segments still attached to the strip!
 We're going to use them as probes on the sockets to attach the column lines to.
 Hook them on the strip side and cut them
 so you have about a millimeter of extra length below the hook:
-<!--
+
 ![Cut Column Probes](images/cut-column-probes.png)
--->
 
 Now, I recommend getting two wads of Blu-Tac out
 and using them to stick all of the diodes and column probes vertically into.
@@ -691,9 +642,8 @@ Solder the diodes and column probes *vertically* into place on each hotswap sock
 It's important to do it vertically because if you make them jut out the sides
 it will conflict with the walls of the switch plates in a few places.
 You will end up with:
-<!--
+
 ![Soldered diodes](images/soldered-diodes.png)
--->
 
 #### Solder the Row and Column Lines
 
@@ -701,9 +651,8 @@ For each of your row/column lines, twist the hook of each diode/column probe
 around the corresponding exposed bit on the line to hold in in place.
 Now, go around with your solder iron and solder everything up!
 This should result in:
-<!--
+
 ![Soldered lines](images/soldered-lines.png)
--->
 
 #### Solder the MCU Probes
 
@@ -712,9 +661,8 @@ On each row/column probe, slide on a length of heat shrink tubing to cover both 
 the plug end of a jumper wire.
 Using plug-socket-end jumper wires, solder the plug ends into the hooks that you made at the end of each row/column probe,
 and use your heat gun to insulate this connection with the heat shrink tubing, leaving you with:
-<!--
+
 ![Soldered probes](images/soldered-probes.png)
--->
 
 (I actually crimped my own jumpers without a plug end, so you will probably have more of a bulge underneath
 your heatshrink tube from the plug housing).
@@ -724,18 +672,16 @@ You can now pull the wires off of the table and roll off all of the Blu-Tac.
 
 Using plug-socket-end jumper wires, solder the plug ends into the PMW3360 ports shown above. 
 Cut off the excess now jutting out of the other end of the sensor so that the lens is able to fit without conflict:
-<!--
+
 ![Soldered PMW3360](images/soldered-pmw3360.png)
--->
 
 #### Solder the Reset Button (MCU Assembly)
 
 Cut two socket-socket-end jumper wires in half, strip away the insulation from the cut ends and solder them to
 the reset button such that a connection is made between them when the button is pressed
 (you probably want to use a multimeter to double-check this):
-<!--
+
 ![Soldered Reset](images/soldered-reset.png)
--->
 
 Repeat for the reset button on the other side.
 
@@ -743,11 +689,15 @@ Repeat for the reset button on the other side.
 
 Cut three socket-socket-end jumper wires in half, strip away the insulation from the cut ends and solder them onto
 the TRRS jack probes (it doesn't really matter which ones you use, as long as you're consistent on both sides):
-<!--
+
 ![Soldered TRRS](images/soldered-trrs.png)
--->
 (You can see that I have already inserted these into the MCU holder but this isn't actually necessary,
 you can just use Blu-Tac to hold them in place while soldering like I did for the reset buttons above).
+
+On the right side, we will actually need an extra ground pin, so fasion one of these short jumpers
+with a single socket on one end, and two pins on the other:
+
+![Double-probe](images/double-probe.png)
 
 #### Check Everything
 
@@ -763,9 +713,8 @@ the bottom of the case walls, the trackswitch mounts on the right switch plates,
 Wait for your solder iron to cool down again, and replace the solder end with
 the M2 insert end, and insert two M2 insert into the back of the PMW3360 mount.
 The parts with all of the inserts inserted should look like this:
-<!--
+
 ![Inserted Inserts](images/inserted-inserts.png)
--->
 
 (You can see a bit of a print failure on the trackswitch mount that I was lucky enough to be able to get around, leaving the insert half-exposed;
 you can likely avoid this if you heed my advice above about orienting the switch plate in the slicer such that no corners are printed as single points).
@@ -795,9 +744,8 @@ After it's dry, plug the switch in and out a few times to make sure it stays
 On the right side, leave the trackswitch socket dangling for now,
 you will install that after the trackswitch has been moutned.
 After all is said and done, you will have something like this:
-<!--
+
 ![Spaghetti](images/spaghetti.png)
--->
 
 And promise me, no matter how much it looks like spaghetti, that you will not try to eat it!
 
@@ -855,15 +803,26 @@ all of them with a good amount of hot glue.
 Finally, install the trackswitch socket that was left dangling earlier.
 
 Your mounted trackswitch should like this (before getting covered in hot glue; again, forgive the semi-print-failure I mentioned earlier):
-<!--
-![Mounted Trackswitch](images/trackswitch.png)
--->
+
+![Mounted Trackswitch](images/mounted-trackswitch.png)
 
 ### Mounting the PMW3360
 
 Take out the PMW3360 sensor, the PMW3360 mount, and the M2 screws (20mm long), nuts, and washers (two of each).
 Gently press the PMW3360 sensor into the mount, oriented such that the protruding jumper ends are on the same side as their cutout on mount.
 The mount should hold both the sensor and the lens securely together.
+
+I have found that on the right side, there is actually quite a tight fit between the arduino micro and the trackball sensor.
+This would not be an issue if it weren't for the height of the jumper cable plug/socket housings,
+but if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
+I recommending bending the pins to give just enough clearance between the MCU and PMW3360 connection.
+For the Arduino micro (you can't see in this image but I only bent the last 7 pins on the left side, and also
+the 6 ICSP pins:
+
+![Bent Pins, Arduino Micro](images/bent-pins-arduino.png)
+and for the PMW3360:
+
+![Bent Pins, PMW3360](images/bent-pins-PMW3360.png)
 
 Wrap the M2 screw with a generous few layers of PTFE tape.
 Put the washers over the screws and insert the screws into the trackball mount (the washer should be on the inside).
@@ -885,12 +844,11 @@ but you will make the final adjustments after you have flashed the arduinos
 (so you can test in real-time whether or not the movement is being picked up).
 
 Your mounted PMW3360 should like this:
-<!--
+
 ![Mounted PMW3360](images/PMW3360.png)
--->
-<!--
+And from the front:
+
 ![Mounted PMW3360, Front View](images/PMW3360-front.png)
--->
 
 ### Keycap Mods
 
@@ -907,11 +865,15 @@ While filing, I recommend using a vice grip to hold the keycap firmly in place a
 Additionally, on the right side, the top left corner of the `thumb-c` keycap
 tends to conflict with the trackball when it is in the inactive (pushed-out) position.
 For this reason, I like to cut away at that corner and file it down in order to make room as follows:
+
+(TODO)
 <!--
 ![Cut Right `thumb-c` Keycap](images/cut-right-thumb-c.png)
 -->
 
 Based on my experience using this keyboard, I've color-coded the edges that you will probably want to file down in the image below:
+
+(TODO)
 <!--
 ![Edges to File](images/edges-to-file.png)
 -->
@@ -946,21 +908,9 @@ If you find that any of the plugs ends are loose on the arduino pins,
 you can use some hot glue to prevent them from being shaken off.
 
 The completed MCU assembly should like this for the Arduino Micro (right half):
-<!--
 ![Arduino Micro Assembly](images/arduino-micro-assembly.png)
--->
 and like this for the Pro Micro (left half):
-<!--
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
--->
-
-I have found that on the right side, there is actually quite a tight fit between the arduino micro and the trackball sensor.
-This would not be an issue if it weren't for the height of the jumper cable plug/socket housings,
-but if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
-I recommending bending the pins like this to give just enough clearance between the MCU and PMW3360 connection:
-<!--
-![Bent Pins](images/bent-pins.png)
--->
 
 For each side, slide the whole MCU assembly into its corresponding spot in the case walls.
 
@@ -985,10 +935,6 @@ Hold it there until the glue has cooled down and solidified.
 Screw in the wrist rests onto the base plates, using whatever holes make for the best distance from your hands.
 I like to use them to support the base of my palms, but of course this is up to your own personal preference.
 
-Here's a close-up of what the wrist wrest will look like once installed:
-<!--
-![Wrist Rest](images/wrist-rest.png)
--->
 
 
 
@@ -1139,14 +1085,14 @@ like escape, backspace, enter, tab, etc.
 On the bottom of the left side of each layer, you'll find the thumb keys,
 in the order of:
 ```
-thumb-l, thumb-u, thumb-c, thumb-ur, thumb-b
+thumb-i, thumb-u, thumb-d, thumb-uo, thumb-o
 ```
 In my experience,
-`thumb-l` and `thumb-b` are the most easy keys to press (you just have to move your thumb in and out),
+`thumb-i` and `thumb-o` are the most easy keys to press (you just have to move your thumb in and out),
 followed by `thumb-u` and `thumb-ur`, which are a bit more out of the way 
-(in fact, you'll notice that I ended up not using `thumb-ur` at all,
+(in fact, you'll notice that I ended up not using `thumb-uo` at all,
 but it's there if you want to use it for something).
-Correspondingly, I keep the symbol and numbers layers handy (pun intended) at `thumb-l` and `thumb-b`, respectively.
+Correspondingly, I keep the symbol and numbers layers handy (pun intended) at `thumb-i` and `thumb-o`, respectively.
 And reserve `thumb-u` for the less-frequently-used arrow and function keys.
 
 In the number and symbol layers, I like to use [shifted symbols](https://github.com/qmk/qmk_firmware/blob/master/docs/keycodes.md#us-ansi-shifted-symbols-idus-ansi-shifted-symbols)
@@ -1283,3 +1229,6 @@ Copyright © 2015-2023 Rishikesh Vaishnav, Matthew Adereth, Noah Prince, Tom Sho
 The source code for generating the models is distributed under the [GNU AFFERO GENERAL PUBLIC LICENSE Version 3](LICENSE).
 
 The generated models are distributed under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSE-models).
+
+The [[file:images/more_images/Pinout-Micro_latest.png][Arduino Micro pinout image]] is [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed. The image is work of [[https://www.arduino.cc/][Arduino]].
+All other images are [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed as well.
