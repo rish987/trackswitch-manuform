@@ -13,7 +13,7 @@ It also incorporates some novel features:
 - Both the trackswitch and trackball sensor have fully parameterized mounts with mounting mechanisms that allow their distance from the trackball to be micro-adjustable.
 - Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
 
-Coupling this keyboard with a pair of [chair-mounted mini-tables](https://github.com/rish987/chair-mounted-mini-tables) (TODO fix link) makes for an extremely
+Coupling this keyboard with a pair of [chair-mounted mini-tables](https://github.com/rish987/chair-mounted-mini-tables) makes for an extremely
 ergonomic setup, with typing comfort the likes of which you have probably never experienced before:
 
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
@@ -47,12 +47,12 @@ Part | Price | Comments
 [Pro Micro MCU](https://www.amazon.com/gp/product/B08THVMQ46/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $19.88 | For the left half. BE CAREFUL WITH THESE! They're pretty flimsy and I've broken the USB headers on muliple of them, so it's good to get a few in case something happens.
 [PMW3360 Motion Sensor](https://www.tindie.com/products/jkicklighter/pmw3360-motion-sensor/) | $29.99 | Trackball motion sensor.
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
-[Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with TODO.
+[Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with a Kalih Silver.
 [Trackball](https://www.aliexpress.us/item/3256803106743416.html?spm=a2g0o.productlist.main.7.559e75b6LrrWPq&algo_pvid=5b156845-75aa-4609-92bb-10b4919b35ad&algo_exp_id=5b156845-75aa-4609-92bb-10b4919b35ad-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000025055404434%22%7D&pdp_npi=2%40dis%21USD%2123.46%2111.03%21%21%21%21%21%402102186a16738183211058438d0674%2112000025055404434%21sea&curPageLogUid=fiwnZejyx836) | $11.99
 [3x6mm Dowel Pins](https://www.amazon.com/gp/product/B07M63KXKS/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.49
 [3x6x2.5mm Miniature Bearings](https://www.amazon.com/gp/product/B00ZHSQX42/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $10.99
 [Silicone wrist rests](https://www.amazon.com/gp/product/B01LYBFIJA/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $9.99 | Nice and soft and squishy and comfy!
-[PLA 3D Printer Filament (at least TODO grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
+[PLA 3D Printer Filament (at least 1000 grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
 [Keycaps x35](https://www.amazon.com/gp/product/B07SJKMNWC/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $15.55 | If you have a resin printer, printing keycaps is also apparently an option.
 [1N4148 diodes x36](https://www.amazon.com/gp/product/B079KJ91JZ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $5.99 |
 [Hot swap sockets x36](https://www.amazon.com/gp/product/B096WZ6TJ5/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $14.50 | 
@@ -280,6 +280,11 @@ how adjusting this parameter will affect the placement of the vertical key.
 #### Adjusting the Above Keys
 
 See `above-z-rot`, `above-extra-dist`, `above-x-rot`, `above-z-off`, `above-init-z-rot`.
+
+Note that there's a bit of a tradeof with these keys when it comes to the `above-x-rot` parameter.
+Steeper of an angle means shorter travel distance, but it also means that you will have to keep
+your fingernails short in order to actuate them comfortably.
+If you aren't ready for this committment, I recommend using a flatter angle.
 
 #### Adjusting the Below Keys
 
@@ -1222,7 +1227,36 @@ Make sure that you don't let any of the glue seep over the lens of the sensor.
 
 Congratulations, you now have a fully functional Trackswitch Manuform!
 
-## License
+# (Anticipated) FAQ
+
+Why should I use this keyboard over a standard (flat) dactyl manuform?
+- There is a bit of a learning curve to this keyboard, and of course the time investment of actually tweaking and building one
+(the build is quite a bit more intricate and time-consuming than that of a normal Dactyl, but still very much doable),
+but once you actually have a functional keyboard I can't think of any downsides.
+The travel distance is shorter, the keys are actuated at more natural angles,
+and the left thumb cluster is super comfortable to use for level-shifting (and makes up for the fact that there aren't many keys to work with).
+
+Why should I use this keyboard over something like the [lalboard](https://github.com/JesusFreke/lalboard)?
+- I can't really comment to much on the lalboard as I haven't built one myself.
+But from what I can tell it really completely optimizes travel distance of your fingers
+and on top of that is entirely adjustable after being printed.
+I suppose I created this keyboard as a compromise between that and the Dactyls that I am used to.
+If you've made a Dactyl before, you can likely use parts left over from that build to make this keyboard,
+and it uses standard keyswitches that everyone is used to.
+One aspect of the lalboard that I was unsure about is actuating keys with my fingernails
+and the sides of my fingers.
+This keyboard (with the exception of `thumb-o`, which is actuated by your thumb knuckle) allows you to actuate all keys with the
+base of your fingers like you are used to (and which I personally find most comfortable).
+
+Does the trackswitch interfere with the smooth motion of the trackball?
+- This depends on the switch you choose to use for the trackswitch. Regardless of which switch you choose, there will be some extra resistance from that while moving the trackball, but if you choose one with just enough actuation force to push the trackball up when released (I used a Kalih silver) it should barely be noticable.
+
+With a normal trackball I'm used to being able to lift my finger off and reposition it to e.g. move long distances and scroll.
+Would the trackswitch mechanism (which pushes the trackball out when it is released) interfere with that?
+- Yeah, so I don't advise doing that with this keyboard. Using trackpoint mode and the custom scroll mode
+that I have included in the firmware, you shouldn't need to.
+
+# License
 
 Copyright © 2015-2023 Rishikesh Vaishnav, Matthew Adereth, Noah Prince, Tom Short, Leo Lou, Okke Formsma, Derek Nheiley
 
