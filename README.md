@@ -9,7 +9,7 @@ It also incorporates some novel features:
 - Drawing inspiration from the vertical actuations of [JesusFreke's lalboard](https://github.com/JesusFreke/lalboard), the keys above and below the home row are positioned such that actuating them involves the continuation of a single motion (i.e. extending or curling the fingers) rather than two separate motions (extending then pressing down or curling then pressing down, as is the case with a conventional flat keyboard layout). Less muscle memory + shorter travel distance = quicker and more comfortable typing!
 - I've yeeted keys that I find exceed a certain (low) threshold of difficulty to press on a standard ortholinear layout. These include the (QWERTY) `n` and `b` keys, as well as all the keys outwards from the pinky column.
 - To make up for this lack of keys, the left side of this keyboard features a powerful thumb cluster with five keys (four of which are vertically actuated: one by the base of the thumb (actuated by curling the thumb inwards), two by the tip of the thumb (actuated by extending the thumb upwards), and another by the thumb knuckle (actuated by moving the thumb outwards)) that allow for fast level-shifting.
-- The right side incorporates a trackball mount with a mechanism that allows the trackball to act as a "switch" that can be pressed down to both enable mouse movement and activate the mouse button layer. I refer to this collective assembly as the "trackswitch".
+- The right side incorporates a trackball mount with a mechanism (consisting of a switch mounted underneath the trackball) that allows the trackball itself to act as a "switch" that can be pressed down to both enable mouse movement and activate the mouse button layer. This means that you don't have to press any buttons to enter the mouse layer before using the trackball -- the action of pressing down the trackball (and thus activating the trackswitch) shifts into the mouse layer. I refer to this collective assembly as the "trackswitch".
 - Both the trackswitch and trackball sensor have fully parameterized mounts with mounting mechanisms that allow their distance from the trackball to be micro-adjustable.
 - Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
 
@@ -50,8 +50,8 @@ Part | Price | Comments
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
 [Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with TODO.
 [Trackball](https://www.aliexpress.us/item/3256803106743416.html?spm=a2g0o.productlist.main.7.559e75b6LrrWPq&algo_pvid=5b156845-75aa-4609-92bb-10b4919b35ad&algo_exp_id=5b156845-75aa-4609-92bb-10b4919b35ad-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000025055404434%22%7D&pdp_npi=2%40dis%21USD%2123.46%2111.03%21%21%21%21%21%402102186a16738183211058438d0674%2112000025055404434%21sea&curPageLogUid=fiwnZejyx836) | $11.99
-[Dowel Pins](https://www.amazon.com/gp/product/B07M63KXKS/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.49
-[Miniature Bearings](https://www.amazon.com/gp/product/B00ZHSQX42/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $10.99
+[3x6mm Dowel Pins](https://www.amazon.com/gp/product/B07M63KXKS/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.49
+[3x6x2.5mm Miniature Bearings](https://www.amazon.com/gp/product/B00ZHSQX42/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $10.99
 [Silicone wrist rests](https://www.amazon.com/gp/product/B01LYBFIJA/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $9.99 | Nice and soft and squishy and comfy!
 [PLA 3D Printer Filament (at least TODO grams)](https://www.amazon.com/gp/product/B07PGY2JP1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $17.63 | 
 [Keycaps x35](https://www.amazon.com/gp/product/B07SJKMNWC/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $15.55 | If you have a resin printer, printing keycaps is also apparently an option.
@@ -265,7 +265,7 @@ this keyboard to exactly fit the shape of your hand:
 
 The vertically actuated keys are placed using the function `key-vert-place`,
 which takes a few parameters that can alter its position relative to the
-default (i.e. all-paramters-set-to-zero) positon.
+default (i.e. all-paramters-set-to-zero) position.
 This default position aligns
 the bottom edge of the top of the vertical switch's keycap
 with
@@ -304,11 +304,11 @@ how adjusting this parameter will affect the placement of the vertical key.
 
 #### Adjusting the Above Keys
 
-See `above-rot`, `above-extra-dist`, `above-x-rot`, `above-z-off`, `above-z-rot`.
+See `above-z-rot`, `above-extra-dist`, `above-x-rot`, `above-z-off`, `above-init-z-rot`.
 
 #### Adjusting the Below Keys
 
-See `below-rot`, `below-extra-dist`, `below-x-rot`, `below-z-rot`.
+See `below-z-rot`, `below-extra-dist`, `below-x-rot`, `below-z-off`, `below-init-z-rot`.
 
 #### Adjusting the Left-of-Index Keys
 
@@ -347,7 +347,7 @@ have the correct rotation relative to the case walls and also have enough purcha
 #### Repositioning the MCU Holder Cutout
 
 If you change the possiton of the above-home-row keys, you'll probably also have to
-change the positon of the MCU holder cutout.
+change the position of the MCU holder cutout.
 When rendering the case walls with `testing` set to `true`,
 it will also render a ghost of the MCU holder to help you position it properly.
 
@@ -398,6 +398,8 @@ I plan to soon also add a way to just print the homerow and `thumb-c` switch pla
 in a coherent prototyping part so you can quickly check their relative positions.
 However, if you can't wait for that, your only option for now
 is to print the entire switch plate.
+
+Once printed, you can install the keys and get a feel for the keyboard by typing the phrase: "great xerxes saw qatar as a vast deceased cat tree" (assuming that you printed the left half -- sorry, that's the best I could come up with, really).
 
 #### Slicer Settings
 
@@ -812,16 +814,13 @@ and gently and slowly press them in.
 Now, insert the trackball and spin it around a bit to make sure the motion is smooth.
 Since the bearings should be peeking through the case, you can also visually check to make
 sure they are actually spinning as you move the trackball.
-Your mounted trackball should look like this:
-<!--
-![Mounted Trackball](images/trackball.png)
--->
 
 ### Mounting the Trackswitch
 
 Take out your multimeter, two plug-socket-end jumper cables, the trackball, the trackswitch mount, the M3 screws (12mm long), nuts, and washers (two of each), and the PTFE tape.
 Wrap the M3 screw with a generous few layers of PTFE tape.
-This tape will keep the trackswitch mount steady once it is screwed in.
+This tape will keep the trackswitch mount steady once it is screwed in,
+and also help to keep the stablizing nut in place.
 Put the washers on the screws and insert them into the trackswitch mount.
 The washers should fit snugly into the cutouts on the top of the mount.
 Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle,
@@ -855,7 +854,7 @@ For some extra assurance that the nuts and screws won't come loose, as a final s
 all of them with a good amount of hot glue.
 Finally, install the trackswitch socket that was left dangling earlier.
 
-Your mounted trackswitch should like this (again, forgive the semi-print-failure I mentioned earlier):
+Your mounted trackswitch should like this (before getting covered in hot glue; again, forgive the semi-print-failure I mentioned earlier):
 <!--
 ![Mounted Trackswitch](images/trackswitch.png)
 -->
@@ -871,10 +870,15 @@ Put the washers over the screws and insert the screws into the trackball mount (
 Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle
 (optionally, you may use washers on this side as well if it helps),
 but not so tight that you aren't able to turn them (along with the nuts).
+If you can't exactly achieve this, that's okay, just make sure the nuts can spin without catching
+(Blu-Tac will come to your rescue)!
 
-Insert the screws into the hole in the front of the mount, then the holes in the PCB,
-then screw them into the inserts in the back of the mounts.
-Continue to screw them in incrementally in equal amounts until the front of the mount is about 6 mm
+Insert the screws through the holes in the front of the mount and the holes in the PCB,
+then screw them into the inserts in the back of the mount.
+Now, squeeze some Blu-Tac underneath opposite corners of the mount
+as far as possible from the nuts.
+This will add some extra stability as you make the final adjustment.
+Continue to screw in incrementally in equal amounts until the front of the mount is about 6 mm
 away from the back of the trackball mount.
 This will certainly place the sensor too far from the trackball to register,
 but you will make the final adjustments after you have flashed the arduinos
@@ -883,6 +887,9 @@ but you will make the final adjustments after you have flashed the arduinos
 Your mounted PMW3360 should like this:
 <!--
 ![Mounted PMW3360](images/PMW3360.png)
+-->
+<!--
+![Mounted PMW3360, Front View](images/PMW3360-front.png)
 -->
 
 ### Keycap Mods
@@ -913,7 +920,7 @@ Based on my experience using this keyboard, I've color-coded the edges that you 
 
 Now is the time to connect the switch plates to the case walls. 
 Note that the code for cutting away at the walls using the plates to ensure a good fit
-may result in some strange geometry, such as very thin tapering walls and odd small protrusions.
+may result in some strange geometry, such as very thin tapering walls and small, odd protrusions.
 If you do encounter these, it should be okay to chip away at them with an X-Acto knife (AND SAFETY GOGGLES ON -- 
 in case you didn't know, you should ALWAYS wear safety goggles when using an X-Acto knife in any context, that blade certainly can break!).
 
@@ -949,8 +956,8 @@ and like this for the Pro Micro (left half):
 
 I have found that on the right side, there is actually quite a tight fit between the arduino micro and the trackball sensor.
 This would not be an issue if it weren't for the height of the jumper cable plug/socket housings,
-so if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
-I recommending bending the pins like this to give just enough clearance between the MCU and PMW3360 connectors:
+but if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
+I recommending bending the pins like this to give just enough clearance between the MCU and PMW3360 connection:
 <!--
 ![Bent Pins](images/bent-pins.png)
 -->
@@ -964,7 +971,8 @@ Screw in the base plates using M3 screws (12mm long), making sure that the count
 Since there's still a bit more adjustment to do on the right side (the PMW3360 sensor distance), 
 and you (presumably) haven't yet tested the keyboard to make sure everything is working,
 I recommend that you just install two or three screws on each side for now
-(as you may have to take it apart again for repairs or for further adjusment).
+(as you may have to take it apart again for repairs or for further adjustment;
+you may in fact just want to skip this step entirely for now and test things with the bottom of your keyboard open).
 
 ### Mounting the Wrist Rests
 
@@ -989,8 +997,8 @@ Here's a close-up of what the wrist wrest will look like once installed:
 It's finally time to install the brains of your keyboard
 that teaches it how to respond to your keypresses,
 a.k.a. the firmware.
-The [firmware that I use](https://github.com/rish987/dactyl_manuform_r_track) is forked 
-from [Schievel1's firmware](https://github.com/Schievel1/dactyl_manuform_r_track)
+The [firmware that I use](https://github.com/rish987/qmk_firmware_dm_r_track) is forked 
+from [Schievel1's firmware](https://github.com/Schievel1/qmk_firmware_dm_r_track)
 and hence, much of the instructions that follow are adapted from
 [Schievel1's build guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#flashing-the-firmware).
 
@@ -1048,11 +1056,6 @@ Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.
 Note that this firmare uses up almost all of the space on the MCU (as attested in the warning message),
 so you have to be very careful and selective about any features you want to add to it.
 
-It will leave the compiled `.hex` file in the root dir, which you can delete:
-```
-rm handwired_dactyl_manuform_5x6_default.hex
-```
-
 ### Tweaking the Key Layout
 
 If you want to change which key does what,
@@ -1078,32 +1081,32 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_QWERTY] = LAYOUT_5x6_right(
      KC_Q   ,KC_W   ,KC_E   ,KC_R   ,KC_T  ,                         KC_Y   ,KC_U   ,KC_I   ,KC_O   , KC_P   ,
      KC_A   ,KC_S   ,KC_D   ,KC_F   ,KC_G  ,                         KC_H   ,KC_J   ,KC_K   ,KC_L   , KC_N   ,
-     BSPCCTL,KC_X   ,KC_C   ,KC_V   ,                                        KC_M   ,KC_B   ,KC_Z   , ESCCTL ,
-     RAISE  ,ARROW  ,KC_SPC ,_______,LOWER ,                         TRKSWCH,        KC_RSFT,KC_ENT
+     BSPCCTL,KC_X   ,KC_C   ,KC_V   ,                                TRKSWCH,KC_M   ,KC_B   ,KC_Z   , ESCCTL ,
+     RAISE  ,ARROW  ,KC_SPC ,_______,LOWER ,                                 KC_RSFT,KC_ENT
   ),
   [_LOWER] = LAYOUT_5x6_right(
      KC_EXLM,KC_AT  ,KC_HASH,KC_DLR ,KC_PERC,                        KC_CIRC,KC_AMPR,KC_ASTR,KC_LPRN,KC_RPRN,
      KC_1   ,KC_2   ,KC_3   ,KC_4   ,KC_5   ,                        KC_6   ,KC_7   ,KC_8   ,KC_9   ,KC_0   ,
-     _______,_______,KC_PLUS,KC_EQL ,                                        _______,KC_COMM,KC_DOT ,_______,
-     _______,_______,_______,_______,_______,                        _______,        _______,        _______
+     _______,_______,KC_PLUS,KC_EQL ,                                _______,_______,KC_COMM,KC_DOT ,_______,
+     _______,_______,_______,_______,_______,                                _______,_______
   ),
   [_RAISE] = LAYOUT_5x6_right(
-     KC_QUES,_______,KC_PLUS,KC_EQL ,KC_PIPE,                       KC_TILD,_______,KC_TAB  ,_______,KC_COLN,
-     KC_SLSH,KC_LCBR,KC_UNDS,KC_RCBR,KC_BSLS,                       KC_GRV ,KC_DQT ,KC_COMM ,KC_DOT ,KC_SCLN,
-     _______,KC_LBRC,KC_MINS,KC_RBRC,                                       KC_QUOT,KC_LT   ,KC_GT  ,_______,
-     _______,_______,_______,_______,_______,                        _______,        _______,_______
+     KC_QUES,_______,KC_PLUS,KC_EQL ,KC_PIPE,                        KC_TILD,_______,KC_TAB  ,_______,KC_COLN,
+     KC_SLSH,KC_LCBR,KC_UNDS,KC_RCBR,KC_BSLS,                        KC_GRV ,KC_QUOT,KC_COMM ,KC_DOT ,KC_SCLN,
+     _______,KC_LBRC,KC_MINS,KC_RBRC,                                _______,KC_DQT ,KC_LT   ,KC_GT  ,_______,
+     _______,_______,_______,_______,_______,                                _______,_______
   ),
   [_MOUSE] = LAYOUT_5x6_right(
      _______,_______,_______,_______,_______,                        _______,_______,_______,_______,_______,
-     _______,_______,_______,_______,_______,                        _______,KC_BTN1,KC_BTN2,MLOCK  ,_______,
-     _______,_______,_______,_______,                                        _______,_______,DRGSCRL,TRKPNT ,
-     _______,_______,KC_LSFT,_______,_______,                        _______,        _______,        _______ 
+     _______,_______,_______,_______,_______,                        _______,_______,_______,MLOCK  ,_______,
+     _______,_______,_______,_______,                                _______,KC_BTN1,KC_BTN2,DRGSCRL,TRKPNT ,
+     _______,_______,KC_LSFT,_______,_______,                                _______,_______ 
   ),
   [_ARROW] = LAYOUT_5x6_right(
      KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,                        KC_F6  ,KC_F7  ,KC_F8  ,KC_F9  ,KC_F10 ,
      _______,_______,_______,_______,_______,                        KC_LEFT,KC_DOWN,KC_UP  ,KC_RGHT,_______,
-     _______,_______,_______,_______,                                        _______,KC_F11 ,KC_F12 ,_______,
-     _______,_______,_______,_______,_______,                        _______,        KC_RGUI,        KC_RALT 
+     _______,_______,_______,_______,                                _______,_______,KC_F11 ,KC_F12 ,_______,
+     _______,_______,_______,_______,_______,                                KC_RGUI,KC_RALT 
   ),
 };
 ```
@@ -1154,21 +1157,124 @@ but in the future I will probably place them more in terms of actual frequency o
 
 On the mouse layer, you will notice that the main four keys
 you will press while using the mouse (`KC_BTN1`, `KC_BTN2`, `DRGSCRL`, `TRKPNT`, explained in the next section)
-are aligned such that the index and middle are on the homerow, but the ring and pinky are on the row below the homerow.
+are aligned such that they are all on the row below the homerow.
 This is to adjust for the way you will reposition your hand while using the trackball,
-as you will find that you have to rotate your hand clockwise a little bit to operate it most comfortably.
+as you will find that you have to rotate your hand a little bit to operate it most comfortably.
 
 ### Tweaking the Mouse Behavior
 
+The firmware for the mouse originates from the [Charybdis keyboard](https://github.com/Bastardkb/Charybdis)
+and has several nifty features.
 
+Firstly, there are several different "modes" that you can put the mouse in to variously
+alter the behavior of the trackball.
+See [Schievel1's guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#a-word-about-trackball-modes)
+for more details on each of these modes.
+The only difference in my firmware is that I have altered the "dragscroll" mode to "lock in" on the direction of movement
+to better work with the trackswitch mechanism --
+rather than lifting up your finger and repositioning it at the top/bottom to continue scrolling in down/up.
+(which would be annoying with this keyboard as the trackswitch would have to be repeatedly pressed),
+you leave your finger on the trackball and move it up in the opposite direction (to no effect).
+If you want to change the direction of scroll, you would re-activate dragscroll mode (e.g. by pressing the key again).
+
+I also added a mode of my own, called "trackpoint" mode.
+This mimicks the behavior of a trackpoint cursor (those little red dot thingies on Lenovo thinkpads)
+by continously moving the cursor in the direction of the offset of the trackball
+from its position when you enabled trackpoint mode.
+This allows you to traverse great distances with the mouse
+without having to lift your finger off of the trackball (or move it at all).
+
+There are also various configuration parameters to tweak
+how the mouse moves (e.g. speed, acceleration, scroll speed, etc.).
+You can set these in `keymaps/handwired/tractyl_manuform/5x6_right/keymaps/default/config.h`.
+See [Schievel1's guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#other-things-to-set-in-the-firmware)
+for a list of these parameters and what they do.
 
 #### Special Mouse Keys
 
-### Flashing the MCUs
+The Charybdis firmware includes [several special keycodes](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#special-key-codes-in-this-firmware)
+to activate/toggle the various modes.
+In addition to these, I have defined a few of my own:
 
-### Final Adjustments to the PMW3360 Distance
+Keycode | Short Alias | Function
+-----|-------|----
+TRACKSWITCH | TRKSWCH | The trackswitch button. This both enables mouse movement and shifts to the mouse layer. You should only use this for the actual trackswitch key.
+MOUSE_LOCK | MLOCK | Locks mouse movement. When releasing the trackswitch, the movement of the trackball means that a little bit of mouse movement is pretty much unavoidable before the actual trackswitch switch is fully de-actuated. While in most cases I have found this to be inconsequential, for the rare cases that it is undesirable you can use this key to lock the mouse in place before releasing.
+TRACKPOINT_MODE | TRKPNT | Activate trackpoint mode.
 
-<!-- TODO -->
+### Compiling & Flashing the MCUs
+
+Once you have modified the firmware, run this command to compile it:
+```shell
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
+```
+
+This compilation command will leave the compiled `handwired_dactyl_manuform_5x6_default.hex` file in the root dir --
+this is what you will flash to the MCUs using `avrdude`.
+
+To flash an MCU, plug it into your computer using the USB cable
+(be very careful and gentle when doing this with the Pro Micro as the USB header tends to snap of very easily!)
+and put it into flash mode using the reset button (you should see some LED responce on the MCU
+after pressing the reset button -- if you don't, double-check your soldering).
+Quickly run the command `dmesg | tail` to see the end of the kernel message log.
+The last line should look something like this:
+```
+[282940.909773] cdc_acm 1-1.2:1.0: ttyACM0: USB ACM device
+```
+This tells you the device name `ttyACM0` that you will relay to `avrdude` so it knows which device to flash --
+In this case, it can be found at `/dev/ttyACM0`. You may get a different name depending on your OS, or a different
+number if another ACM device is already plugged in.
+
+Note that your OS may restrict access to this device to certain groups.
+Since it would be cumbersome to have to run as root every time you want to flash,
+I recommend that you add your own user to the same group `/dev/ttyACM*` is accessible by.
+After pressing the reset button, run `ls -la /dev | grep ttyACM`, which should output something like this: 
+```
+crw-rw-r-- 1 root dialout ... /dev/ttyACM
+```
+In this case, the OS gave read/write permissions to the `dialout` group, and you can add yourself to this group
+with the command `sudo usermod -a -G dialout myUserName`. You can skip this step though if you use the mega-command below.
+
+The command to flash your MCU is this:
+```bash
+avrdude -v -patmega32u4 -cavr109 -P/dev/ttyACM0 -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
+```
+I found that I have to wait a few seconds after pressing the reset button for it to work.
+Run the same command for both halves of the keyboard -- they use the same exact firmware,
+but are able to tell which half is which based on which one is plugged in.
+For this keyboard, the right half is the one that you should plug in while using it.
+
+The following mega-command packs everything up into one. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
+```bash
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
+```
+
+### Final Adjustments to the PMW3360 Sensor Distance
+
+Now that your Arduino Micro has the firmware flashed onto it,
+test adjustments of the PMW3360 sensor from the trackball mount to make sure
+that it is able to pick up the motion of the trackball.
+
+Plug in the right half of the keyboard.
+As an initial sanity check, let's make sure that the sensor is working at all.
+With the trackball removed, manually press down on the trackswitch
+and move your finger around near the sensor to see if you're able to get the mouse to jiggle.
+If you can't, that's probably a sign that you need to double-check the connection of the PMW3360 and/or trackswitch.
+
+Now, make micro-ajustments in the tightening direction of both screws in equal increments
+until the sensor is just able to pick up the motion of the trackball.
+Doing this slowly and carefully can help mitigate the issue of the mouse shifting when releasing the trackball
+(mentioned in relation to the `MLOCK` key).
+
+Note that adjustment is a one-way street and you should *only* tighten!
+If you find that you have gone too far, you can loosen again,
+but you will probably have to re-tighten the nuts on the back
+and definitely will have to de-compress the stablizing Blu-Tac.
+
+Once you've gotten the distance just right, use hot glue to fix everything in place.
+Make sure that you don't let any of the glue seep over the lens of the sensor.
+
+Congratulations, you now have a fully functional Trackswitch Manuform!
 
 ## License
 

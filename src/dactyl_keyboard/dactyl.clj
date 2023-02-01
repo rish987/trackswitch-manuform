@@ -173,7 +173,14 @@
                   (= column 1)  (- 23) ;;index
                   (= column 2)  (- 23) ;;middle
                   (= column 3)  (- 23) ;;ring
-                  (= column 4)  (- 47) ;;pinky -- keep this lower or else it will get in the way when actuating "s"
+                  (= column 4)  (- 47) ;;pinky -- keep this lower or else it will get in the way when actuating "a"
+                  :else 0))
+
+(defn below-z-off [column] (cond
+                  (= column 1)  0 ;;index
+                  (= column 2)  0 ;;middle
+                  (= column 3)  0 ;;ring
+                  (= column 4)  0 ;;pinky
                   :else 0))
 
 (defn below-init-z-rot [column] (cond
@@ -1118,7 +1125,7 @@
         )
         (when (= row 3)
           (->> 
-              (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 0 (below-init-z-rot column) (below-x-rot column) (below-z-rot column) shape)
+              (key-vert-place' translate-fn rotate-x-fn rotate-y-fn rotate-z-fn (below-extra-dist column) 0 (below-z-off column) (below-init-z-rot column) (below-x-rot column) (below-z-rot column) shape)
               (apply-key-geometry' translate-fn rotate-x-fn rotate-y-fn column homerow)
           )
         )
