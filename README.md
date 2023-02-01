@@ -309,7 +309,7 @@ The mnemonic is that
 `thumb-uo` stands for "thumb upper-out",
 `thumb-i` stands for "thumb in" (as in moving your thumb inwards),
 `thumb-o` stands for "thumb out" (as in moving your thumb outwards), and
-`thumb-d` stands for "thumb out" (as in pressing your thumb down).
+`thumb-d` stands for "thumb down" (as in pressing your thumb down).
 
 #### Repositioning the Screw Insert Mounts
 
