@@ -95,7 +95,7 @@ The diameter of the trackball. When measuring, turn it a bit in the calipers to 
 
 The height of the dowels (apologies for the inconsistent spelling).
 
-![dowell-height measurement](images/dowell-height.png)
+![dowell-height measurement](images/measurements/dowell-height.png)
 
 ### `sa-height1`
 
@@ -1237,7 +1237,7 @@ The travel distance is shorter, the keys are actuated at more natural angles,
 and the left thumb cluster is super comfortable to use for level-shifting (and makes up for the fact that there aren't many keys to work with).
 
 Why should I use this keyboard over something like the [lalboard](https://github.com/JesusFreke/lalboard)?
-- I can't really comment to much on the lalboard as I haven't built one myself.
+- I can't really comment too much on the lalboard as I haven't built one myself.
 But from what I can tell it really completely optimizes travel distance of your fingers
 and on top of that is entirely adjustable after being printed.
 I suppose I created this keyboard as a compromise between that and the Dactyls that I am used to.
