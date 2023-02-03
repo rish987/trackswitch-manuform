@@ -69,14 +69,14 @@ Part | Price | Comments
 [M2, M3 screws and washers](https://www.amazon.com/gp/product/B07F74JHBD/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $28.99 | Again, good to have a full set for other 3D printer projects.
 
 
-Total: $352.37
+Total: $357.36
 
 This is a bit of an overestimate, considering that a lot of the listings above come with
 more pieces/material than needed (and you may already have some of these things lying around).
 Personally, I like to have two keyboards (one for at home and another for on-the-go/redundancy in case one breaks),
 and if you want to build a second keyboard,
 the items you will need to re-purchase are the keycaps, trackball, Arduino Micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
-for an additional $111.28. Two of these keyboards for less than $231.83 each sounds like a pretty good deal to me!
+for an additional $111.28. Two of these keyboards for less than $234.33 each sounds like a pretty good deal to me!
 
 ## Preliminary Measurements
 
@@ -1193,9 +1193,9 @@ In addition to these, I have defined a few of my own:
 
 Keycode | Short Alias | Function
 -----|-------|----
-TRACKSWITCH | TRKSWCH | The trackswitch button. This both enables mouse movement and shifts to the mouse layer. You should only use this for the actual trackswitch key.
-MOUSE_LOCK | MLOCK | Locks mouse movement. When releasing the trackswitch, the movement of the trackball means that a little bit of mouse movement is pretty much unavoidable before the actual trackswitch switch is fully de-actuated. While in most cases I have found this to be inconsequential, for the rare cases that it is undesirable you can use this key to lock the mouse in place before releasing.
-TRACKPOINT_MODE | TRKPNT | Activate trackpoint mode.
+`TRACKSWITCH` | `TRKSWCH` | The trackswitch button. This both enables mouse movement and shifts to the mouse layer. You should only use this for the actual trackswitch key.
+`MOUSE_LOCK` | `MLOCK` | Locks mouse movement. When releasing the trackswitch, the movement of the trackball means that a little bit of mouse movement is pretty much unavoidable before the actual trackswitch switch is fully de-actuated. While in most cases I have found this to be inconsequential, for the rare cases that it is undesirable you can use this key to lock the mouse in place before releasing.
+`TRACKPOINT_MODE` | `TRKPNT` | Activate trackpoint mode.
 
 ### Compiling & Flashing the MCUs
 
