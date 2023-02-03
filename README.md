@@ -820,8 +820,19 @@ This tape will keep the trackswitch mount steady once it is screwed in,
 and also help to keep the stablizing nut in place.
 Put the washers on the screws and insert them into the trackswitch mount.
 The washers should fit snugly into the cutouts on the top of the mount.
+
 Screw on the nuts on the other side tight enough so that the screws aren't able to jiggle,
 but not so tight that you aren't able to turn them (along with the nuts).
+Getting this balance just right can be tricky. If you find that you can't get the nuts tight enough
+without them catching on the part, I suggest that you fashion some small plastic washers
+to place between the nut and the mount (you can try to use a normal metal washer but in my experience these also tended to catch).
+You can make one of these by taking a 7/64 drill bit and carefully making a hole in a thin piece of plastic
+(like a grape container), and cutting out a small circle around it.
+Be sure to deburr the hole so that both sides of the washer are flat.
+You may find that you need to use a couple of these washers on a single screw.
+It will end up looking something like this once installed:
+
+![Plastic washer](images/plastic_washer.png)
 
 Screw both screws into the corresponding inserts on the right switch plates just enough so that the mount takes hold.
 Take the trackswitch keyswitch you have chosen, remove the trackball, and insert it into the trackswitch mount (through the square hole on the trackball mount).
@@ -833,7 +844,7 @@ proceed to make equal and incremental tightenings of both screws until you hear 
 As soon as you do hear a beep, spin the trackball around a bit to make sure that it is consistent
 (both imperfections on the surface of the trackball and movement of the actuator within the switch
 housing can make this inconsistent).
-If it isn't, make microadjustments until it is.
+If it isn't, continue to make microadjustments until it is.
 
 Orient your switch plates approximately how they will be once mounted.
 When you release the trackball, it should lift up and the beep should stop.
