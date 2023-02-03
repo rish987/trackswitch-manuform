@@ -968,8 +968,11 @@ If you find that any of the plugs ends are loose on the Arduino pins,
 you can use some hot glue to prevent them from being shaken off.
 
 The completed MCU assembly should like this for the Arduino Micro (right half):
+
 ![Arduino Micro Assembly](images/arduino-micro-assembly.png)
+
 and like this for the Pro Micro (left half):
+
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
 
 For each side, slide the whole MCU assembly into its corresponding spot in the case walls.
