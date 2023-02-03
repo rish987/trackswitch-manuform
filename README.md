@@ -879,7 +879,7 @@ I recommend bending the pins to give just enough clearance between the MCU and P
 For the Arduino Micro (you can't see in this image but I only bent the last 7 pins on the left side, and also
 the 6 ICSP pins:
 
-![Bent Pins, Arduino Micro](images/bent-pins-Arduino.png)
+![Bent Pins, Arduino Micro](images/bent-pins-arduino.png)
 and for the PMW3360:
 
 ![Bent Pins, PMW3360](images/bent-pins-PMW3360.png)
@@ -968,7 +968,7 @@ If you find that any of the plugs ends are loose on the Arduino pins,
 you can use some hot glue to prevent them from being shaken off.
 
 The completed MCU assembly should like this for the Arduino Micro (right half):
-![Arduino Micro Assembly](images/Arduino-micro-assembly.png)
+![Arduino Micro Assembly](images/arduino-micro-assembly.png)
 and like this for the Pro Micro (left half):
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
 
