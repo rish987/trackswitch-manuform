@@ -11,7 +11,7 @@ It also incorporates some novel features:
 - To make up for this lack of keys, the left side of this keyboard features a powerful thumb cluster with five keys (four of which are vertically actuated: one by the base of the thumb (actuated by curling the thumb inwards), two by the tip of the thumb (actuated by extending the thumb upwards), and another by the thumb knuckle (actuated by moving the thumb outwards)) that allow for fast level-shifting.
 - The right side incorporates a trackball mount with a mechanism (consisting of a switch mounted underneath the trackball) that allows the trackball itself to act as a "switch" that can be pressed down to both enable mouse movement and activate the mouse button layer. This means that you don't have to press any buttons to enter the mouse layer before using the trackball -- the action of pressing down the trackball (and thus activating the trackswitch) shifts into the mouse layer. I refer to this collective assembly as the "trackswitch".
 - Both the trackswitch and trackball sensor have fully parameterized mounts with mounting mechanisms that allow their distance from the trackball to be micro-adjustable.
-- Fully parameterized case mounts for the arduino micro and pro-micro MCUs.
+- Fully parameterized case mounts for the Arduino Micro and Pro Micro MCUs.
 
 Coupling this keyboard with a pair of [chair-mounted mini-tables](https://github.com/rish987/chair-mounted-mini-tables) makes for an extremely
 ergonomic setup, with typing comfort the likes of which you have probably never experienced before:
@@ -28,6 +28,7 @@ ergonomic setup, with typing comfort the likes of which you have probably never 
 - Solder fume extractor
 - Safety goggles
 - Sharpie pen
+- X-Acto Knife
 - Multimeter with continuity beep and alligator clips
 - Hot glue gun
 - Heat gun and heat shrink tubing
@@ -37,13 +38,14 @@ ergonomic setup, with typing comfort the likes of which you have probably never 
 - Caliper (digital recommended)
 - Keyswitch/Keycap puller
 - [0.6mm nozzle](https://www.amazon.com/gp/product/B093SKXHL3/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) (recommended for faster prints)
-- [Blu-Tac](https://www.amazon.com/gp/product/B001FGLX72/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+- [Blu-Tack](https://www.amazon.com/gp/product/B001FGLX72/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 
 ## Bill-of-Materials
 
 Part | Price | Comments
 -----|-------|----
-[Arduino micro without headers](https://www.amazon.com/gp/product/B00AFY2S56/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1) | $23.88 | This is needed only for the right (trackball) half of the keyboard (you can get away with a pro micro on the left half). I like to get the version without headers and solder my own headers on the top to reduce its overall height.
+[Arduino Micro without headers](https://www.amazon.com/dp/B01N1MJYK3/ref=twister_B09TRPJVK6?_encoding=UTF8&psc=1) | $23.88 | This is needed only for the right (trackball) half of the keyboard (you can get away with a pro micro on the left half). I like to get the version without headers and solder my own headers on the top to reduce its overall height.
+[Arduino header strip](https://www.amazon.com/MCIGICM-Header-2-45mm-Arduino-Connector/dp/B07PKKY8BX/ref=sr_1_3?crid=2FCSAJKTFP6FH&keywords=Arduino+headers&qid=1675438451&s=electronics&sprefix=Arduino+header%2Celectronics%2C445&sr=1-3) | $4.99
 [Pro Micro MCU](https://www.amazon.com/gp/product/B08THVMQ46/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $19.88 | For the left half. BE CAREFUL WITH THESE! They're pretty flimsy and I've broken the USB headers on muliple of them, so it's good to get a few in case something happens.
 [PMW3360 Motion Sensor](https://www.tindie.com/products/jkicklighter/pmw3360-motion-sensor/) | $29.99 | Trackball motion sensor.
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
@@ -73,8 +75,8 @@ This is a bit of an overestimate, considering that a lot of the listings above c
 more pieces/material than needed (and you may already have some of these things lying around).
 Personally, I like to have two keyboards (one for at home and another for on-the-go/redundancy in case one breaks),
 and if you want to build a second keyboard,
-the items you will need to re-purchase are the keycaps, trackball, Arduino micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
-for an additonal $111.28. Two of these keyboards for less than $231.83 each sounds like a pretty good deal to me!
+the items you will need to re-purchase are the keycaps, trackball, Arduino Micro, Pro Micro (possibly), PMW3360, and silicone wrist wrests
+for an additional $111.28. Two of these keyboards for less than $231.83 each sounds like a pretty good deal to me!
 
 ## Preliminary Measurements
 
@@ -185,7 +187,7 @@ However, the OpenSCAD language is fairly niche and doesn't have a lot of user-fr
 For this reason, most iterations of Dactyl Manuforms have been implemented primarily or entirely in
 Clojure and transpiled to OpenSCAD (`.scad`) using the [`scad-clj` package](https://github.com/farrellm/scad-clj)
 (you don't have to install this yourself, `lein auto generate` below should do it for you).
-For this transpilation, you will need an additonal piece of sofware called [leiningen](https://leiningen.org/).
+For this transpilation, you will need an additional piece of software called [leiningen](https://leiningen.org/).
 
 Once everything is installed, run
 ```bash
@@ -240,7 +242,7 @@ this keyboard to exactly fit the shape of your hand:
 
 The vertically actuated keys are placed using the function `key-vert-place`,
 which takes a few parameters that can alter its position relative to the
-default (i.e. all-paramters-set-to-zero) position.
+default (i.e. all-parameters-set-to-zero) position.
 This default position aligns
 the bottom edge of the top of the vertical switch's keycap
 with
@@ -284,7 +286,7 @@ See `above-z-rot`, `above-extra-dist`, `above-x-rot`, `above-z-off`, `above-init
 Note that there's a bit of a tradeof with these keys when it comes to the `above-x-rot` parameter.
 Steeper of an angle means shorter travel distance, but it also means that you will have to keep
 your fingernails short in order to actuate them comfortably.
-If you aren't ready for this committment, I recommend using a flatter angle.
+If you aren't ready for this commitment, I recommend using a flatter angle.
 
 #### Adjusting the Below Keys
 
@@ -293,10 +295,10 @@ See `below-z-rot`, `below-extra-dist`, `below-x-rot`, `below-z-off`, `below-init
 #### Adjusting the Left-of-Index Keys
 
 For the vertical key to the left of the RH homerow index key (`h` on the QWERTY layout), see
-`h-rot`, `h-extra-dist`, `h-x-off`, `h-x-rot`, `h-z-off`, `h-z-rot`.
+`h-z-rot`, `h-extra-dist`, `h-x-off`, `h-x-rot`, `h-z-off`, `h-init-z-rot`.
 
 For the vertical key to the upper-left of the RH homerow index key (`y` on the QWERTY layout), see
-`y-rot`, `y-extra-dist`, `y-x-off`, `y-x-rot`, `y-z-off`, `y-z-rot`.
+`y-z-rot`, `y-extra-dist`, `y-x-off`, `y-x-rot`, `y-z-off`, `y-init-z-rot`.
 
 #### Adjusting the Thumb Cluster Layout
 
@@ -325,7 +327,7 @@ have the correct rotation relative to the case walls and also have enough purcha
 
 #### Repositioning the MCU Holder Cutout
 
-If you change the possiton of the above-home-row keys, you'll probably also have to
+If you change the position of the above-home-row keys, you'll probably also have to
 change the position of the MCU holder cutout.
 When rendering the case walls with `testing` set to `true`,
 it will also render a ghost of the MCU holder to help you position it properly.
@@ -533,7 +535,7 @@ On the left side, we can get away with the cheaper Pro Micro:
 Given the crazy angles of the keys, this keyboard is easiest to solder before inserting the hotswap sockets into the keyboard.
 (The plates actually have holes for holding the diodes that we're not going to use; I just left them in since they make the keyboard a bit lighter).
 So, for each half, start by laying out the hotswap sockets in the approximate shape of the keyboard,
-using Blu-Tac to hold them in place.
+using Blu-Tack to hold them in place.
 Reference your printed switch plates to make sure that you leave
 more than enough distance between them so that they can reach the keys that they need to reach.
 This will undoubtedly result in spaghetti wiring underneath your keyboard, but hey, I like spaghetti, don't you?
@@ -562,7 +564,7 @@ Mark the start of this extra length with a Sharpie.
 Note that some columns will have to reach their respective thumb keys
 (and the third row will have to reach the trackswitch key in the right half),
 and so will require a good amount of extra length for that.
-Use Blu-Tac to keep the wires next to their rows/columns after cutting them:
+Use Blu-Tack to keep the wires next to their rows/columns after cutting them:
 
 ![Cut Row/Column Lines](images/cut-lines.png)
 
@@ -612,7 +614,7 @@ Count out 36 diodes and separate cut them off from the rest of the strip.
 Using some straight edge like the edge of a table to make the initial bend,
 make a hook with the wire on the *black* side of the diode.
 Make a cut so that you will have enough wire to be able to wrap the hook around the lines.
-On the other side, cut again, leaving a few millimiters of wire.
+On the other side, cut again, leaving a few millimeters of wire.
 Your cut diodes should end up looking like this:
 
 ![Cut Diodes](images/cut-diodes.png)
@@ -624,7 +626,7 @@ so you have about a millimeter of extra length below the hook:
 
 ![Cut Column Probes](images/cut-column-probes.png)
 
-Now, I recommend getting two wads of Blu-Tac out
+Now, I recommend getting two wads of Blu-Tack out
 and using them to stick all of the diodes and column probes vertically into.
 This will make it easy to pick them up with pliers for the soldering step
 (I will spare you from a photograph of this since the sight of it evokes visceral disgust).
@@ -671,7 +673,7 @@ and use your heat gun to insulate this connection with the heat shrink tubing, l
 
 (I actually crimped my own jumpers without a plug end, so you will probably have more of a bulge underneath
 your heatshrink tube from the plug housing).
-You can now pull the wires off of the table and roll off all of the Blu-Tac.
+You can now pull the wires off of the table and roll off all of the Blu-Tack.
 
 #### Solder the PMW3360 Sensor
 
@@ -697,9 +699,9 @@ the TRRS jack probes (it doesn't really matter which ones you use, as long as yo
 
 ![Soldered TRRS](images/soldered-trrs.png)
 (You can see that I have already inserted these into the MCU holder but this isn't actually necessary,
-you can just use Blu-Tac to hold them in place while soldering like I did for the reset buttons above).
+you can just use Blu-Tack to hold them in place while soldering like I did for the reset buttons above).
 
-On the right side, we will actually need an extra ground pin, so fasion one of these short jumpers
+On the right side, we will actually need an extra ground pin, so fashion one of these short jumpers
 with a single socket on one end, and two pins on the other:
 
 ![Double-probe](images/double-probe.png)
@@ -707,6 +709,48 @@ with a single socket on one end, and two pins on the other:
 #### Check Everything
 
 Go around and gently jiggle all of the soldered joints, checking that everything is solid before proceeding to the assembly.
+
+#### Solder the MCU Headers
+
+It's probably a good idea to use pins on your Arduino for a couple reasons.
+Firstly, it makes it easy to fix any mistakes you may make when connecting things up.
+Secondly, it gives you the option of re-using your MCU for a different project
+if you find that this keyboard is not the best for you.
+While the connections may not be as "solid" as directly soldering onto the board,
+I have found that you can just use hot glue to keep everything in place
+once you have verified that the keyboard is working as you expect.
+
+The Arduino Micro with header options you find online will probably
+have the headers pre-soldered on the bottom.
+I find that this adds some unnecessary height to the board
+because of the ICSP headers that jut out on the other side.
+I would rather not cut those off (again, you may end up wanting to re-use this Arduino for a different project),
+so I like to get the Arduino Micro without headers and solder my own headers on the top instead.
+
+Cut off two strips of 17 pins each from the Arduino pin header strips.
+When you try to fit them on the top, you may find that they conflict with some of the components protruding from the board --
+if so, you should be able to strip away a bit from the plastic on the headers with an X-Acto knife to make room for them.
+
+Get a wad of Blu-Tack and place the Arduino Micro with the pin headers upside-down
+on it (so that the pins press into the Blu-Tack and hold the Arduino in place).
+Try to make sure that the pins are at a 90-degree angle relative to the Arduino.
+
+Now, heat up your solder iron and get a bit of solder ready.
+When soldering a pin, first press your iron against both the pin and the contact on the PCB,
+and wait for the components to heat up.
+When you feed in the solder, press it against the pin and MCU contact, not the solder iron.
+It should get "sucked in" all around the contact and the pin.
+If it doesn't, it probably means that you didn't heat up both the pin and the contact on the MCU all the way,
+so make sure that you have positioned the iron tip correctly and it is at a high enough temperature.
+Make sure you feed in enough solder so that it goes all the way around the contact (i.e. doesn't leave any holes).
+
+Regarding the Pro Micro, all on the options I have seen online with pre-soldered headers also put them on
+the "wrong" side, at least for this build.
+I like to have these headers on top as well because I like to use the flat side on the bottom of the board
+to stick it onto the MCU holder strip.
+There's a good chance that the Pro Micro that you bought came with a 12-header strip,
+but if it didn't, the Arduino header strips should work just fine for this as well.
+The soldering process should be identical to that of the Arduino Micro.
 
 #### Inserting the Inserts
 
@@ -747,7 +791,7 @@ After it's dry, plug the switch in and out a few times to make sure it stays
 (if it doesn't, which probably means you didn't use enough glue or didn't place it correctly, use your pliers to pull out the hot glue and try again).
 
 On the right side, leave the trackswitch socket dangling for now,
-you will install that after the trackswitch has been moutned.
+you will install that after the trackswitch has been mounted.
 After all is said and done, you will have something like this:
 
 ![Spaghetti](images/spaghetti.png)
@@ -781,7 +825,7 @@ but not so tight that you aren't able to turn them (along with the nuts).
 
 Screw both screws into the corresponding inserts on the right switch plates just enough so that the mount takes hold.
 Take the trackswitch keyswitch you have chosen, remove the trackball, and insert it into the trackswitch mount (through the square hole on the trackball mount).
-Plug in the socket ends of your jumper wires and clip the alligator clips of your multimeter onto the plug ends.
+Plug in the socket ends of your jumper wires onto the pins on the switch and clip the alligator clips of your multimeter onto the plug ends.
 Turn on your multimeter and put it into continuity beep mode.
 
 Now, take an M3 allen wrench, and with the trackball pressed down,
@@ -794,9 +838,9 @@ If it isn't, make microadjustments until it is.
 Orient your switch plates approximately how they will be once mounted.
 When you release the trackball, it should lift up and the beep should stop.
 Whether or not this happens depends on two factors: the actuation force of the keyswitch used and the pitch of the plates.
-The pitch of the plates should be far enough forward such that gravity, along with the force of the spring in the keyswitch,
-is able to pull the trackball out (so yes, this mechanism depends on gravity in order to work properly;
-my sincerest apologies to the astronaut and sloth communities).
+The pitch of the plates should be far enough forward such that the force of the spring in the keyswitch
+is able to pull the trackball out. If it is too far back, the force of gravity will exceed the force of the keyswitch and
+the trackball won't be able to pop out.
 
 If this doesn't happen, then you either have it pitched too far back or your keyswitch doesn't have a high enough actuation force.
 If you find that the beep doesn't stop, it means that you went too far in the previous step -- unfortunately, since loosening tends to
@@ -817,14 +861,14 @@ Take out the PMW3360 sensor, the PMW3360 mount, and the M2 screws (20mm long), n
 Gently press the PMW3360 sensor into the mount, oriented such that the protruding jumper ends are on the same side as their cutout on mount.
 The mount should hold both the sensor and the lens securely together.
 
-I have found that on the right side, there is actually quite a tight fit between the arduino micro and the trackball sensor.
+I have found that on the right side, there is actually quite a tight fit between the Arduino Micro and the trackball sensor.
 This would not be an issue if it weren't for the height of the jumper cable plug/socket housings,
 but if you are planning to use pins (as I do in this guide) rather than soldering directly onto the MCUs,
-I recommending bending the pins to give just enough clearance between the MCU and PMW3360 connection.
-For the Arduino micro (you can't see in this image but I only bent the last 7 pins on the left side, and also
+I recommend bending the pins to give just enough clearance between the MCU and PMW3360 connection.
+For the Arduino Micro (you can't see in this image but I only bent the last 7 pins on the left side, and also
 the 6 ICSP pins:
 
-![Bent Pins, Arduino Micro](images/bent-pins-arduino.png)
+![Bent Pins, Arduino Micro](images/bent-pins-Arduino.png)
 and for the PMW3360:
 
 ![Bent Pins, PMW3360](images/bent-pins-PMW3360.png)
@@ -835,17 +879,17 @@ Screw on the nuts on the other side tight enough so that the screws aren't able 
 (optionally, you may use washers on this side as well if it helps),
 but not so tight that you aren't able to turn them (along with the nuts).
 If you can't exactly achieve this, that's okay, just make sure the nuts can spin without catching
-(Blu-Tac will come to your rescue)!
+(Blu-Tack will come to your rescue)!
 
 Insert the screws through the holes in the front of the mount and the holes in the PCB,
 then screw them into the inserts in the back of the mount.
-Now, squeeze some Blu-Tac underneath opposite corners of the mount
+Now, squeeze some Blu-Tack underneath opposite corners of the mount
 as far as possible from the nuts.
 This will add some extra stability as you make the final adjustment.
 Continue to screw in incrementally in equal amounts until the front of the mount is about 6 mm
 away from the back of the trackball mount.
 This will certainly place the sensor too far from the trackball to register,
-but you will make the final adjustments after you have flashed the arduinos
+but you will make the final adjustments after you have flashed the Arduinos
 (so you can test in real-time whether or not the movement is being picked up).
 
 Your mounted PMW3360 should like this:
@@ -901,19 +945,19 @@ making sure you are pressing the parts together as you do so so that the gap doe
 Take out your glue gun, the two MCU holders, the Arduino Micro and Pro Micro, the TRRS adapters, and the reset buttons.
 
 Place the Arduino Micro on its mount, being careful not to break the very thin dowels that are meant to
-insert into the mount holes on each corner of the arduino (though if you do break them, it's probably not a big deal).
-Smear hot glue on each of the four corners to hold the arduino in place (be careful not to obtstruct any of the pins with glue).
+insert into the mount holes on each corner of the Arduino (though if you do break them, it's probably not a big deal).
+Smear hot glue on each of the four corners to hold the Arduino in place (be careful not to obtstruct any of the pins with glue).
 
 Place a line of hot glue on the strip in the Pro Micro holder, and install the Pro Micro.
 On each holder, install a TRRS adapter (first insert the round end into the hole and then press the back in against the tapered back wall),
 using a bit of glue to keep it in place, and install the reset button above the MCU using hot glue as well (enough so that the button doesn't pop out from behind when pressed).
 
-Plug in the arduinos according to the wiring diagram above.
-If you find that any of the plugs ends are loose on the arduino pins,
+Plug in the Arduinos according to the wiring diagram above.
+If you find that any of the plugs ends are loose on the Arduino pins,
 you can use some hot glue to prevent them from being shaken off.
 
 The completed MCU assembly should like this for the Arduino Micro (right half):
-![Arduino Micro Assembly](images/arduino-micro-assembly.png)
+![Arduino Micro Assembly](images/Arduino-micro-assembly.png)
 and like this for the Pro Micro (left half):
 ![Pro Micro Assembly](images/pro-micro-assembly.png)
 
@@ -982,12 +1026,12 @@ make git-submodule
 
 Now, run the following commands to test that the compilation pipeline is working:
 ```shell
-qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
+qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default
 ```
 
 Which should yield an output like this:
 ```
-Ψ Compiling keymap with make --jobs=1 handwired/tractyl_manuform/5x6_right/arduinomicro:default
+Ψ Compiling keymap with make --jobs=1 handwired/tractyl_manuform/5x6_right/Arduinomicro:default
 
 QMK Firmware 0.16.9
 avr-gcc (GCC) 5.4.0
@@ -997,14 +1041,14 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Size before:
    text    data     bss     dec     hex filename
-      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex
+      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex
 
-Copying handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex to qmk_firmware folder        [OK]
-Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex                 [WARNINGS]
+Copying handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex to qmk_firmware folder        [OK]
+Checking file size of handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex                 [WARNINGS]
 
  * The firmware size is approaching the maximum - 28442/28672 (99%, 230 bytes free)
 ```
-Note that this firmare uses up almost all of the space on the MCU (as attested in the warning message),
+Note that this firmware uses up almost all of the space on the MCU (as attested in the warning message),
 so you have to be very careful and selective about any features you want to add to it.
 
 ### Tweaking the Key Layout
@@ -1129,8 +1173,8 @@ you leave your finger on the trackball and move it up in the opposite direction 
 If you want to change the direction of scroll, you would re-activate dragscroll mode (e.g. by pressing the key again).
 
 I also added a mode of my own, called "trackpoint" mode.
-This mimicks the behavior of a trackpoint cursor (those little red dot thingies on Lenovo thinkpads)
-by continously moving the cursor in the direction of the offset of the trackball
+This mimicks the behavior of a trackpoint cursor (those little red dot thingies on Lenovo Thinkpads)
+by continuously moving the cursor in the direction of the offset of the trackball
 from its position when you enabled trackpoint mode.
 This allows you to traverse great distances with the mouse
 without having to lift your finger off of the trackball (or move it at all).
@@ -1157,7 +1201,7 @@ TRACKPOINT_MODE | TRKPNT | Activate trackpoint mode.
 
 Once you have modified the firmware, run this command to compile it:
 ```shell
-qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
+qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default
 ```
 
 This compilation command will leave the compiled `handwired_dactyl_manuform_5x6_default.hex` file in the root dir --
@@ -1165,7 +1209,7 @@ this is what you will flash to the MCUs using `avrdude`.
 
 To flash an MCU, plug it into your computer using the USB cable
 (be very careful and gentle when doing this with the Pro Micro as the USB header tends to snap of very easily!)
-and put it into flash mode using the reset button (you should see some LED responce on the MCU
+and put it into flash mode using the reset button (you should see some LED response on the MCU
 after pressing the reset button -- if you don't, double-check your soldering).
 Quickly run the command `dmesg | tail` to see the end of the kernel message log.
 The last line should look something like this:
@@ -1188,7 +1232,7 @@ with the command `sudo usermod -a -G dialout myUserName`. You can skip this step
 
 The command to flash your MCU is this:
 ```bash
-avrdude -v -patmega32u4 -cavr109 -P/dev/ttyACM0 -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
+avrdude -v -patmega32u4 -cavr109 -P/dev/ttyACM0 -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex":i
 ```
 I found that I have to wait a few seconds after pressing the reset button for it to work.
 Run the same command for both halves of the keyboard -- they use the same exact firmware,
@@ -1197,7 +1241,7 @@ For this keyboard, the right half is the one that you should plug in while using
 
 The following mega-command packs everything up into one. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
 ```bash
-qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
+qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex":i
 ```
 
 ### Final Adjustments to the PMW3360 Sensor Distance
@@ -1212,7 +1256,7 @@ With the trackball removed, manually press down on the trackswitch
 and move your finger around near the sensor to see if you're able to get the mouse to jiggle.
 If you can't, that's probably a sign that you need to double-check the connection of the PMW3360 and/or trackswitch.
 
-Now, make micro-ajustments in the tightening direction of both screws in equal increments
+Now, make micro-adjustments in the tightening direction of both screws in equal increments
 until the sensor is just able to pick up the motion of the trackball.
 Doing this slowly and carefully can help mitigate the issue of the mouse shifting when releasing the trackball
 (mentioned in relation to the `MLOCK` key).
@@ -1220,7 +1264,7 @@ Doing this slowly and carefully can help mitigate the issue of the mouse shiftin
 Note that adjustment is a one-way street and you should *only* tighten!
 If you find that you have gone too far, you can loosen again,
 but you will probably have to re-tighten the nuts on the back
-and definitely will have to de-compress the stablizing Blu-Tac.
+and definitely will have to de-compress the stablizing Blu-Tack.
 
 Once you've gotten the distance just right, use hot glue to fix everything in place.
 Make sure that you don't let any of the glue seep over the lens of the sensor.
@@ -1229,7 +1273,7 @@ Congratulations, you now have a fully functional Trackswitch Manuform!
 
 # (Anticipated) FAQ
 
-Why should I use this keyboard over a standard (flat) dactyl manuform?
+Why should I use this keyboard over a standard (flat) Dactyl Manuform?
 - There is a bit of a learning curve to this keyboard, and of course the time investment of actually tweaking and building one
 (the build is quite a bit more intricate and time-consuming than that of a normal Dactyl, but still very much doable),
 but once you actually have a functional keyboard I can't think of any downsides.
@@ -1249,7 +1293,7 @@ This keyboard (with the exception of `thumb-o`, which is actuated by your thumb 
 base of your fingers like you are used to (and which I personally find most comfortable).
 
 Does the trackswitch interfere with the smooth motion of the trackball?
-- This depends on the switch you choose to use for the trackswitch. Regardless of which switch you choose, there will be some extra resistance from that while moving the trackball, but if you choose one with just enough actuation force to push the trackball up when released (I used a Kalih silver) it should barely be noticable.
+- This depends on the switch you choose to use for the trackswitch. Regardless of which switch you choose, there will be some extra resistance from that while moving the trackball, but if you choose one with just enough actuation force to push the trackball up when released (I used a Kalih silver) it should barely be noticeable.
 
 With a normal trackball I'm used to being able to lift my finger off and reposition it to e.g. move long distances and scroll.
 Would the trackswitch mechanism (which pushes the trackball out when it is released) interfere with that?
@@ -1264,5 +1308,5 @@ The source code for generating the models is distributed under the [GNU AFFERO G
 
 The generated models are distributed under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSE-models).
 
-The [[file:images/more_images/Pinout-Micro_latest.png][Arduino Micro pinout image]] is [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed. The image is work of [[https://www.arduino.cc/][Arduino]].
+The [[file:images/more_images/Pinout-Micro_latest.png][Arduino Micro pinout image]] is [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed. The image is work of [[https://www.Arduino.cc/][Arduino]].
 All other images are [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed as well.
