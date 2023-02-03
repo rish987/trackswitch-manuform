@@ -1040,12 +1040,12 @@ make git-submodule
 
 Now, run the following commands to test that the compilation pipeline is working:
 ```shell
-qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
 ```
 
 Which should yield an output like this:
 ```
-Ψ Compiling keymap with make --jobs=1 handwired/tractyl_manuform/5x6_right/Arduinomicro:default
+Ψ Compiling keymap with make --jobs=1 handwired/tractyl_manuform/5x6_right/arduinomicro:default
 
 QMK Firmware 0.16.9
 avr-gcc (GCC) 5.4.0
@@ -1055,10 +1055,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Size before:
    text    data     bss     dec     hex filename
-      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex
+      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex
 
-Copying handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex to qmk_firmware folder        [OK]
-Checking file size of handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex                 [WARNINGS]
+Copying handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex to qmk_firmware folder        [OK]
+Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex                 [WARNINGS]
 
  * The firmware size is approaching the maximum - 28442/28672 (99%, 230 bytes free)
 ```
@@ -1215,7 +1215,7 @@ Keycode | Short Alias | Function
 
 Once you have modified the firmware, run this command to compile it:
 ```shell
-qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default
 ```
 
 This compilation command will leave the compiled `handwired_dactyl_manuform_5x6_default.hex` file in the root dir --
@@ -1246,7 +1246,7 @@ with the command `sudo usermod -a -G dialout myUserName`. You can skip this step
 
 The command to flash your MCU is this:
 ```bash
-avrdude -v -patmega32u4 -cavr109 -P/dev/ttyACM0 -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex":i
+avrdude -v -patmega32u4 -cavr109 -P/dev/ttyACM0 -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
 ```
 I found that I have to wait a few seconds after pressing the reset button for it to work.
 Run the same command for both halves of the keyboard -- they use the same exact firmware,
@@ -1255,7 +1255,7 @@ For this keyboard, the right half is the one that you should plug in while using
 
 The following mega-command packs everything up into one. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
 ```bash
-qmk compile -kb handwired/tractyl_manuform/5x6_right/Arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_Arduinomicro_default.hex":i
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
 ```
 
 ### Final Adjustments to the PMW3360 Sensor Distance
@@ -1322,5 +1322,5 @@ The source code for generating the models is distributed under the [GNU AFFERO G
 
 The generated models are distributed under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](LICENSE-models).
 
-The [[file:images/more_images/Pinout-Micro_latest.png][Arduino Micro pinout image]] is [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed. The image is work of [[https://www.Arduino.cc/][Arduino]].
+The [[file:images/more_images/Pinout-Micro_latest.png][Arduino Micro pinout image]] is [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed. The image is work of [[https://www.arduino.cc/][Arduino]].
 All other images are [[https://creativecommons.org/licenses/by-sa/4.0/][CC-BY-SA]] licensed as well.
