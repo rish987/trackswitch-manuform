@@ -897,7 +897,7 @@ then screw them into the inserts in the back of the mount.
 Now, squeeze some Blu-Tack underneath opposite corners of the mount
 as far as possible from the nuts.
 This will add some extra stability as you make the final adjustment.
-Continue to screw in incrementally in equal amounts until the front of the mount is about 6 mm
+Continue to screw in incrementally in equal amounts until the front of the mount is about 3mm
 away from the back of the trackball mount.
 This will certainly place the sensor too far from the trackball to register,
 but you will make the final adjustments after you have flashed the Arduinos
