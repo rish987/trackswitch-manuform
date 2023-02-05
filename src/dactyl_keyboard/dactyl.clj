@@ -6,7 +6,7 @@
             [usb_holder :refer [usb-holder usb-holder-mirrored usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
 (def testing true)
-;(def testing false)
+(def testing false)
 
 ; for animation
 ;(defmethod write-expr :t [depth [form {:keys [min max]}]]
@@ -266,12 +266,12 @@
 (def thumb-o-z-rot 120)
 (def thumb-o-z-off 4.8)
 (def thumb-o-x-off (- 16.0))
-(def thumb-o-x-rot (- 20.00))
-(def thumb-o-extra-dist 6.5)
+(def thumb-o-x-rot (- 16))
+(def thumb-o-extra-dist 5.5)
 
 (def thumb-i-z-rot (- 75))
-(def thumb-i-x-rot (- 40))
-(def thumb-i-extra-dist 5.2)
+(def thumb-i-x-rot (- 35))
+(def thumb-i-extra-dist 3.2)
 (def thumb-i-x-off 6)
 (def thumb-i-z-off 0)
 
@@ -2001,6 +2001,13 @@ need to adjust for difference for thumb-z only"
 (defn wall-locate3 [dx dy border] [(* dx (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
                                    (* dy (+ (if border wall-border-xy-offset wall-xy-offset) (if border wall-border-thickness wall-thickness))) 
                                    (* 2 (if border wall-border-z-offset wall-z-offset))])
+(defn wall-locate2-vert [dx dy border] [(* dx (if border wall-border-xy-offset wall-xy-offset))
+                                   (* dy (if border wall-border-xy-offset wall-xy-offset))
+                                   0])
+(defn vert-fat-web-post-top' [dx dy border] (rotate-x (deg2rad (- 90)) (translate (map + (wall-locate2-vert dx dy border) [0 vert-post-offset (+ (- (/ web-thickness 2)) 0)]) fat-web-post')))
+
+(defn vert-fat-web-post-tl-lower' [dx dy border] (translate [(+ (/ mount-width -2) fat-post-adj) (+ (/ mount-height -2) 0) 0] (vert-fat-web-post-top' dx dy border)))
+(defn vert-fat-web-post-tr-lower' [dx dy border] (translate [(- (/ mount-width  2) fat-post-adj) (+ (/ mount-height -2) 0) 0] (vert-fat-web-post-top' dx dy border)))
 
 (defn connectors [left]
   (union
@@ -2853,7 +2860,8 @@ need to adjust for difference for thumb-z only"
     ;(key-corner (dec lastcol) firstrow :tr border)
     ;(for [y (range 3 lastrow)] (key-wall-brace (dec lastcol)      y  -1 0 web-post-bl (dec lastcol) y -1 0 web-post-tl border))
 
-    (wall-brace-vert      (partial key-place' border (dec lastcol) 1)  1  1 vert-fat-web-post-tr-lower (partial key-place' border (dec lastcol) 1)  1  1 vert-fat-web-post-br-lower border)
+    (wall-brace-vert      (partial key-place' border (dec lastcol) 1)  1  1 (vert-fat-web-post-tr-lower' -1 0 border) (partial key-place' border (dec lastcol) 1)  1  1 (vert-fat-web-post-tr-lower' 0 -1 border) border)
+    (wall-brace-vert      (partial key-place' border (dec lastcol) 1)  1  1 (vert-fat-web-post-tr-lower' 0 -1 border) (partial key-place' border (dec lastcol) 1)  1  1 vert-fat-web-post-br-lower border)
     (wall-brace'           (partial key-place' border (dec lastcol) 1)  0  0 vert-fat-web-post-br-lower true (partial key-place' border (dec lastcol) 2)  1  0 fat-web-post-tr false border)
     (key-wall-brace        (dec lastcol) 2 1  0 fat-web-post-tr (dec lastcol) 2 1  0 fat-web-post-br border)
     (key-wall-brace        (dec lastcol) 2 1  0 fat-web-post-br (dec lastcol) 3 -1  0 fat-web-post-bl border)
@@ -2871,7 +2879,7 @@ need to adjust for difference for thumb-z only"
     ; (key-wall-brace 0 0 0 1 web-post-tl          0  0 0 1 web-post-tr border)
     (for [c (range firstcol (dec ncols))] 
                   (union 
-                    (wall-brace-vert        (partial key-place' border c firstrow)  1  1 vert-fat-web-post-tl-lower (partial key-place' border c firstrow)  1  1 vert-fat-web-post-tr-lower border)
+                    (wall-brace-vert        (partial key-place' border c firstrow)  1  1 vert-fat-web-post-tl-lower (partial key-place' border c firstrow)  1  1 (if (= c (- ncols 2)) (vert-fat-web-post-tr-lower' -1 0 border) vert-fat-web-post-tr-lower) border)
                     (when border (union
                       (vert-key-case-top-wall (partial key-place' border c firstrow))
                       (vert-key-case-back-wall (partial key-place' border c firstrow))
@@ -3028,9 +3036,9 @@ need to adjust for difference for thumb-z only"
 
     (when left (union
       (->> (wall-brace'        thumb-d-place  -1  -1 fat-web-post-bl false thumb-o-place  0  0 vert-fat-web-post-bl-lower true border) (color BRO))
-      (->> (wall-brace-vert        thumb-o-place  -1  0 vert-fat-web-post-bl-lower thumb-o-place  -1  0 vert-fat-web-post-tl-lower border) (color BRO))
-      (->> (wall-brace-vert        thumb-o-place  -1  0 vert-fat-web-post-tl-lower thumb-o-place  0 1  vert-fat-web-post-tl-lower border) (color GRE))
-      (->> (wall-brace-vert        thumb-o-place  0  1 vert-fat-web-post-tl-lower thumb-o-place  0  1 vert-fat-web-post-tr-lower border) (color BRO))
+      (->> (wall-brace-vert        thumb-o-place  -1  0 vert-fat-web-post-bl-lower thumb-o-place  -1  0 (vert-fat-web-post-tl-lower' 0 -1 border) border) (color BRO))
+      (->> (wall-brace-vert        thumb-o-place  -1  0 (vert-fat-web-post-tl-lower' 0 -1 border) thumb-o-place  0 1  (vert-fat-web-post-tl-lower' 1 0 border) border) (color GRE))
+      (->> (wall-brace-vert        thumb-o-place  0  1 (vert-fat-web-post-tl-lower' 1 0 border) thumb-o-place  0  1 vert-fat-web-post-tr-lower border) (color BRO))
       (->> (wall-brace-vert        thumb-o-place  0  1 vert-fat-web-post-tr-lower thumb-uo-place  0  1 vert-fat-web-post-tl-lower border) (color BRO))
       (->> (wall-brace-vert        thumb-uo-place  0  1 vert-fat-web-post-tl-lower thumb-uo-place  0  1 vert-fat-web-post-tr-lower border) (color BRO))
       (->> (wall-brace-vert        thumb-uo-place  0  1 vert-fat-web-post-tr-lower thumb-u-place  0  1 vert-fat-web-post-tl-lower border) (color BRO))
@@ -4075,17 +4083,17 @@ need to adjust for difference for thumb-z only"
     (spit "things/test.scad"
       (write-scad
         (union 
-          ;(model-switch-plates-right false)
-          ;(union (mirror [-1 0 0] (model-switch-plates-right true)))
+          ;(model-switch-plates-right false) ;right switch plates
+          (union (mirror [-1 0 0] (model-switch-plates-right true))) ;left switch plates
 
-          (union (model-case-walls-right false))
-          ;(union (mirror [-1 0 0] (model-case-walls-right true)))
+          ;(union (model-case-walls-right false)) ;right case walls
+          ;(union (mirror [-1 0 0] (model-case-walls-right true))) ;left case walls
 
-          ;(union (thumb-test false))
-          ;(union (mirror [-1 0 0] (thumb-test true)))
+          ;(union (thumb-test false)) ;right thumb test
+          ;(union (mirror [-1 0 0] (thumb-test true))) ;left thumb test
 
-          ;(usb-holder false)
-          ;(usb-holder-mirrored true)
+          ;(usb-holder false) ;right usb holder (arduino micro)
+          ;(usb-holder-mirrored true) ;left usb holder (pro micro)
 
           ;sensor-case
           ;trackswitch-mount
@@ -4094,48 +4102,48 @@ need to adjust for difference for thumb-z only"
     )
   )
   (when (not testing)
-      (spit "things/switch-plates-right.scad"
-            (write-scad (cura-fix (model-switch-plates-right false))))
-      (spit "things/vert-support-blockers-right.scad"
-            (write-scad (cura-fix (shift-model (vert-layout false vert-support-blocker)))))
-      (spit "things/case-walls-right.scad"
-            (write-scad (model-case-walls-right false)))
-      (spit "things/thumb-test-right.scad"
-            (write-scad (cura-fix (thumb-test false))))
-      (spit "things/vert-support-blockers-thumb-test-right.scad"
-            (write-scad (cura-fix (vert-support-blockers-thumb-test false))))
+    (spit "things/switch-plates-right.scad"
+          (write-scad (cura-fix (model-switch-plates-right false))))
+    (spit "things/vert-support-blockers-right.scad"
+          (write-scad (cura-fix (shift-model (vert-layout false vert-support-blocker)))))
+    (spit "things/case-walls-right.scad"
+          (write-scad (model-case-walls-right false)))
+    (spit "things/thumb-test-right.scad"
+          (write-scad (cura-fix (thumb-test false))))
+    (spit "things/vert-support-blockers-thumb-test-right.scad"
+          (write-scad (cura-fix (vert-support-blockers-thumb-test false))))
 
-      (spit "things/switch-plates-left.scad"
-            (write-scad (cura-fix (mirror [-1 0 0] (model-switch-plates-right true)))))
-      (spit "things/vert-support-blockers-left.scad"
-            (write-scad (cura-fix (mirror [-1 0 0] (shift-model (vert-layout true vert-support-blocker))))))
-      (spit "things/case-walls-left.scad"
-            (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
-      (spit "things/thumb-test-left.scad"
-            (write-scad (cura-fix (mirror [-1 0 0] (thumb-test true)))))
-      (spit "things/vert-support-blockers-thumb-test-left.scad"
-            (write-scad (cura-fix (mirror [-1 0 0] (vert-support-blockers-thumb-test true)))))
+    (spit "things/switch-plates-left.scad"
+          (write-scad (cura-fix (mirror [-1 0 0] (model-switch-plates-right true)))))
+    (spit "things/vert-support-blockers-left.scad"
+          (write-scad (cura-fix (mirror [-1 0 0] (shift-model (vert-layout true vert-support-blocker))))))
+    (spit "things/case-walls-left.scad"
+          (write-scad (mirror [-1 0 0] (model-case-walls-right true))))
+    (spit "things/thumb-test-left.scad"
+          (write-scad (cura-fix (mirror [-1 0 0] (thumb-test true)))))
+    (spit "things/vert-support-blockers-thumb-test-left.scad"
+          (write-scad (cura-fix (mirror [-1 0 0] (vert-support-blockers-thumb-test true)))))
 
-      (spit "things/ardumicro-holder.scad"
-            (write-scad (usb-holder false)))
-      (spit "things/promicro-holder.scad"
-            (write-scad (usb-holder true)))
+    (spit "things/ardumicro-holder.scad"
+          (write-scad (usb-holder false)))
+    (spit "things/promicro-holder.scad"
+          (write-scad (usb-holder true)))
 
-      (spit "things/bottom-plate-right.scad"
-            (write-scad (model-bottom-plate false)))
-      (spit "things/wrist-rest-right-holes.scad"
-            (write-scad model-wrist-rest-right-holes))
+    (spit "things/bottom-plate-right.scad"
+          (write-scad (model-bottom-plate false)))
+    (spit "things/wrist-rest-right-holes.scad"
+          (write-scad model-wrist-rest-right-holes))
 
-      (spit "things/bottom-plate-left.scad"
-            (write-scad (mirror [-1 0 0] (model-bottom-plate true))))
-      (spit "things/wrist-rest-left-holes.scad"
-            (write-scad (mirror [-1 0 0] model-wrist-rest-right-holes)))
+    (spit "things/bottom-plate-left.scad"
+          (write-scad (mirror [-1 0 0] (model-bottom-plate true))))
+    (spit "things/wrist-rest-left-holes.scad"
+          (write-scad (mirror [-1 0 0] model-wrist-rest-right-holes)))
 
-      (spit "things/sensor-case.scad"
-            (write-scad sensor-case))
+    (spit "things/sensor-case.scad"
+          (write-scad sensor-case))
 
-      (spit "things/trackswitch-mount.scad"
-            (write-scad trackswitch-mount))
+    (spit "things/trackswitch-mount.scad"
+          (write-scad trackswitch-mount))
   )
 )
 
