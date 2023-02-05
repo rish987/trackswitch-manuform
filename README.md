@@ -49,7 +49,7 @@ Part | Price | Comments
 [Pro Micro MCU](https://www.amazon.com/gp/product/B08THVMQ46/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $19.88 | For the left half. BE CAREFUL WITH THESE! They're pretty flimsy and I've broken the USB headers on muliple of them, so it's good to get a few in case something happens.
 [PMW3360 Motion Sensor](https://www.tindie.com/products/jkicklighter/pmw3360-motion-sensor/) | $29.99 | Trackball motion sensor.
 [Key switches x35](https://www.amazon.com/gp/product/B07X3WKM54/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $34.99 | If you're new to mechanical keyboards Gateron browns are probably a safe option.
-[Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with a Kalih Silver.
+[Keyswitch with a good amount of actuation force](https://www.amazon.com/gp/product/B078FMPZ8R/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $20.99 | This is for the trackswitch -- some force is needed to push the trackball up, but too much force can make the motion less smooth; I recommend getting a sample pack like this one so that you have a few alternatives to try. In my case I ended up going with a Kailh Silver.
 [Trackball](https://www.aliexpress.us/item/3256803106743416.html?spm=a2g0o.productlist.main.7.559e75b6LrrWPq&algo_pvid=5b156845-75aa-4609-92bb-10b4919b35ad&algo_exp_id=5b156845-75aa-4609-92bb-10b4919b35ad-3&pdp_ext_f=%7B%22sku_id%22%3A%2212000025055404434%22%7D&pdp_npi=2%40dis%21USD%2123.46%2111.03%21%21%21%21%21%402102186a16738183211058438d0674%2112000025055404434%21sea&curPageLogUid=fiwnZejyx836) | $11.99
 [3x6mm Dowel Pins](https://www.amazon.com/gp/product/B07M63KXKS/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $7.49
 [3x6x2.5mm Miniature Bearings](https://www.amazon.com/gp/product/B00ZHSQX42/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1) | $10.99
@@ -428,7 +428,14 @@ When orienting the switch plate, make sure to rotate it so there aren't any shar
 that will be printed as single points in a layer -- that is, all corners should be printed
 as part of a line of filament.
 Double-check in the layers preview after slicing that this is really the case!
-Accommodating this requirement will likely result in some additional support material,
+One trick that I have found useful is to translate the part such that any problematic corners
+are at the lowest point in the model and pushed slightly below the build plate
+(so they will be cut off a little bit and not printed as points).
+By rotating the part, you should be able to protect at least two corners in this way:
+
+![Cutting corners](images/cut-corners.png)
+
+Accommodating this requirement may result in some additional support material,
 but this is well-worth it to prevent failed corners, or, in the worst case, a failed print.
 
 #### Printing
@@ -850,7 +857,7 @@ Orient your switch plates approximately how they will be once mounted.
 When you release the trackball, it should lift up and the beep should stop.
 Whether or not this happens depends on two factors: the actuation force of the keyswitch used and the pitch of the plates.
 The pitch of the plates should be far enough forward such that the force of the spring in the keyswitch
-is able to pull the trackball out. If it is too far back, the force of gravity will exceed the force of the keyswitch and
+is able to push the trackball out. If it is too far back, the force of gravity will exceed the force of the keyswitch and
 the trackball won't be able to pop out.
 
 If this doesn't happen, then you either have it pitched too far back or your keyswitch doesn't have a high enough actuation force.
@@ -1307,7 +1314,7 @@ This keyboard (with the exception of `thumb-o`, which is actuated by your thumb 
 base of your fingers like you are used to (and which I personally find most comfortable).
 
 Does the trackswitch interfere with the smooth motion of the trackball?
-- This depends on the switch you choose to use for the trackswitch. Regardless of which switch you choose, there will be some extra resistance from that while moving the trackball, but if you choose one with just enough actuation force to push the trackball up when released (I used a Kalih silver) it should barely be noticeable.
+- This depends on the switch you choose to use for the trackswitch. Regardless of which switch you choose, there will be some extra resistance from that while moving the trackball, but if you choose one with just enough actuation force to push the trackball up when released (I used a Kailh silver) it should barely be noticeable.
 
 With a normal trackball I'm used to being able to lift my finger off and reposition it to e.g. move long distances and scroll.
 Would the trackswitch mechanism (which pushes the trackball out when it is released) interfere with that?
