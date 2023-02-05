@@ -1,4 +1,4 @@
-# Trackswitch Manuform -- A Hyper-Ergonomic Trackball-Enabled Dactyl with a Crazy Mouse Level Shift Mechanism
+# Trackswitch Manuform -- A Hyper-Ergonomic Dactyl Manuform with a Clickable Trackball
 
 This keyboard is an attempt to make a best-of-both-worlds combination between the
 modular (and support-saving) design of [dereknheiley's compactyl manuform](https://github.com/dereknheiley/compactyl) (with adjustable wrist rest mounts)
@@ -428,7 +428,7 @@ When orienting the switch plate, make sure to rotate it so there aren't any shar
 that will be printed as single points in a layer -- that is, all corners should be printed
 as part of a line of filament.
 Double-check in the layers preview after slicing that this is really the case!
-One trick that I have found useful is to translate the part such that any problematic corners
+One trick that I have found useful is to orient the part such that any problematic corners
 are at the lowest point in the model and pushed slightly below the build plate
 (so they will be cut off a little bit and not printed as points).
 By rotating the part, you should be able to protect at least two corners in this way:
@@ -778,7 +778,7 @@ you can likely avoid this if you heed my advice above about orienting the switch
 ## Assembly
 
 Congrats on making it this far!
-The final step is of course to put the electronics and keyswitches together with the
+The final (physical) step is of course to put the electronics and keyswitches together with the
 printed parts, and to set up trackball and trackswitch assembly.
 Get your hot glue gun and M2/M3 screws+nuts+washers ready.
 
