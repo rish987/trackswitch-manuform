@@ -441,7 +441,7 @@ but this is well-worth it to prevent failed corners, or, in the worst case, a fa
 #### Printing
 
 I highly, highly recommend having an [Octoprint](https://octoprint.org/) setup with a camera for this.
-If you use the 0.6mm nozzle as recommended above the print should take no more than 12 hours.
+If you use the 0.6mm nozzle as recommended above the print should take 13-15 hours.
 You should start the print early in the morning (as soon as you wake up).
 It's probably a good idea to smear your buildplate with glue before printing to help prevent any bed adhesion problems.
 Unless you have good safety precautions [like thermal fuses](https://www.youtube.com/watch?v=tTJfASOHojo)
