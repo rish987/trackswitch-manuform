@@ -1,5 +1,7 @@
 # Trackswitch Manuform -- A Hyper-Ergonomic Dactyl Manuform with a Clickable Trackball
 
+[As seen on Reddit!](https://reddit.com/r/ErgoMechKeyboards/comments/10rnnoc/introducing_the_trackswitch_manuform_a/)
+
 This keyboard is an attempt to make a best-of-both-worlds combination between the
 modular (and support-saving) design of [dereknheiley's compactyl manuform](https://github.com/dereknheiley/compactyl) (with adjustable wrist rest mounts)
 and the trackball-enabled design of the [noahprince22's tracktyl manuform](https://github.com/noahprince22/tractyl-manuform-keyboard),
