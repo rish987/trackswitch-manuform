@@ -464,6 +464,9 @@ to break those supports away (you should hear a satisfying crunch as you do this
 The keyboard has four insert adapters that can easily break of during the process of removing supports.
 To avoid this, you may want to try to carefully cut away the supports from around them.
 Use a hefty pair of wire cutters to do this -- NOT the ones supplied with your 3D printer!!!
+If you do end up accidentally breaking one of them anyways, don't worry!
+As long as there is enough left to insert the insert into,
+a screw should still be able to reach it and hold the plates securely.
 
 Using your pliers, go all around and gently loosen up the supports from the part by grabbing it and wiggling it around.
 Then, once everything feels loose enough, pull the supports out, being careful not to injure yourself once they finally come out from behind the vertical keys.
@@ -1246,7 +1249,7 @@ Since it would be cumbersome to have to run as root every time you want to flash
 I recommend that you add your own user to the same group `/dev/ttyACM*` is accessible by.
 After pressing the reset button, run `ls -la /dev | grep ttyACM`, which should output something like this: 
 ```
-crw-rw-r-- 1 root dialout ... /dev/ttyACM
+crw-rw-r-- 1 root dialout ... /dev/ttyACM0
 ```
 In this case, the OS gave read/write permissions to the `dialout` group, and you can add yourself to this group
 with the command `sudo usermod -a -G dialout myUserName`. You can skip this step though if you use the mega-command below.
@@ -1260,7 +1263,7 @@ Run the same command for both halves of the keyboard -- they use the same exact 
 but are able to tell which half is which based on which one is plugged in.
 For this keyboard, the right half is the one that you should plug in while using it.
 
-The following mega-command packs everything up into one. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
+The following mega-command packs everything up into one. Note that it assumes that you don't have any other devices connected with the `/dev/ttyACM*` prefix. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
 ```bash
 qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
 ```
