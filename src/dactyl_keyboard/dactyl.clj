@@ -5,8 +5,8 @@
             [scad-clj.scad :refer :all]
             [usb_holder :refer [usb-holder usb-holder-mirrored usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
-(def testing true)
 (def testing false)
+(def testing true)
 
 ; for animation
 ;(defmethod write-expr :t [depth [form {:keys [min max]}]]
@@ -2153,8 +2153,8 @@ need to adjust for difference for thumb-z only"
 (def trackswitch-wall-clearance 5.5)
 (def trackswitch-connector-off 2.5)
 (def trackswitch-vert-offset (+ web-thickness mount-height -6.5))
-(def trackswitch-connector-post-tr (translate [(+ trackswitch-wall-clearance) trackswitch-vert-offset (- trackswitch-wall-clearance)] vert-short-post-tr-lower))
-(def trackswitch-connector-post-tl (translate [(- trackswitch-wall-clearance) trackswitch-vert-offset (- trackswitch-wall-clearance)] vert-short-post-tl-lower))
+(def trackswitch-connector-post-tr (translate [(+ trackswitch-wall-clearance (- wall-border-xy-offset)) trackswitch-vert-offset (- trackswitch-wall-clearance)] vert-short-post-tr-lower))
+(def trackswitch-connector-post-tl (translate [(+ (- trackswitch-wall-clearance) wall-border-xy-offset) trackswitch-vert-offset (- trackswitch-wall-clearance)] vert-short-post-tl-lower))
 (def trackswitch-connector-post-br (translate [(+ trackswitch-wall-clearance) trackswitch-vert-offset (+ plate-thickness vert-post-offset trackswitch-connector-off)] vert-short-post-tr-lower))
 (def trackswitch-connector-post-bl (translate [(- trackswitch-wall-clearance) trackswitch-vert-offset (+ plate-thickness vert-post-offset trackswitch-connector-off)] vert-short-post-tl-lower))
 
@@ -2908,14 +2908,17 @@ need to adjust for difference for thumb-z only"
         trackball-place (if border trackball-rotate (fn [shape] (shift-model (trackball-rotate shape))))
         trackswitch-place (fn [shape] (trackball-place (trackswitch-place shape)))
         vert-off trackswitch-vert-offset
-        vert-fat-web-post-tr-lower' (translate [(+ trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] vert-fat-web-post-tr-lower)
-        vert-fat-web-post-tl-lower' (translate [(- trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] vert-fat-web-post-tl-lower)
+        vert-fat-web-post-tr-lower-1 (translate [(+ trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] (vert-fat-web-post-tr-lower' 0 -1 border))
+        vert-fat-web-post-tr-lower-2 (translate [(+ trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] (vert-fat-web-post-tr-lower' -1 0 border))
+        vert-fat-web-post-tl-lower-1 (translate [(- trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] (vert-fat-web-post-tl-lower' 1 0 border))
+        vert-fat-web-post-tl-lower-2 (translate [(- trackswitch-wall-clearance) vert-off (- trackswitch-wall-clearance)] (vert-fat-web-post-tl-lower' 0 -1 border))
        ] 
   (union
-    (wall-brace-vert (partial key-place firstcol homerow) -1 0 vert-fat-web-post-tr-lower trackswitch-place -1 0 vert-fat-web-post-tr-lower' border)
-    (wall-brace-vert trackswitch-place -1 0 vert-fat-web-post-tr-lower' trackswitch-place -1 0 vert-fat-web-post-tl-lower' border)
-    (wall-brace' trackswitch-place 0 0 vert-fat-web-post-tl-lower' true (partial thumb-d-place' border) -1 0 fat-web-post-tl false border)
-    ;(wall-brace trackball-place -1 0 trackball-post-bl (partial thumb-m-place' border) -1 0 fat-web-post-tl border)
+    (wall-brace-vert (partial key-place firstcol homerow) -1 0 vert-fat-web-post-tr-lower trackswitch-place -1 0 vert-fat-web-post-tr-lower-1 border)
+    (wall-brace-vert trackswitch-place -1 0 vert-fat-web-post-tr-lower-1 trackswitch-place -1 0 vert-fat-web-post-tr-lower-2 border)
+    (wall-brace-vert trackswitch-place -1 0 vert-fat-web-post-tr-lower-2 trackswitch-place -1 0 vert-fat-web-post-tl-lower-1 border)
+    (wall-brace-vert trackswitch-place -1 0 vert-fat-web-post-tl-lower-1 trackswitch-place -1 0 vert-fat-web-post-tl-lower-2 border)
+    (wall-brace' trackswitch-place 0 0 vert-fat-web-post-tl-lower-2 true (partial thumb-d-place' border) -1 0 fat-web-post-tl false border)
 )))
 
 (defn corner-left-wall [border]
@@ -4083,8 +4086,8 @@ need to adjust for difference for thumb-z only"
     (spit "things/test.scad"
       (write-scad
         (union 
-          ;(model-switch-plates-right false) ;right switch plates
-          (union (mirror [-1 0 0] (model-switch-plates-right true))) ;left switch plates
+          (model-switch-plates-right false) ;right switch plates
+          ;(union (mirror [-1 0 0] (model-switch-plates-right true))) ;left switch plates
 
           ;(union (model-case-walls-right false)) ;right case walls
           ;(union (mirror [-1 0 0] (model-case-walls-right true))) ;left case walls

@@ -762,12 +762,12 @@ The soldering process should be identical to that of the Arduino Micro.
 #### Inserting the Inserts
 
 This is technically part of the assembly step, but is best to do right now while you have your solder iron out.
-Take out your M2 and M3 inserts, wait for your solder iron to cool down, and replace the solder probe with
-the M3 insert probe.
+Take out your M2 and M3 inserts, wait for your solder iron to cool down, and replace the solder tip with
+the M3 insert tip.
 Insert the inserts into the four mounts on the bottom of each of the switch plates,
 the bottom of the case walls, the trackswitch mounts on the right switch plates, and the bottom of the wrist rest holders.
-Wait for your solder iron to cool down again, and replace the solder end with
-the M2 insert end, and insert two M2 insert into the back of the PMW3360 mount.
+Wait for your solder iron to cool down again, and replace the M3 insert tip with
+the M2 insert tip, and insert two M2 insert into the back of the PMW3360 mount.
 The parts with all of the inserts inserted should look like this:
 
 ![Inserted Inserts](images/inserted-inserts.png)
