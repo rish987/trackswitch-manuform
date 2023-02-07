@@ -5,8 +5,8 @@
             [scad-clj.scad :refer :all]
             [usb_holder :refer [usb-holder usb-holder-mirrored usb-holder-cutout usb-holder-space]]
             [scad-clj.model :refer :all]))
-(def testing false)
 (def testing true)
+(def testing false)
 
 ; for animation
 ;(defmethod write-expr :t [depth [form {:keys [min max]}]]

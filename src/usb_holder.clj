@@ -71,7 +71,8 @@
 (def reset-width (+ 12.8 clearance))
 (def reset-ardumicro-tare (+ (* 2 reset-buf) reset-height ardumicro-height))
 (def reset-protrude 1)
-(def reset-rad (+ (/ 6.75 2) clearance))
+(def reset-diam 6.75)
+(def reset-rad (+ (/ reset-diam 2) clearance))
 
 (def total-height (+ reset-ardumicro-tare ardumicro-extra-height))
 (def cutout-height (+ total-height (* 2 usb-holder-clearance)))

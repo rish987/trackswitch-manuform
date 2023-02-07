@@ -175,6 +175,11 @@ Measure the protrusion of the reset button from the highest point on the base (t
 
 Add a bit to this if you want the button to be more recessed in the case.
 
+### (`src/usb_holder.clj`) `reset-diam`
+
+Measure the diameter of your reset button.
+
+
 
 ## Making Adjustments/CAD Generation
 
