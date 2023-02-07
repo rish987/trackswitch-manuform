@@ -870,13 +870,21 @@ The pitch of the plates should be far enough forward such that the force of the 
 is able to push the trackball out. If it is too far back, the force of gravity will exceed the force of the keyswitch and
 the trackball won't be able to pop out.
 
-If this doesn't happen, then you either have it pitched too far back or your keyswitch doesn't have a high enough actuation force.
-If you find that the beep doesn't stop, it means that you went too far in the previous step -- unfortunately, since loosening tends to
-also loosen the nuts keeping the trackswitch mount steady, in this case you'll probably have to take the whole assembly out,
-re-tighten the nuts, and start from the beginning.
+If this doesn't happen, then there are three possible issues:
 
-For some extra assurance that the nuts and screws won't come loose, as a final step I recommend smearing
-all of them with a good amount of hot glue.
+- You have it pitched too far back, so make sure that it is rotated towards you to the same extent that it will be when mounted on the case (but don't go too far as this could give you a false sense of success).
+- Your keyswitch doesn't have a high enough actuation force. I recommend a linear switch, and have had success with a Gateron Black and a Kailh Silver.
+- You may want to additionally tighten the screws a bit to reduce the distance from the trackball to the switch
+(and thus increase the force of the switch on the trackball). Make sure that you do not go too far,
+and use your multimeter to verify that when you release the trackball the connection is still broken.
+
+If you find that the beep doesn't stop when you release the trackball, it means that you went too far in the previous step --
+unfortunately, since loosening tends to also loosen the nuts keeping the trackswitch mount steady,
+in this case you'll probably have to take the whole assembly out, re-tighten the nuts, and start from the beginning.
+
+Once you have gotten the distance perfect, as a final step smear everything
+with a good amount of hot glue to ensure that nothing will come loose
+(don't let any get inside of the trackball mount).
 Finally, install the trackswitch socket that was left dangling earlier.
 
 Your mounted trackswitch should like this (before getting covered in hot glue; again, forgive the semi-print-failure I mentioned earlier):
