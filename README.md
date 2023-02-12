@@ -20,7 +20,7 @@ ergonomic setup, with typing comfort the likes of which you have probably never 
 
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
 
-Also, a build in Neovim colors:
+Also, a build in Neovim colors (or, perhaps, the colors of a certain flag):
 
 ![Neovim Build](images/nvim-build.png)
 
