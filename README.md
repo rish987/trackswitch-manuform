@@ -20,6 +20,10 @@ ergonomic setup, with typing comfort the likes of which you have probably never 
 
 ![Trackswitch Manuform preview](images/trackswitch-manuform.png)
 
+Also, a build in Neovim colors:
+
+![Neovim Build](images/nvim-build.png)
+
 # Build Guide
 
 ## Tools
@@ -407,7 +411,7 @@ a 0.6mm nozzle and at 0.28mm layer height. This will substantially cut down your
 relative to the default 0.4mm nozzle with 0.2mm layer height.
 You may lose some of the finer details on the plates, but I ended up not making use of them anyways.
 
-Otherwise, I use all of the default Cura settings.
+Otherwise, I use all of the default Cura settings (remember to set it to use a 0.6mm nozzle size if you are using one).
 
 #### Aligning the Support Blockers
 
