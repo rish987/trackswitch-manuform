@@ -1284,7 +1284,7 @@ For this keyboard, the right half is the one that you should plug in while using
 
 The following mega-command packs everything up into one. Note that it assumes that you don't have any other devices connected with the `/dev/ttyACM*` prefix. It compiles, then prints a prompt, upon which you should press enter and the reset button on the MCU at the same time. Then, it waits a few seconds for the MCU to enter flash mode, extends the device permissions, and finally flashes the new code:
 ```bash
-qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Po 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
+qmk compile -kb handwired/tractyl_manuform/5x6_right/arduinomicro -km default && echo "Press reset!" && read -N 1 && sleep 3 && ACMDIR="/dev/$(dmesg | tail | grep -Pom1 'ttyACM\d+')" && sudo chmod 777 $ACMDIR && avrdude -v -patmega32u4 -cavr109 -P$ACMDIR -b57600 -Uflash:w:"handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex":i
 ```
 
 ### Final Adjustments to the PMW3360 Sensor Distance
