@@ -1227,6 +1227,12 @@ how the mouse moves (e.g. speed, acceleration, scroll speed, etc.).
 You can set these in `keymaps/handwired/tractyl_manuform/5x6_right/keymaps/default/config.h`.
 See [Schievel1's guide](https://github.com/Schievel1/dactyl_manuform_r_track/blob/main/README.org#other-things-to-set-in-the-firmware)
 for a list of these parameters and what they do.
+Take note also of the following custom parameters:
+
+Parameter | Function
+-----|-----
+`TRACKPOINT_REFRESH_INTERVAL` | Only send mouse movements at multiples of this many cycles when in trackpoint mode; this is helpful to slow down the cursor when the MCU refresh rate is too high. Try setting this to a higher value if you find that the slowest trackpoint speed is too fast.
+`ACTIVATION_DELAY` | Number of cycles to disable mouse movement for after activating the trackswitch; this prevents some unexpected initial mouse jitter resulting from the movement of the trackball as it is pressed down. Try a higher number if you still see this jitter.
 
 #### Special Mouse Keys
 
@@ -1237,7 +1243,7 @@ In addition to these, I have defined a few of my own:
 Keycode | Short Alias | Function
 -----|-------|----
 `TRACKSWITCH` | `TRKSWCH` | The trackswitch button. This both enables mouse movement and shifts to the mouse layer. You should only use this for the actual trackswitch key.
-`MOUSE_LOCK` | `MLOCK` | Locks mouse movement. When releasing the trackswitch, the movement of the trackball means that a little bit of mouse movement is pretty much unavoidable before the actual trackswitch switch is fully de-actuated. While in most cases I have found this to be inconsequential, for the rare cases that it is undesirable you can use this key to lock the mouse in place before releasing.
+`MOUSE_LOCK` | `MLOCK` | Locks mouse movement. When releasing the trackswitch, the movement of the trackball means that a little bit of mouse jitter is pretty much unavoidable before the actual trackswitch switch is fully de-actuated (though we are able to deal with this when activating the trackswitch with the `ACTIVATION_DELAY` variable, when *releasing* it there is no reliable way to prevent this without being able to see into the future). While in most cases I have found this jitter to be inconsequential, for the rare cases that it is undesirable you can use this key to lock the mouse in place before releasing.
 `TRACKPOINT_MODE` | `TRKPNT` | Activate trackpoint mode.
 
 ### Compiling & Flashing the MCUs
