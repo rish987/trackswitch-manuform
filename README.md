@@ -1,9 +1,10 @@
 # Trackswitch Manuform -- A Hyper-Ergonomic Dactyl Manuform with a Clickable Trackball
 
-[As seen on Reddit!](https://reddit.com/r/ErgoMechKeyboards/comments/10rnnoc/introducing_the_trackswitch_manuform_a/)
+As seen [on Reddit](https://reddit.com/r/ErgoMechKeyboards/comments/10rnnoc/introducing_the_trackswitch_manuform_a/) and [on kbd.news](https://kbd.news/Trackswitch-Manuform-1878.html)!
 
 This keyboard is an attempt to make a best-of-both-worlds combination between the
-modular (and support-saving) design of [dereknheiley's compactyl manuform](https://github.com/dereknheiley/compactyl) (with adjustable wrist rest mounts)
+modular (and support-saving) design of [dereknheiley's compactyl manuform](https://github.com/dereknheiley/compactyl) (with adjustable wrist rest mounts),
+from which this repo is originally forked,
 and the trackball-enabled design of the [noahprince22's tracktyl manuform](https://github.com/noahprince22/tractyl-manuform-keyboard),
 forking the firmware from [Schievel1's dactyl_manuform_r_track](https://github.com/Schievel1/dactyl_manuform_r_track).
 
@@ -1084,15 +1085,12 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 Size before:
    text    data     bss     dec     hex filename
-      0   28442       0   28442    6f1a handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex
+      0   26622       0   26622    67fe handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex
 
 Copying handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex to qmk_firmware folder        [OK]
-Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex                 [WARNINGS]
-
- * The firmware size is approaching the maximum - 28442/28672 (99%, 230 bytes free)
+Checking file size of handwired_tractyl_manuform_5x6_right_arduinomicro_default.hex                 [OK]
+* The firmware size is fine - 26622/28672 (92%, 2050 bytes free)
 ```
-Note that this firmware uses up almost all of the space on the MCU (as attested in the warning message),
-so you have to be very careful and selective about any features you want to add to it.
 
 ### Tweaking the Key Layout
 
@@ -1108,9 +1106,10 @@ enum custom_layers {
     _ARROW,
 };
 
-#define RAISE MO(_RAISE)
-#define LOWER MO(_LOWER)
-#define ARROW MO(_ARROW)
+// these will temporarily shift to the mode when held, and switch to the mode when double-tapped
+#define RAISE TT(_RAISE)
+#define LOWER TT(_LOWER)
+#define ARROW TT(_ARROW)
 
 #define ESCCTL  RCTL_T(KC_ESC)
 #define BSPCCTL  RCTL_T(KC_BSPC)
