@@ -1106,10 +1106,10 @@ enum custom_layers {
     _ARROW,
 };
 
-// these will temporarily shift to the mode when held, and switch to the mode when double-tapped
-#define RAISE TT(_RAISE)
-#define LOWER TT(_LOWER)
-#define ARROW TT(_ARROW)
+// if you use TT instead of MO, these will temporarily shift to the mode when held, and switch to the mode when double-tapped
+#define RAISE MO(_RAISE)
+#define LOWER MO(_LOWER)
+#define ARROW MO(_ARROW)
 
 #define ESCCTL  RCTL_T(KC_ESC)
 #define BSPCCTL  RCTL_T(KC_BSPC)
